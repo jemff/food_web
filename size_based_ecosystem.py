@@ -15,24 +15,28 @@ eng = matlab.engine.start_matlab()
 
 
 def jacobian_calculator(f, x, h):
-    #if len(f(x))>0:
-    #    jac = np.zeros((x.shape[0], f(x).shape[0]))
-    #else:
-    jac = np.zeros((x.shape[0],x.shape[0]))
-    x_m = np.copy(x)
-    x_p = np.copy(x)
-    for i in range(len((x))):
-        x_m[i] -= h
-        x_p[i] += h
-        jac[:, i] = (f(x_p) - f(x_m))/(2*h)
+    if max(np.shape(np.array([f(x)]))) <= 1:
+        jac = np.zeros(x.shape[0])
         x_m = np.copy(x)
         x_p = np.copy(x)
+        for i in range(len((x))):
+            x_m[i] -= h
+            x_p[i] += h
+            jac[i] = (f(x_p) - f(x_m))/(2*h)
+
+    else:
+        jac = np.zeros((x.shape[0],x.shape[0]))
+        x_m = np.copy(x)
+        x_p = np.copy(x)
+        for i in range(len((x))):
+            x_m[i] -= h
+            x_p[i] += h
+            jac[:, i] = (f(x_p) - f(x_m))/(2*h)
+            x_m = np.copy(x)
+            x_p = np.copy(x)
 
     return jac
 
-def grad_calculator(f, x, h):
-    grad = np.zeros(x.shape[0])
-    #Finish me
 
 class ecosystem_optimization:
 
@@ -48,6 +52,7 @@ class ecosystem_optimization:
         self.loss = loss
 
     def one_actor_growth(self, strategies, i):
+        #print(strategies)
         strat_mat = strategies.reshape(self.strategy_matrix.shape)
         interaction_term = self.parameters.who_eats_who[i]*self.populations
         interaction_term = interaction_term*self.parameters.clearance_rate[i]
@@ -75,19 +80,20 @@ class ecosystem_optimization:
                 interaction_term = interaction_term * self.parameters.handling_times[k] * self.parameters.clearance_rate[k]
                 layer_action = np.zeros((self.layers, self.mass_vector.shape[0]))
                 for j in range(self.layers):
-                    layer_action[j] = self.parameters.layered_attack[j, i] * strat_mat[i, j] * interaction_term * strat_mat[:, j]
-                #foraging_term = np.dot(self.water.res_counts, self.parameters.forager_or_not[k] * self.parameters.handling_times[k] * \
-                #                self.parameters.clearance_rate[k] * self.parameters.layered_foraging)
+                    layer_action[j] = self.parameters.layered_attack[j, k] * strat_mat[k, j] * interaction_term * strat_mat[:, j]
+
                 foraging_term = self.water.res_counts * self.parameters.forager_or_not[k] * \
                                 self.parameters.handling_times[k] \
                                 * self.parameters.clearance_rate[k] * self.parameters.layered_foraging[:,k]
 
-                loss += np.dot(strat_mat[k], np.dot(self.spectral.M, strat_mat[i]*self.populations[k]*self.parameters.layered_attack[:,k,i]*self.parameters.clearance_rate[k]))/(1+np.sum(np.dot(self.ones, np.dot(self.spectral.M,np.sum(layer_action, axis = 1)++foraging_term))))
+                loss += np.dot(strat_mat[k], np.dot(self.spectral.M, strat_mat[i]*self.populations[k]*self.parameters.layered_attack[:,k,i]*self.parameters.clearance_rate[k]))/\
+                        (1+np.sum(np.dot(self.ones, np.dot(self.spectral.M,np.sum(layer_action, axis = 1) + foraging_term))))
 
         #print(loss, i, "Loss of i", growth_term)
         #if loss == 0:
+        #    print(growth_term, loss)
         #    print("Im here!!!", i)
-        #    loss = self.parameters.loss_term[i]*np.dot(strat_mat[i],np.dot(self.spectral.M, strat_mat[i]))
+        #    loss = 0.05*(1/self.parameters.handling_times[i])*np.dot(strat_mat[i],np.dot(self.spectral.M, strat_mat[i]))
 
         return growth_term - loss
 
@@ -114,6 +120,9 @@ class ecosystem_optimization:
     def one_actor_growth_num_derr(self, strategies, i, fineness = 0.000001):
         return jacobian_calculator(lambda x: self.one_actor_growth(self.strategy_replacer(x, i, strategies), i), strategies[i:i+self.layers], fineness)
 
+    def one_actor_hessian(self, strategies, i, fineness = 0.000001):
+        return jacobian_calculator(lambda x: self.one_actor_growth_num_derr(self.strategy_replacer(x, i, strategies), i),
+                                   strategies[i:i + self.layers], fineness)
 
     def loss_function(self, strategies):
 
@@ -123,7 +132,7 @@ class ecosystem_optimization:
             v = 0
             for i in range(self.mass_vector.shape[0]):
 
-                total_loss[v:v+self.layers] = self.one_actor_growth_num_derr(strategies, i)[0]
+                total_loss[v:v+self.layers] = self.one_actor_growth_num_derr(strategies, i) #[0]
                 #print(strategies[i*self.layers:(i+1)*self.layers].shape, self.layers, i, i*layers, (i+1)*layers, i+1)
                 total_loss[v+1] = np.dot(self.ones,np.dot(self.spectral.M, strategies[i*self.layers:(i+1)*self.layers]))-1
                 v += self.layers+1
