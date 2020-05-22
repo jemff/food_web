@@ -106,7 +106,7 @@ class ecosystem_optimization:
         for j in range(self.mass_vector.shape[0]):
             total_growth[j] = self.one_actor_growth(strategies, j)
 
-        return total_growth#*self.populations
+        return (total_growth - self.parameters.loss_term)*self.populations
 
 
 
