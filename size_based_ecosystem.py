@@ -7,11 +7,9 @@ import matplotlib.pyplot as plt
 
 eng = matlab.engine.start_matlab()
 
-#Add eating functionality of resources so they actually get removed
 #Add interpolation logic (Convert to Lagrange, evaluate Lagrange in bigger point set, optimize again)
 #Add cheeger constant calculator
-#Add graph viewer
-#Create extra file
+#Fix water resource renewal logic.
 
 
 def jacobian_calculator(f, x, h):
@@ -61,9 +59,6 @@ class ecosystem_optimization:
         for j in range(self.layers):
             layer_action[j] = self.parameters.layered_attack[j,i]*strat_mat[i,j]*interaction_term*strat_mat[:,j]\
                               *self.parameters.handling_times[i]
-            #print("This is where I die ", self.layers, i, j, self.parameters.layered_attack.shape, self.parameters.handling_times.shape, strat_mat.shape)
-
-
         foraging_term = self.water.res_counts * self.parameters.forager_or_not[i] * self.parameters.handling_times[i] \
                         * self.parameters.clearance_rate[i] * self.parameters.layered_foraging[:,i]
 
@@ -72,8 +67,13 @@ class ecosystem_optimization:
 
 
         growth_term = np.sum(np.dot(self.ones, np.dot(self.spectral.M,np.sum(layer_action, axis = 1)+foraging_term))/(1+np.sum(np.dot(self.ones, np.dot(self.spectral.M,np.sum(layer_action, axis = 1)++foraging_term)))))
+        if i == 1:
+            print(growth_term)
+            #print(strat_mat[i,np.argmax(strat_mat[i,:])], strat_mat[0,np.argmax(strat_mat[i,:])], interaction_term, layer_action[np.argmax(strat_mat[i,:])])
+
 
         loss = 0
+        #print(loss)
         for k in range(self.parameters.who_eats_who.shape[0]):
             if(self.parameters.who_eats_who[k,i] == 1):
                 interaction_term = self.parameters.who_eats_who[k] * self.populations
@@ -90,11 +90,12 @@ class ecosystem_optimization:
                         (1+np.sum(np.dot(self.ones, np.dot(self.spectral.M,np.sum(layer_action, axis = 1) + foraging_term))))
 
         #print(loss, i, "Loss of i", growth_term)
-        #if loss == 0:
+        #if loss is 0:
         #    print(growth_term, loss)
         #    print("Im here!!!", i)
-        #    loss = 0.05*(1/self.parameters.handling_times[i])*np.dot(strat_mat[i],np.dot(self.spectral.M, strat_mat[i]))
-
+        #    loss = 0.1*(1/self.parameters.handling_times[i])*np.dot(self.ones, np.dot(self.spectral.M, strat_mat[i]))
+            #print(loss)
+        #print(loss)
         return growth_term - loss
 
     def total_growth(self, strategies = None):
@@ -163,8 +164,6 @@ class ecosystem_optimization:
             interaction_term = self.parameters.who_eats_who[i] * self.populations
             interaction_term = interaction_term * self.parameters.clearance_rate[i]
             layer_action = np.zeros((self.layers, self.mass_vector.shape[0]))
-            #        print(self.parameters.layered_attack.shape, strat_mat.shape, self.parameters.handling_times.shape, self.strategy_matrix.shape)
-
             for j in range(self.layers):
                 layer_action[j] = self.parameters.layered_attack[j, i] * strat_mat[i, j] * interaction_term * strat_mat[:,j] \
                                   * self.parameters.handling_times[i]
@@ -177,7 +176,7 @@ class ecosystem_optimization:
             #print(np.sum(np.dot(self.ones, np.dot(self.spectral.M, (layer_action + foraging_term)))))
             consumed_resources += foraging_term /(1 + np.sum(np.dot(self.ones, np.dot(self.spectral.M, (np.sum(layer_action, axis = 1) + foraging_term)))))
 
-        self.water.resource_setter(self.water.res_counts - time_step *consumed_resources)
+        self.water.resource_setter(self.water.res_counts - time_step * consumed_resources)
 
 class spectral_method:
     def __init__(self, depth, layers):
@@ -200,6 +199,9 @@ class spectral_method:
 
         self.x = ((self.x+1)/2) * depth
 
+        self.vandermonde = self.vandermonde_calculator().T
+        self.vandermonde_inv = np.linalg.inv(self.vandermonde)
+        #self.vandermonde = depth*self.vandermonde
 
     def JacobiP(self, x, alpha, beta, n):
         P_n = np.zeros((n, x.shape[0]))
@@ -316,7 +318,7 @@ class ecosystem_parameters:
         return 1/(22.3*self.mass_vector**(0.75))
 
     def loss_rate_setter(self):
-        return 1.2*self.mass_vector**(0.75)
+        return 1.2*self.mass_vector**(0.75) #Used to be 1.2, but this was annoying
 
     def layer_creator(self, obj):
         weights = 2/(1+np.exp(0.8*self.spectral.x)) #Replace with actual function
@@ -334,7 +336,7 @@ class ecosystem_parameters:
 
 
 class water_column:
-    def __init__(self, spectral, res_vec, advection = 1, diffusion = 0.5, resource_max = 15, replacement = 1.2, time_step = 0.001, layers = 2):
+    def __init__(self, spectral, res_vec, advection = 1, diffusion = 0.5, resource_max = 30, replacement = 1.2, time_step = 0.001, layers = 2):
         self.adv = advection
         self.diff = diffusion
         self.resource = resource_max
@@ -352,17 +354,85 @@ class water_column:
         ones = np.repeat(1, self.layers)
         self.res_top[0:int(self.layers/10)+1] = self.res_counts[0:int(self.layers/10)+1]
         total_top_mass = np.dot(ones, np.dot(self.spectral.M, self.res_top))
+        #print(total_top_mass, self.res_counts)
+        print(total_top_mass, self.res_counts[0])
         self.res_counts[0] += self.lam*(self.resource - total_top_mass)*self.time_step
-
-        ##Advection diffusion step
+        ##Advection diffusion
         if self.diff != 0 or self.adv != 0:
-            diff_op = self.spectral.D*self.adv-self.diff*np.linalg.matrix_power(self.spectral.D,2)+np.identity(self.layers)/self.time_step
-            diff_op[0] = self.spectral.D[0]
-            diff_op[-1] = 0
-            diff_op[-1,-1] = 1
-            self.res_counts = np.linalg.solve(diff_op, self.res_counts)
+            sol_vec = np.copy(self.res_counts)
+            #sol_vec[0] = 0
+            sol_vec[-1] = 0
+            #print(self.diff, self.adv, self.time_step)
+            diff_op = (-self.adv*self.spectral.D+self.diff*np.linalg.matrix_power(self.spectral.D,2))*self.time_step+np.identity(self.layers)
+            #diff_op[0] = self.spectral.D[0]
+            diff_op[-1] = self.spectral.D[-1]
+            #diff_op[-1,-1] = 1
+            #print(self.res_counts, np.linalg.solve(diff_op, sol_vec))
+            self.res_counts = np.abs(np.linalg.solve(diff_op, sol_vec))
 
 
+
+
+class simulator:
+    def __init__(self, step_size, time, eco):
+        self.step_size = step_size
+        self.time = time
+        self.eco = eco
+
+def constraint_builder(M, classes):
+    lower_bound = np.zeros(M.shape[0]*classes)
+    upper_bound = np.array([np.inf]*M.shape[0]*classes)
+    identity_part = np.identity(M.shape[0]*classes)
+
+    matrix_vec = M.sum(axis = 0)
+#    print(matrix_vec)
+    matrix = np.zeros((classes, M.shape[0]*classes))
+    for i in range(classes):
+        matrix[i, i*M.shape[0]: (i+1)*M.shape[0]] = matrix_vec
+
+    one_bound = np.repeat(1, classes)
+
+    bounds = optm.Bounds(lower_bound, upper_bound)
+
+    return matrix, one_bound, bounds
+
+def loss_func_very_special(vec, size_classes = None, layers = None, spec = None, eco = None):
+
+
+    coeffs = vec.reshape((layers, size_classes))
+    point_vec = np.dot(spec.vandermonde, coeffs)
+    point_loss = eco.loss_function(point_vec.flatten())
+    point_loss = point_loss.reshape((layers, size_classes)) #Attempt at finding minimum via. coefficients
+
+
+    return np.sum(np.dot(point_loss.T, np.dot(spec.M, point_loss))) #np.sum((np.linalg.norm(loss_vec, axis = 0))**2) #np.sum(np.dot(loss_vec, np.dot(spec.M, loss_vec.T))) #
+
+def loss_func(vec, size_classes = None, layers = None, spec = None):
+
+    loss_vec = np.reshape(vec, (size_classes, layers))
+
+    return (np.sum((np.linalg.norm(loss_vec, axis=0))))**2  # np.sum(np.dot(loss_vec, np.dot(spec.M, loss_vec.T)))
+
+def sequential_nash(eco, verbose = False):
+    x_temp = np.copy(eco.strategy_matrix.flatten())  # np.zeros(size_classes*layers)
+    x_temp2 = np.copy(eco.strategy_matrix.flatten())
+    error = 1
+    A, one, bounds = constraint_builder(eco.spectral.M, eco.mass_vector.shape[0])
+    constr1 = ({'type': 'eq', 'fun': lambda x: np.dot(A[0, 0:eco.layers], x) - 1})
+    bounds1 = optm.Bounds(np.array([0] * eco.layers), np.array([np.inf] * eco.layers))
+
+    while error > 10 ** (-8):
+#        print("Wut")
+        for k in range(eco.mass_vector.shape[0]):
+            x_temp2[k * eco.layers:(k + 1) * eco.layers] = optm.minimize(
+                lambda x: eco.one_actor_growth(eco.strategy_replacer(x, k, x_temp), k),
+                x0=x_temp[eco.layers * k:eco.layers * (k + 1)], method='SLSQP', constraints=constr1, bounds=bounds1).x
+        if verbose is True:
+            print("Error: ", np.max(np.abs(x_temp - x_temp2)))
+        error = np.max(np.abs(x_temp - x_temp2))
+        x_temp = np.copy(x_temp2)
+
+    return x_temp
 
 def interpolater(old_vec, old_size, new_size, size_classes, old_spec, new_spec):
     new_vec = np.zeros(new_size*size_classes)
@@ -373,10 +443,3 @@ def interpolater(old_vec, old_size, new_size, size_classes, old_spec, new_spec):
         new_vec[new_size*k:new_size*(k+1)] = new_strat/np.dot(np.repeat(1, new_size),np.dot(new_spec.M, new_strat))
 
     return new_vec
-
-
-class simulator:
-    def __init__(self, step_size, time, eco):
-        self.step_size = step_size
-        self.time = time
-        self.eco = eco
