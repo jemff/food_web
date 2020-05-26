@@ -66,9 +66,9 @@ class ecosystem_optimization:
         #foraging_term =  np.dot(self.water.res_counts, self.parameters.forager_or_not[i]*self.parameters.handling_times[i]*self.parameters.clearance_rate[i]*self.parameters.layered_foraging)
 
 
-        growth_term = np.sum(np.dot(self.ones, np.dot(self.spectral.M,np.sum(layer_action, axis = 1)+foraging_term))/(1+np.sum(np.dot(self.ones, np.dot(self.spectral.M,np.sum(layer_action, axis = 1)++foraging_term)))))
-        if i == 1:
-            print(growth_term)
+        growth_term = np.dot(self.ones, np.dot(self.spectral.M,np.sum(layer_action, axis = 1)+foraging_term)/(1+np.sum(np.dot(self.ones, np.dot(self.spectral.M,np.sum(layer_action, axis = 1)+foraging_term)))))
+        #if i == 1:
+        #    print(growth_term, interaction_term, strat_mat[0,:], "Max strategy of 1 ", max(strat_mat[1,:]), "Max strategy of 0 ", max(strat_mat[0,:]))
             #print(strat_mat[i,np.argmax(strat_mat[i,:])], strat_mat[0,np.argmax(strat_mat[i,:])], interaction_term, layer_action[np.argmax(strat_mat[i,:])])
 
 
@@ -90,10 +90,10 @@ class ecosystem_optimization:
                         (1+np.sum(np.dot(self.ones, np.dot(self.spectral.M,np.sum(layer_action, axis = 1) + foraging_term))))
 
         #print(loss, i, "Loss of i", growth_term)
-        #if loss is 0:
+        if loss is 0:
         #    print(growth_term, loss)
         #    print("Im here!!!", i)
-        #    loss = 0.1*(1/self.parameters.handling_times[i])*np.dot(self.ones, np.dot(self.spectral.M, strat_mat[i]))
+            loss = 0.1*(1/self.parameters.handling_times[i])*np.dot(strat_mat[i], np.dot(self.spectral.M, strat_mat[i]))
             #print(loss)
         #print(loss)
         return growth_term - loss
@@ -113,7 +113,7 @@ class ecosystem_optimization:
 
     def strategy_replacer(self, x, i, strategies):
         strat = np.copy(strategies)
-        strat[i:i+self.layers] = x
+        strat[i*self.layers:(i+1)*self.layers] = x
 
         #print(i)
         return strat
@@ -318,7 +318,7 @@ class ecosystem_parameters:
         return 1/(22.3*self.mass_vector**(0.75))
 
     def loss_rate_setter(self):
-        return 1.2*self.mass_vector**(0.75) #Used to be 1.2, but this was annoying
+        return 0.1*self.mass_vector**(0.75) #Used to be 1.2, but this was annoying
 
     def layer_creator(self, obj):
         weights = 2/(1+np.exp(0.8*self.spectral.x)) #Replace with actual function
@@ -425,7 +425,7 @@ def sequential_nash(eco, verbose = False):
 #        print("Wut")
         for k in range(eco.mass_vector.shape[0]):
             x_temp2[k * eco.layers:(k + 1) * eco.layers] = optm.minimize(
-                lambda x: eco.one_actor_growth(eco.strategy_replacer(x, k, x_temp), k),
+                lambda x: -eco.one_actor_growth(eco.strategy_replacer(x, k, x_temp), k),
                 x0=x_temp[eco.layers * k:eco.layers * (k + 1)], method='SLSQP', constraints=constr1, bounds=bounds1).x
         if verbose is True:
             print("Error: ", np.max(np.abs(x_temp - x_temp2)))
