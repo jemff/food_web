@@ -11,9 +11,9 @@ res_max = 15
 simulate = True
 verbose = False
 daily_cycle = 365*2*np.pi
-
-
 mass_vector = np.array([1, 20, 400, 8000, 16000]) #np.array([1, 30, 300, 400, 800, 16000])
+
+
 from scipy import stats
 obj = spectral_method(depth, layers-1) #This is the old off-by-one error... Now we have added another fucked up error!
 logn = stats.lognorm.pdf(obj.x, 1, 0)
@@ -60,3 +60,7 @@ if simulate is True:
     plt.plot(obj.x, eco.water.res_counts)
     plt.show()
     print(eco.populations, eco.total_growth(x_res))
+    print(graph_builder(eco))
+    print(eco.water.res_counts)
+    print(np.dot(eco.water.res_counts, np.dot(eco.spectral.M, eco.strategy_matrix[0])))
+    print("Do you want to continue simulating?")

@@ -23,7 +23,7 @@ res_start = logn
 water_start = water_column(obj, res_start, layers = layers, resource_max = res_max, time_step = time_step, replacement = lam, advection = 1, diffusion = 0)
 
 params = ecosystem_parameters(mass_vector, obj)
-print(params.layered_foraging[:,0])
+print(params.who_eats_who, np.sum(params.who_eats_who[:,3]) == 0)
 eco = ecosystem_optimization(mass_vector, layers, params, obj, water_start, loss = 'constr')
 eco.population_setter(np.array([1, 1, 1, 1, 0.1]) )#, 1, 1, 1, 0.1]))
 #eco.strategy_setter(np.sqrt(eco.strategy_matrix.flatten())) THis is for the L2 version... Quantum fish ahoy

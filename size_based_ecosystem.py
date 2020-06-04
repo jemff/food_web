@@ -60,8 +60,7 @@ class ecosystem_optimization:
             layer_action[j] = self.parameters.layered_attack[j,i]*strat_mat[i,j]*interaction_term*strat_mat[:,j]\
                               *self.parameters.handling_times[i]
         foraging_term = self.water.res_counts * self.parameters.forager_or_not[i] * self.parameters.handling_times[i] \
-                        * self.parameters.clearance_rate[i] * self.parameters.layered_foraging[:,i]
-
+                        * self.parameters.clearance_rate[i] * self.parameters.layered_foraging[:,i]*strat_mat[i]
 #        print(foraging_term)
         #foraging_term =  np.dot(self.water.res_counts, self.parameters.forager_or_not[i]*self.parameters.handling_times[i]*self.parameters.clearance_rate[i]*self.parameters.layered_foraging)
 
@@ -84,16 +83,17 @@ class ecosystem_optimization:
 
                 foraging_term = self.water.res_counts * self.parameters.forager_or_not[k] * \
                                 self.parameters.handling_times[k] \
-                                * self.parameters.clearance_rate[k] * self.parameters.layered_foraging[:,k]
+                                * self.parameters.clearance_rate[k] * self.parameters.layered_foraging[:,k]*strat_mat[k]
 
                 loss += np.dot(strat_mat[k], np.dot(self.spectral.M, strat_mat[i]*self.populations[k]*self.parameters.layered_attack[:,k,i]*self.parameters.clearance_rate[k]))/\
                         (1+np.sum(np.dot(self.ones, np.dot(self.spectral.M,np.sum(layer_action, axis = 1) + foraging_term))))
 
         #print(loss, i, "Loss of i", growth_term)
-        if loss is 0:
+        if np.sum(self.parameters.who_eats_who[:,i]) == 0:
         #    print(growth_term, loss)
         #    print("Im here!!!", i)
             loss = 0.1*(1/self.parameters.handling_times[i])*np.dot(strat_mat[i], np.dot(self.spectral.M, strat_mat[i]))
+            #print(i)
             #print(loss)
         #print(loss)
         return growth_term - loss
@@ -170,7 +170,7 @@ class ecosystem_optimization:
             # print("This is where I die ", self.layers, i, j, self.parameters.layered_attack.shape, self.parameters.handling_times.shape, strat_mat.shape)
 
             foraging_term = self.water.res_counts*self.parameters.forager_or_not[i] * self.parameters.handling_times[i]\
-                            *self.parameters.clearance_rate[i] * self.parameters.layered_foraging[:, i]
+                            *self.parameters.clearance_rate[i] * self.parameters.layered_foraging[:, i]*strat_mat[i]
 
             #print(foraging_term.shape, self.layers, self.spectral.x, self.water.res_counts.shape, self.parameters.layered_foraging.shape)
             #print(np.sum(np.dot(self.ones, np.dot(self.spectral.M, (layer_action + foraging_term)))))
@@ -270,12 +270,12 @@ class ecosystem_parameters:
         self.handling_times = self.handling_times_setter()
         self.who_eats_who = self.who_eats_who_setter()
         self.clearance_rate = self.clearance_rate_setter() #330/12 * mass_vector**(3/4)
-        self.layered_attack = self.layer_creator(self.attack_matrix)
+        self.layered_attack = self.layer_creator(self.attack_matrix, lam = 0.8)
         self.efficiency = 0.7 #Very good number.
         self.loss_term = self.loss_rate_setter() #mass_vector**(0.75)*0.01
         self.forager_or_not = self.forager_or_not_setter()
         self.foraging_attack_prob = self.foraging_attack_setter()
-        self.layered_foraging = self.layer_creator(self.foraging_attack_prob)
+        self.layered_foraging = self.layer_creator(self.foraging_attack_prob, lam = 2)
 
 
     def forager_or_not_setter(self):
@@ -321,8 +321,8 @@ class ecosystem_parameters:
     def loss_rate_setter(self):
         return 0.1*self.mass_vector**(0.75) #Used to be 1.2, but this was annoying
 
-    def layer_creator(self, obj):
-        weights = 2/(1+np.exp(0.8*self.spectral.x)) #Replace with actual function
+    def layer_creator(self, obj, lam = 0.8):
+        weights = 2/(1+np.exp(lam*self.spectral.x)) #Replace with actual function
         layers = np.zeros((self.spectral.x.shape[0], *obj.shape))
        # print(layers.shape, obj.shape, self.spectral.x.shape[0])
 
