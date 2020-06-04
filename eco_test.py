@@ -23,11 +23,14 @@ res_start = logn
 water_start = water_column(obj, res_start, layers = layers, resource_max = res_max, time_step = time_step, replacement = lam, advection = 1, diffusion = 0)
 
 params = ecosystem_parameters(mass_vector, obj)
+print(params.layered_foraging[:,0])
 eco = ecosystem_optimization(mass_vector, layers, params, obj, water_start, loss = 'constr')
 eco.population_setter(np.array([1, 1, 1, 1, 0.1]) )#, 1, 1, 1, 0.1]))
-
+#eco.strategy_setter(np.sqrt(eco.strategy_matrix.flatten())) THis is for the L2 version... Quantum fish ahoy
+print(graph_builder(eco), "Original graph")
 seq_nash = sequential_nash(eco, verbose = True)
 eco.strategy_setter(seq_nash)
+print(graph_builder(eco), "New graph")
 
 plt.figure()
 for i in range(size_classes):

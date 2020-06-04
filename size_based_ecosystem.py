@@ -10,7 +10,7 @@ eng = matlab.engine.start_matlab()
 #Add interpolation logic (Convert to Lagrange, evaluate Lagrange in bigger point set, optimize again)
 #Add cheeger constant calculator
 #Fix water resource renewal logic.
-
+#Implement simulation class
 
 def jacobian_calculator(f, x, h):
     if max(np.shape(np.array([f(x)]))) <= 1:
@@ -107,7 +107,7 @@ class ecosystem_optimization:
         for j in range(self.mass_vector.shape[0]):
             total_growth[j] = self.one_actor_growth(strategies, j)
 
-        return (total_growth - self.parameters.loss_term)*self.populations
+        return (total_growth - 0*self.parameters.loss_term)*self.populations
 
 
 
@@ -262,6 +262,8 @@ class spectral_method:
 
 class ecosystem_parameters:
     def __init__(self, mass_vector, spectral, attack_matrix = None, handling_times = None, who_eats_who = None):
+        self.forage_mass = 0.05
+
         self.mass_vector = mass_vector
         self.spectral = spectral
         self.attack_matrix = self.attack_matrix_setter()
@@ -276,21 +278,20 @@ class ecosystem_parameters:
         self.layered_foraging = self.layer_creator(self.foraging_attack_prob)
 
 
-
     def forager_or_not_setter(self):
-        forage_mass =1/408 #Should probably be in the ecosystem parameters explicitly
-        fo_or_not = (np.copy(self.mass_vector))/forage_mass
+        #forage_mass =1/408 #Should probably be in the ecosystem parameters explicitly
+        fo_or_not = (np.copy(self.mass_vector))/self.forage_mass
         fo_or_not[fo_or_not > 1000] = 0
         fo_or_not[fo_or_not != 0] = 1
 
         return fo_or_not
 
     def foraging_attack_setter(self):
-        forage_mass = 0.05
+        #forage_mass = 0.05
         sigma = 1.3
         beta = 408
 
-        foraging_attack = np.exp(-(np.log(self.mass_vector/(beta*forage_mass))) ** 2 / (2 * sigma ** 2))
+        foraging_attack = np.exp(-(np.log(self.mass_vector/(beta*self.forage_mass))) ** 2 / (2 * sigma ** 2))
 
         return foraging_attack
 
@@ -374,10 +375,11 @@ class water_column:
 
 
 class simulator:
-    def __init__(self, step_size, time, eco):
+    def __init__(self, step_size, time, eco, simulate_population = False, simulate_water = False, gradient = False, verbose = False, stackelberg = False):
         self.step_size = step_size
         self.time = time
         self.eco = eco
+        self.simulate
 
 def constraint_builder(M, classes):
     lower_bound = np.zeros(M.shape[0]*classes)
@@ -396,7 +398,7 @@ def constraint_builder(M, classes):
 
     return matrix, one_bound, bounds
 
-def loss_func_very_special(vec, size_classes = None, layers = None, spec = None, eco = None):
+def loss_func_coefficients(vec, size_classes = None, layers = None, spec = None, eco = None):
 
 
     coeffs = vec.reshape((layers, size_classes))
@@ -420,9 +422,11 @@ def sequential_nash(eco, verbose = False):
     A, one, bounds = constraint_builder(eco.spectral.M, eco.mass_vector.shape[0])
     constr1 = ({'type': 'eq', 'fun': lambda x: np.dot(A[0, 0:eco.layers], x) - 1})
     bounds1 = optm.Bounds(np.array([0] * eco.layers), np.array([np.inf] * eco.layers))
-
-    while error > 10 ** (-8):
-#        print("Wut")
+    ibr_mode = True
+    newton_step = 0.1
+    cutoff = 5
+    iterations = 0
+    while error > 10 ** (-8) and iterations < 100:
         for k in range(eco.mass_vector.shape[0]):
             x_temp2[k * eco.layers:(k + 1) * eco.layers] = optm.minimize(
                 lambda x: -eco.one_actor_growth(eco.strategy_replacer(x, k, x_temp), k),
@@ -430,8 +434,24 @@ def sequential_nash(eco, verbose = False):
         if verbose is True:
             print("Error: ", np.max(np.abs(x_temp - x_temp2)))
         error = np.max(np.abs(x_temp - x_temp2))
-        x_temp = np.copy(x_temp2)
+        if error > cutoff:
+            ibr_mode = False
+        elif error < cutoff:
+            ibr_mode = True
+        if ibr_mode is True:
+            x_temp = np.copy(x_temp2)
+        elif ibr_mode is False:
+            print("Newtoning ", error)
+            x_temp = x_temp + newton_step*x_temp2 #Not sure if this is a good idea...
+            normalization_constants = np.dot(A, x_temp)
+            for i in range(eco.mass_vector[0]):
+                x_temp[i*eco.layers:(i+1)*eco.layers] = x_temp[i*eco.layers:(i+1)*eco.layers]/normalization_constants[i]
+        iterations += 1
+    if iterations >= 100:
+        constr = ({'type': 'eq', 'fun': lambda x: np.dot(A, x) - 1})
+        opt_obj = optm.minimize(lambda x: loss_func(eco.loss_function(x), size_classes= eco.mass_vector.shape[0], layers = eco.layers, spec = eco.spectral), x0 = eco.strategy_matrix.flatten(), method = 'SLSQP',  constraints = constr, bounds = bounds)
 
+        x_temp = opt_obj.x
     return x_temp
 
 def interpolater(old_vec, old_size, new_size, size_classes, old_spec, new_spec):
@@ -443,3 +463,29 @@ def interpolater(old_vec, old_size, new_size, size_classes, old_spec, new_spec):
         new_vec[new_size*k:new_size*(k+1)] = new_strat/np.dot(np.repeat(1, new_size),np.dot(new_spec.M, new_strat))
 
     return new_vec
+
+def graph_builder(eco):
+    strat_mat = eco.strategy_matrix
+    outflows = np.zeros((eco.mass_vector.shape[0], eco.mass_vector.shape[0]))
+
+    for i in range(eco.mass_vector.shape[0]):
+        for k in range(eco.parameters.who_eats_who.shape[0]):
+            if (eco.parameters.who_eats_who[k, i] == 1):
+                interaction_term = eco.parameters.who_eats_who[k] * eco.populations
+                interaction_term = interaction_term * eco.parameters.handling_times[k] * eco.parameters.clearance_rate[k]
+                layer_action = np.zeros((eco.layers, eco.mass_vector.shape[0]))
+                for j in range(eco.layers):
+                    layer_action[j] = eco.parameters.layered_attack[j, k] * strat_mat[k, j] * interaction_term * strat_mat[
+                                                                                                                 :, j]
+
+                foraging_term = eco.water.res_counts * eco.parameters.forager_or_not[k] * \
+                                eco.parameters.handling_times[k] \
+                                * eco.parameters.clearance_rate[k] * eco.parameters.layered_foraging[:, k]
+
+                outflows[i,k] = np.dot(strat_mat[k], np.dot(eco.spectral.M,
+                                                    strat_mat[i] * eco.populations[k] * eco.parameters.layered_attack[:, k,
+                                                                                        i] * eco.parameters.clearance_rate[
+                                                        k])) / \
+                        (1 + np.sum(np.dot(eco.ones, np.dot(eco.spectral.M, np.sum(layer_action, axis=1) + foraging_term))))
+
+    return outflows
