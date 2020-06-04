@@ -89,10 +89,10 @@ class ecosystem_optimization:
                         (1+np.sum(np.dot(self.ones, np.dot(self.spectral.M,np.sum(layer_action, axis = 1) + foraging_term))))
 
         #print(loss, i, "Loss of i", growth_term)
-        if np.sum(self.parameters.who_eats_who[:,i]) == 0:
+        #if np.sum(self.parameters.who_eats_who[:,i]) == 0:
         #    print(growth_term, loss)
         #    print("Im here!!!", i)
-            loss = 0.1*(1/self.parameters.handling_times[i])*np.dot(strat_mat[i], np.dot(self.spectral.M, strat_mat[i]))
+        #    loss = 0.1*(1/self.parameters.handling_times[i])*np.dot(strat_mat[i], np.dot(self.spectral.M, strat_mat[i]))
             #print(i)
             #print(loss)
         #print(loss)
@@ -170,7 +170,7 @@ class ecosystem_optimization:
             # print("This is where I die ", self.layers, i, j, self.parameters.layered_attack.shape, self.parameters.handling_times.shape, strat_mat.shape)
 
             foraging_term = self.water.res_counts*self.parameters.forager_or_not[i] * self.parameters.handling_times[i]\
-                            *self.parameters.clearance_rate[i] * self.parameters.layered_foraging[:, i]*strat_mat[i]
+                            *self.parameters.clearance_rate[i] * self.parameters.layered_foraging[:, i] * strat_mat[i]
 
             #print(foraging_term.shape, self.layers, self.spectral.x, self.water.res_counts.shape, self.parameters.layered_foraging.shape)
             #print(np.sum(np.dot(self.ones, np.dot(self.spectral.M, (layer_action + foraging_term)))))
@@ -420,7 +420,7 @@ def sequential_nash(eco, verbose = False):
     x_temp2 = np.copy(eco.strategy_matrix.flatten())
     error = 1
     A, one, bounds = constraint_builder(eco.spectral.M, eco.mass_vector.shape[0])
-    constr1 = ({'type': 'eq', 'fun': lambda x: np.dot(A[0, 0:eco.layers], x) - 1})
+    constr1 = ({'type': 'eq', 'fun': lambda x: np.dot(A[0, 0:eco.layers], x**2) - 1}) #Now we do it L2-style!
     bounds1 = optm.Bounds(np.array([0] * eco.layers), np.array([np.inf] * eco.layers))
     ibr_mode = True
     newton_step = 0.1
