@@ -17,7 +17,7 @@ eng = matlab.engine.start_matlab()
 
 class ecosystem_optimization:
 
-    def __init__(self, mass_vector, layers, parameters, spectral, water, l2 = True):
+    def __init__(self, mass_vector, layers, parameters, spectral, water, l2 = True, output_level = 5):
         self.layers = layers
         self.mass_vector = mass_vector
         self.spectral = spectral
@@ -27,7 +27,7 @@ class ecosystem_optimization:
         self.ones = np.repeat(1, layers)
         self.water = water
         self.l2 = l2
-
+        self.output_level = output_level
     def one_actor_growth(self, i, x_temp = None, solve_mode = True):
         temp_pops = np.copy(self.populations)
         temp_pops[i] = 0
@@ -48,46 +48,21 @@ class ecosystem_optimization:
             predation_ext_food[k] = np.sum(np.dot(self.spectral.M, foraging_term))+lin_g_others
             predator_hunger[k] = self.parameters.clearance_rate[k] * np.dot(self.spectral.M, self.parameters.layered_attack[:, k, i] * x_temp[k])*self.parameters.who_eats_who[k,i]
 
-
-        if self.populations.shape[0]>1 and i is 0:
-            print(np.dot(self.strategy_matrix[i], predator_hunger.T)*self.populations[1])
-            #print(np.dot(self.spectral.M, self.parameters.layered_attack[:, k, i] * x_temp[k]) * self.parameters.who_eats_who[k, i])
-
         x = ca.SX.sym('x', self.layers)
 
         interaction_term = self.parameters.who_eats_who[i] * self.populations * self.parameters.clearance_rate[i]
 
         lin_growth = ca.Function('lin_growth', [x], [ca.dot(interaction_term, (x_temp*self.parameters.layered_attack[:, i, :].T) @ self.spectral.M @ x)])
-#        print(lin_growth(self.strategy_matrix[i]), i, lin_growth_what(self.strategy_matrix[i]))
-#            print( self.parameters.clearance_rate[i], np.max(interaction_term.reshape((self.populations.shape[0], 1)) * x_temp), i, self.populations)
-
 
         foraging_term_self = ca.Function('foraging_term_self', [x], [(self.water.res_counts * self.parameters.forager_or_not[i] \
                                 * self.parameters.clearance_rate[i] * self.parameters.layered_foraging[:, i]).reshape((1,self.layers)) @ (self.spectral.M @ x)])
-        #if i==1:
-        #    print(foraging_term_self(self.strategy_matrix[i]), 1)
-
 
         actual_growth = self.parameters.efficiency * (lin_growth(x) + foraging_term_self(x)) \
                                 / (1 + self.parameters.handling_times[i] * (lin_growth(x)+foraging_term_self(x)))
 
-#        print("I get beyond this point", predation_ext_food.sum())
-#        predation_ext = (predation_ext_food*self.parameters.handling_times).sum()
 
-#        print(predation_ext)
-
-        #const_thing = predator_hunger.reshape((1, self.layers))
-        #const_thing_2 = (self.parameters.handling_times @ predator_hunger).reshape((1, self.layers))*self.populations[i]
-        one_pops = np.repeat(1, self.populations.shape[0])
-
-        if np.sum(self.parameters.who_eats_who[:, i]) != 0:
-            pred_loss = ca.dot( (x.T @ predator_hunger.T).T, self.populations)
-            print(ca.substitute(pred_loss, x, self.strategy_matrix[i]), "Predation loss")
-
-            # ca.dot((predator_hunger @ x / (1 + (self.populations[i]*predator_hunger @ x) + predation_ext)), self.populations) #This snippet should work, but is currently commented out for testing reasons
-        else:
-            pred_loss = 0 #0.1 * self.parameters.loss_term[i] * (ca.transpose(x) @ self.spectral.M @ self.parameters.layer_creator(np.array([1])))
-            #print("Penalty!!", i)
+        pred_loss = ca.dot((x.T @ predator_hunger.T).T, self.populations)             # ca.dot((predator_hunger @ x / (1 + self.parameters.handling_times(self.populations[i]*predator_hunger @ x) + predation_ext)), self.populations) #This snippet should work, but is currently commented out for testing reasons
+        print("Class: ", i, "Predation loss", ca.substitute(pred_loss, x, self.strategy_matrix[i]), "Actual growth", ca.substitute(actual_growth, x, self.strategy_matrix[i]))
 
         delta_p = ca.Function('delta_p', [x], [(actual_growth - pred_loss)], ['x'], ['r'])
 
@@ -95,30 +70,31 @@ class ecosystem_optimization:
             pop_change = -(actual_growth - pred_loss)
             if self.l2 is True:
                 g = x.T @ self.spectral.M @ x - 1
+                arg = {"lbg": 0, "ubg": 0}
+
             else:
                 g = ca.cumsum(self.spectral.M @ x) - 1
+                arg = {"lbg": -1, "ubg": 0}
+
             x_min = [0]*self.layers
             x_max = [ca.inf]*self.layers
-            arg = {"lbg": 0, "ubg": 0}
             arg["lbx"] = x_min
             arg["ubx"] = x_max
-            s_opts = {'ipopt': {'print_level' : 0}}
+            s_opts = {'ipopt': {'print_level' : self.output_level}}
             prob = {'x': x, 'f': pop_change, 'g': g}
             solver = ca.nlpsol('solver', 'ipopt', prob, s_opts)
+            unif = np.repeat(1/(self.spectral.x[-1]), self.layers)
             sol = solver(x0=x_temp[i], **arg)
+            print(ca.substitute(pop_change, x, np.repeat(1/(self.spectral.x[-1]), self.layers)), ca.substitute(pop_change, x, sol['x']))
             x_out = sol['x']
 
         else:
             x_out = delta_p(self.strategy_matrix[i])
-           # if i is 1:
-             #   print("1 growth", x_out)
-            #ca.substitute(pop_change, x, self.strategy_matrix[i]) #Change to function type
-            #print(foraging_term(self.strategy_matrix[i]), lin_growth(self.strategy_matrix[i]) , x_out, self.parameters.loss_term[i])
         return x_out
 
 
     def casadi_total_growth(self):
-        #Remark this is currently broken...
+        #Remark this is currently broken... Changes from one-actor-growth have not been implemented properly. TODO:FixMe
         x_temp = self.strategy_matrix
         x_tot = []
         total_loss = 0 #= []
@@ -133,68 +109,60 @@ class ecosystem_optimization:
             x_i = ca.SX.sym('x' + str(i), self.layers)
             x_tot.append(x_i)
             print(i, x_tot[i], self.populations.shape[0])
+            temp_pops = np.copy(self.populations)
+            temp_pops[i] = 0
+
+            if x_temp is None:
+                x_temp = self.strategy_matrix
 
             predation_ext_food = np.zeros(self.populations.shape[0])
             predator_hunger = np.zeros((self.populations.shape[0], self.layers))
             for k in range(self.parameters.who_eats_who.shape[0]):
                 interaction_term = self.parameters.who_eats_who[k] * temp_pops * self.parameters.clearance_rate[k]
 
-                layer_action = x_temp[k, :].reshape((self.layers, 1)) * self.parameters.layered_attack[:, k, :] \
-                               * (interaction_term.reshape((self.populations.shape[0], 1)) * x_temp).T
-
+                lin_g_others = np.dot(
+                    (x_temp * self.parameters.layered_attack[:, k, :].T @ self.spectral.M @ x_temp[k]),
+                    interaction_term)
                 foraging_term = self.water.res_counts * self.parameters.forager_or_not[k] \
                                 * self.parameters.clearance_rate[k] * self.parameters.layered_foraging[:, k] * \
                                 x_temp[k]
 
-                predation_ext_food[k] = \
-                    np.dot(self.ones, np.dot(self.spectral.M, np.sum(layer_action, axis=1) + foraging_term))
-                predator_hunger[k] = self.parameters.clearance_rate[k] * np.dot(self.spectral.M, x_temp[k])
+                predation_ext_food[k] = np.sum(np.dot(self.spectral.M, foraging_term)) + lin_g_others
+                predator_hunger[k] = self.parameters.clearance_rate[k] * np.dot(self.spectral.M,
+                                                                                self.parameters.layered_attack[:, k,
+                                                                                i] * x_temp[k]) * \
+                                     self.parameters.who_eats_who[k, i]
 
-            interaction_term = self.parameters.who_eats_who[i] * self.populations * self.parameters.clearance_rate[
-                i]
+            interaction_term = self.parameters.who_eats_who[i] * self.populations * self.parameters.clearance_rate[i]
 
-            lin_growth = ca.Function('lin_growth', [x_i],
-                                     [self.ones.reshape((1, self.layers)) @ (
-                                                 self.parameters.layered_attack[:, i, :] @
-                                                 (interaction_term.reshape(
-                                                     (self.populations.shape[0], 1)) *
-                                                  x_temp) @ x_i)])
+            lin_growth = ca.Function('lin_growth', [x_i], [
+                ca.dot(interaction_term, (x_temp * self.parameters.layered_attack[:, i, :].T) @ self.spectral.M @ x)])
 
-            foraging_term = ca.Function('foraging_term', [x_i],
-                                        [(self.water.res_counts * self.parameters.forager_or_not[i] \
-                                          * self.parameters.clearance_rate[i] * self.parameters.layered_foraging[:,
-                                                                                i]).reshape((1, self.layers)) @ (
-                                                 self.spectral.M @ x_i)])
+            foraging_term_self = ca.Function('foraging_term_self', [x_i],
+                                             [(self.water.res_counts * self.parameters.forager_or_not[i] \
+                                               * self.parameters.clearance_rate[i] * self.parameters.layered_foraging[:,
+                                                                                     i]).reshape((1, self.layers)) @ (
+                                                          self.spectral.M @ x_i)])
 
-            actual_growth = self.parameters.efficiency * (lin_growth(x_i) + foraging_term(x_i)) \
-                            / (1 + self.parameters.handling_times[i] * lin_growth(x_i) + foraging_term(x_i))
+            actual_growth = self.parameters.efficiency * (lin_growth(x_i) + foraging_term_self(x_i)) \
+                            / (1 + self.parameters.handling_times[i] * (lin_growth(x_i) + foraging_term_self(x_i)))
 
-            #        print("I get beyond this point", predation_ext_food.sum())
-            predation_ext = (predation_ext_food * self.parameters.handling_times).sum()
+            pred_loss = ca.dot((x_i.T @ predator_hunger.T).T,
+                               self.populations)  # ca.dot((predator_hunger @ x / (1 + self.parameters.handling_times(self.populations[i]*predator_hunger @ x) + predation_ext)), self.populations) #This snippet should work, but is currently commented out for testing reasons
 
-            #        print(predation_ext)
-
-            const_thing = (temp_pops @ predator_hunger).reshape((1, self.layers))
-            const_thing_2 = (self.parameters.handling_times @ predator_hunger).reshape((1, self.layers)) * \
-                            self.populations[i]
-
-            #        print(const_thing.shape, const_thing_2.shape, x, const_thing @ x)
-            if np.sum(self.parameters.who_eats_who[:, i]) != 0:
-                pred_loss = (const_thing @ x_i) / (1 + (const_thing_2 @ x_i + predation_ext))
-
-            else:
-                pred_loss = 0.1 * self.parameters.loss_term[i] * (
-                        ca.transpose(x_i) @ self.spectral.M @ np.repeat(1, self.layers))
             grad_i = ca.gradient(actual_growth - pred_loss, x_i)
             total_loss = total_loss + ca.norm_2(grad_i)
 
             if self.l2 is True:
                 g.append(x_i.T @ self.spectral.M @ x_i - 1)
+                lbg.append(0)
+                ubg.append(0)
+
             else:
                 g.append(ca.cumsum(self.spectral.M @ x_i) - 1)
+                lbg.append(-1)
+                ubg.append(0)
 
-            lbg.append(0)
-            ubg.append(0)
             lbx.append(np.zeros(self.layers))
             ubx.append([ca.inf]*self.layers)
 
@@ -530,52 +498,23 @@ def sequential_nash(eco, verbose = False):
     x_temp = np.copy(eco.strategy_matrix)  # np.zeros(size_classes*layers)
     x_temp2 = np.copy(eco.strategy_matrix)
     error = 1
-#    A, one, bounds = constraint_builder(eco.spectral.M, eco.mass_vector.shape[0])
-#    ibr_mode = True
-#    newton_step = 0.1
-#    cutoff = 1000000000
     iterations = 0
-    while error > 10 ** (-2) and iterations < 40: #This is a bit large...
+    while error > 10 ** (-8) and iterations < 40:
         for k in range(eco.mass_vector.shape[0]):
             result = eco.one_actor_growth(k, x_temp)
             x_temp2[k] = np.array(result).flatten()
             if verbose is True:
                 print(np.dot(eco.ones, np.dot(eco.spectral.M, (result) ** 2)), k, "2 Norm of strategy")
 
-            #print(x_temp.shape, x_temp2.shape)
-
         error = np.max(np.abs(x_temp - x_temp2))
+
         if verbose is True:
             print("Error: ", error)
-           # print(np.dot(eco.ones, np.dot(eco.spectral.M,  (result)**2)), k, "2 Norm of strategy")
-
         x_temp = np.copy(x_temp2)
         iterations += 1
-
-#        if error > cutoff:
-#            ibr_mode = False
-#        elif error < cutoff:
-#            ibr_mode = True
-#        if ibr_mode is True:
-#
-#            if verbose is True:
-#                print("IBR Testing")#, np.dot(A[0:eco.layers], x_temp2**2), np.dot(A[0:eco.layers], x_temp**2))
-#        elif ibr_mode is False:
-#            if verbose is True:
-#                print("Newtoning ", error)
-#            x_temp = x_temp + newton_step*x_temp2 #Not sure if this is a good idea...
-#            normalization_constants = np.dot(A, x_temp**2)
-#            for i in range(eco.mass_vector[0]):
-#                x_temp[i*eco.layers:(i+1)*eco.layers] = x_temp[i*eco.layers:(i+1)*eco.layers]/normalization_constants[i]
-#            #newton_step = newton_step*1/2
-            #print(iterations, newton_step)
     if iterations >= 40:
-#        constr = ({'type': 'eq', 'fun': lambda x: np.dot(A[0:eco.layers], x**2) - 1})
-#        opt_obj = optm.minimize(lambda x: loss_func(eco.loss_function(x), size_classes= eco.mass_vector.shape[0],
-#                                                    layers = eco.layers, spec = eco.spectral), x0 = x_temp2, method = 'SLSQP',  constraints = constr, bounds = bounds)
-#        print(opt_obj)
-        print("Entering L2 mode")
         x_temp = eco.casadi_total_growth()
+    #print(x_temp,eco.water.res_counts)
     return x_temp
 
 def interpolater(old_vec, old_size, new_size, size_classes, old_spec, new_spec):

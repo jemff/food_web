@@ -4,7 +4,7 @@ import scipy.stats as stats
 import pickle as pkl
 
 depth = 20 #Previously 5 has worked well.
-layers = 60 #5 works well.
+layers = 30 #5 works well.
 size_classes = 1
 lam = 2
 simulate = True
@@ -24,7 +24,7 @@ l2 = False
 size_classes = 1
 m_v_t = np.array([list_of_sizes[size_classes - 1]])
 params = ecosystem_parameters(m_v_t, obj)
-eco = ecosystem_optimization(m_v_t, layers, params, obj, water_start, l2 = l2)
+eco = ecosystem_optimization(m_v_t, layers, params, obj, water_start, l2 = l2, output_level = 0)
 #OG_layered_attack = np.copy(eco.parameters.layered_attack)
 eco.population_setter(np.array([1]) )#, 1, 1, 1, 0.1]))
 eco.parameters.handling_times = np.array([0])
@@ -38,7 +38,7 @@ def one_actor_steady_state(pop, eco=eco):
 
 
 stability = False
-time_step = 10**(-7)
+time_step = 10**(-4)
 #max_err = time_step*1/10
 
 if simulate is True:
@@ -55,7 +55,7 @@ if simulate is True:
         if error>0.01:
             time_step = max(0.75*time_step, 10**(-12))
         else:
-            time_step = min(5/4*time_step, 10**(-7))
+            time_step = min(5/4*time_step, 10**(-4))
 
 
 
