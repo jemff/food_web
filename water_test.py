@@ -5,7 +5,7 @@ size_classes = 2
 t_end = 1
 time_step = 0.00001
 lam = 1
-res_max = 15
+res_max = 1
 simulate = True
 verbose = False
 

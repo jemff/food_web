@@ -18,7 +18,8 @@ size_classes = 3
 t_end = 2/730 #30/365
 lam = 1
 time_step = 10**(-5) #1/500000
-res_max = 15
+res_max = stats.norm.pdf(obj.x, loc = 2)
+
 simulate = False
 verbose = False
 daily_cycle = 365*2*np.pi
