@@ -198,25 +198,24 @@ class ecosystem_optimization:
         print(ca.substitute(total_loss, x_tot, x_out), "Extremity")
         return(x_out.reshape(x_temp.shape))
 
-    def hill_tot_g(self):
-        x_temp = self.strategy_matrix
-        x_tot = []
-        total_loss = 0 #= []
-        g = []
-        lbg = []
-        ubg = []
-        lbx = []
-        ubx = []
+    def hill_tot_g(self, l):
+        temp_mat = np.zeros((self.populations.shape[0], self.populations.shape[0]))
+        temp_mat[l,l] = 1
+        x_temp_0 = np.copy(self.strategy_matrix)
+        x_temp_0[l] = 0
+        x_tot = ca.SX.sym((self.populations.shape[0], self.layers))
+        var = temp_mat @ x_tot
+        x_temp = var + x_temp_0
+        #x_temp = ca.sub
+        total_loss = 0
         for i in range(self.populations.shape[0]):
             temp_pops = np.copy(self.populations)
             temp_pops[i] = 0
-            x_tot.append(x_i)
-            print(i, x_tot[i], self.populations.shape[0])
+            x_i = self.strategy_matrix[i]
             temp_pops = np.copy(self.populations)
             temp_pops[i] = 0
 
-            if x_temp is None:
-                x_temp = self.strategy_matrix
+
 
             predation_ext_food = np.zeros(self.populations.shape[0])
             predator_hunger = np.zeros((self.populations.shape[0], self.layers))
@@ -251,42 +250,18 @@ class ecosystem_optimization:
             pred_loss = ca.dot((predator_hunger @ x_i / (
                         1 + self.parameters.handling_times.reshape((self.populations.shape[0], 1)) * (
                             self.populations[i] * predator_hunger @ x_i) + lin_g_others)),
-                               self.populations)  # ca.dot((x.T @ predator_hunger.T).T, self.populations)   This snippet is for the linear case, known good
+                               self.populations)
 
-            #ca.dot((x_i.T @ predator_hunger.T).T, self.populations)  #  #This snippet works, is made for the linear case
-            x_i_NP = x_temp[i].reshape((self.layers, 1))
-            grad_i = ca.gradient(actual_growth - pred_loss, x_i)
-            print(grad_i.size(), ca.substitute(grad_i, x_i, x_temp[i]))
-            total_loss = total_loss + ca.norm_2(grad_i)
+            total_loss = total_loss - self.one_actor_growth(i, solve_mode=False) + pred_loss - actual_growth #Note the signs
 
-            if self.l2 is True:
-                g.append(x_i.T @ self.spectral.M @ x_i - 1)
-                lbg.append(0)
-                ubg.append(0)
 
-            else:
-                g.append(ca.dot(self.ones, self.spectral.M @ x_i) - 1)
-                lbg.append(0)
-                ubg.append(0)
-
-            lbx.append(np.zeros(self.layers))
-            ubx.append([ca.inf]*self.layers)
-
-        x_tot = ca.vertcat(*x_tot)
-        g = ca.vertcat(*g)
-        lbx = np.concatenate(lbx)
-        ubx = np.concatenate(ubx)
-        lbg = np.zeros(self.populations.shape[0])
-        ubg = np.zeros(self.populations.shape[0])
-
-        print(ca.substitute(total_loss, x_tot, x_temp.flatten()), "Extremity")
         s_opts = {'ipopt': {'print_level' : 0}}
         prob = {'x': x_tot, 'f': total_loss, 'g': g}
         solver = ca.nlpsol('solver', 'ipopt', prob, s_opts)
-        sol = solver(x0=x_temp.flatten(), lbx=lbx, ubx=ubx, lbg=lbg, ubg=ubg)
+        sol = solver(x0=x_temp, lbx=lbx, ubx=ubx, lbg=lbg, ubg=ubg)
         x_out = sol['x']
         print(ca.substitute(total_loss, x_tot, x_out), "Extremity")
-        return(x_out.reshape(x_temp.shape))
+        return temp_mat@(x_out.reshape(x_temp.shape))+x_temp_0
 
 
 
