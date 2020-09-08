@@ -6,9 +6,6 @@ time_step = 0.0001
 simulate = False
 verbose = True
 l2 = True
-
-
-
 from size_based_ecosystem import *
 import pickle as pkl
 
@@ -25,7 +22,7 @@ res_max = 10*norm_dist
 water_start = water_column(obj, res_start, layers = layers, resource_max = res_max, replacement = lam, advection = 0, diffusion = 0)
 
 params = ecosystem_parameters(mass_vector, obj)
-#params.handling_times = np.zeros(2)
+params.handling_times = np.zeros(2)
 
 eco = ecosystem_optimization(mass_vector, layers, params, obj, water_start)
 eco.population_setter(np.array([1, 0.0000001]) )
@@ -37,7 +34,7 @@ error = 1
 time = 0
 
 while (error>10**(-8) and error>1/10*time_step) or time<1:
-    x_res = sequential_nash(eco, verbose=verbose, l2=l2)
+    x_res = sequential_nash(eco, verbose=verbose, circle_mode=True, l2 = l2)
     pop_old = np.copy(eco.populations)
     delta_pop = eco.total_growth(x_res)
     new_pop = delta_pop * time_step + eco.populations
@@ -58,4 +55,3 @@ while (error>10**(-8) and error>1/10*time_step) or time<1:
 
 with open('eco_test.pkl', 'wb') as f:
     pkl.dump(eco, f, pkl.HIGHEST_PROTOCOL)
-

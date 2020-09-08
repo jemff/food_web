@@ -18,16 +18,16 @@ res_start = 3*norm_dist #0.1*(1-obj.x/depth)
 res_max = 10*norm_dist
 
 water_start = water_column(obj, res_start, layers = layers, resource_max = res_max, replacement = lam, advection = 0, diffusion = 0)
-list_of_sizes = np.array([20, 8000]) #, 1, 400, 1600, 40000])
+list_of_sizes = np.array([20, 5000, 1]) #, 1, 400, 1600, 40000])
 
-l2 = False
-size_classes = 1
-m_v_t = np.array([list_of_sizes[size_classes - 1]])
+l2 = True
+size_classes = 2
+m_v_t = list_of_sizes[0:size_classes]
 params = ecosystem_parameters(m_v_t, obj)
 eco = ecosystem_optimization(m_v_t, layers, params, obj, water_start, l2 = l2, output_level = 0)
 #OG_layered_attack = np.copy(eco.parameters.layered_attack)
-eco.population_setter(np.array([1]) )#, 1, 1, 1, 0.1]))
-eco.parameters.handling_times = np.array([0])
+eco.population_setter(np.array([20, 10**(-9)]) )#, 1, 1, 1, 0.1]))
+#eco.parameters.handling_times = np.array([0, 0])
 
 frozen_ecos = []
 def one_actor_steady_state(pop, eco=eco):
@@ -38,28 +38,34 @@ def one_actor_steady_state(pop, eco=eco):
 
 
 stability = False
-time_step = 10**(-4)
+time_step = 10**(-5)
 #max_err = time_step*1/10
 
 if simulate is True:
     while size_classes < len(list_of_sizes)+1:
 
-        x_res = sequential_nash(eco, verbose=verbose)
-        eco.strategy_setter(x_res)
+        x_res = sequential_nash(eco, verbose=True, l2=l2)
         pop_old = np.copy(eco.populations)
-        eco.population_setter(eco.total_growth() * time_step + eco.populations)
-        error = np.linalg.norm(eco.populations - pop_old)
-        print(error, eco.populations, np.sum(eco.water.res_counts), time_step)
-        eco.water.update_resources(consumed_resources = eco.consumed_resources(), time_step = time_step)
+        delta_pop = eco.total_growth(x_res)
+        new_pop = delta_pop * time_step + eco.populations
+        error = np.linalg.norm(new_pop - pop_old)
 
-        if error>0.01:
+        while error>0.001 or min(new_pop)>1.1*min(pop_old):
+            new_pop = delta_pop * time_step + eco.populations
+            error = np.linalg.norm(new_pop - pop_old)
             time_step = max(0.75*time_step, 10**(-12))
-        else:
-            time_step = min(5/4*time_step, 10**(-4))
+
+
+        eco.population_setter(eco.total_growth(x_res) * time_step + eco.populations)
+        eco.strategy_setter(x_res)
+        eco.water.update_resources(consumed_resources=eco.consumed_resources(), time_step=time_step)
+        print("I'm here")
+        print(error, eco.populations, np.sum(eco.water.res_counts), time_step, new_pop - pop_old)
+        time_step = min(5/4*time_step, 10**(-5))
 
 
 
-        if error/time_step < min(1/10, np.min(eco.populations/2)):
+        if error/time_step < min(1/100, np.min(eco.populations/2)):
             stability = True
 
         if stability is True:
@@ -73,7 +79,6 @@ if simulate is True:
             m_v_t = np.copy(list_of_sizes[0:size_classes])
 
             params = ecosystem_parameters(m_v_t, obj)
-            print(params.forager_or_not)
             eco = ecosystem_optimization(m_v_t, layers, params, obj, water_start, l2 = l2)
             eco.strategy_matrix[0:size_classes-1] = strat_old
             eco.populations[0:size_classes-1] = pops
