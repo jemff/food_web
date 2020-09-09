@@ -5,7 +5,7 @@ lam = 2
 time_step = 0.0001
 simulate = False
 verbose = True
-l2 = True
+l2 = False
 
 
 

@@ -4,7 +4,7 @@ size_classes = 2
 lam = 2
 time_step = 0.0001
 simulate = False
-verbose = True
+verbose = False
 l2 = False
 from size_based_ecosystem import *
 
@@ -24,12 +24,7 @@ params.handling_times = np.zeros(2)
 
 eco = ecosystem_optimization(mass_vector, layers, params, obj, water_start, l2=l2, verbose=True, movement_cost=0)
 eco.population_setter(np.array([1, 0.0000001]) )
-#print(params.layered_attack[:, 1, :], eco.strategy_matrix)
-#print((eco.strategy_matrix*params.layered_attack[:, 1, :].T).T )
-#print((eco.strategy_matrix*params.layered_attack[:, 1, :].T) @ obj.M @ eco.strategy_matrix[1])
 x_res_verify = sequential_nash(eco, verbose = verbose, l2 = l2)
-x_res = hillclimb_nash(eco, verbose=verbose, l2 = l2)
+x_res = hillclimb_nash(eco)
 
-print(x_res_verify)
-eco.strategy_setter(x_res)
 print(x_res_verify - x_res)

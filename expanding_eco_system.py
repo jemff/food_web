@@ -20,7 +20,7 @@ res_max = 10*norm_dist
 water_start = water_column(obj, res_start, layers = layers, resource_max = res_max, replacement = lam, advection = 0, diffusion = 0)
 list_of_sizes = np.array([20, 5000, 1]) #, 1, 400, 1600, 40000])
 
-l2 = True
+l2 = False
 size_classes = 2
 m_v_t = list_of_sizes[0:size_classes]
 params = ecosystem_parameters(m_v_t, obj)
