@@ -37,7 +37,7 @@ error = 1
 time = 0
 
 while (error>10**(-8) and error>1/10*time_step) or time<1:
-    x_res = sequential_nash(eco, verbose=verbose, l2=l2)
+    x_res = hillclimb_nash(eco, verbose=verbose, l2=l2)
     pop_old = np.copy(eco.populations)
     delta_pop = eco.total_growth(x_res)
     new_pop = delta_pop * time_step + eco.populations

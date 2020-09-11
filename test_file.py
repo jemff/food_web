@@ -1,5 +1,5 @@
 depth = 20 #Previously 5 has worked well.
-layers = 30 #5 works well.
+layers = 100 #5 works well.
 size_classes = 2
 lam = 2
 time_step = 0.0001
@@ -27,4 +27,15 @@ eco.population_setter(np.array([1, 0.0000001]) )
 x_res_verify = sequential_nash(eco, verbose = verbose, l2 = l2)
 x_res = hillclimb_nash(eco)
 
-print(x_res_verify - x_res)
+def heat_kernel(t,x,M,clearance_rate):
+    gridx, gridy = np.meshgrid(x,x)
+    ker = lambda x, y: np.exp(-(x-y)**2/(4*clearance_rate**(1/2)*t))
+    out = (4*t*clearance_rate)**(-1/2)*ker(gridx, gridy)
+
+    return M@out
+
+heat = heat_kernel(0.0001, obj.x, obj.M, params.clearance_rate[1])
+
+plt.plot(obj.x, x_res_verify[1])
+plt.plot(obj.x, x_res_verify[1] @ heat)
+plt.show()
