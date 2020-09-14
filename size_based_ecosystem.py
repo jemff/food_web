@@ -34,10 +34,9 @@ class ecosystem_optimization:
         self.movement_cost = movement_cost
         self.heat_kernels = np.zeros((self.populations.shape[0], self.spectral.M.shape[0], self.spectral.M.shape[0]))
         self.heat_kernel_creator(time_step)
-        #self.strategy_matrix = self.strategy_matrix @ self.heat_kernels
-        #print(self.strategy_matrix.shape)
-
-        #self.strategy_matrix = self.strategy_matrix @ spectral.M
+        for i in range(self.populations.shape[0]):
+            norm_const = np.sum(spectral.M @ (self.strategy_matrix[i] @ self.heat_kernels[i]))
+            self.strategy_matrix[i] = 1/norm_const*self.strategy_matrix[i]
 
     def one_actor_growth(self, i, x_temp_i = None, solve_mode = True, time_step = 10**(-4)):
         temp_pops = np.copy(self.populations)
@@ -93,11 +92,10 @@ class ecosystem_optimization:
                 arg = {"lbg": 0, "ubg": 0}
 
             else:
-                g = ca.dot(self.ones, self.spectral.M @ x) - 1 #(x.T @ self.heat_kernels[i]).T)
+                g = ca.dot(self.ones, self.spectral.M @ (x.T @ self.heat_kernels[i]).T) - 1 #(x.T @ self.heat_kernels[i]).T)
                 arg = {"lbg": 0, "ubg": 0}
 
 
-            #print(ca.substitute(g,x,self.strategy_matrix[i]), "CONSTRAINTS")
             x_min = [0]*self.layers
             x_max = [ca.inf]*self.layers
             arg["lbx"] = x_min
@@ -106,7 +104,6 @@ class ecosystem_optimization:
             prob = {'x': x, 'f': pop_change, 'g': g}
             solver = ca.nlpsol('solver', 'ipopt', prob, s_opts)
             sol = solver(x0=x_temp[i], **arg)
-            print(ca.substitute(pop_change, x, np.repeat(1/(self.spectral.x[-1]), self.layers)), ca.substitute(pop_change, x, sol['x']))
             x_out = np.array(sol['x'])
             x_out = x_out #self.heat_kernels[i] @
 
@@ -125,9 +122,9 @@ class ecosystem_optimization:
         x_tot = ca.SX.sym('x_tot', self.layers)
         for i in range(self.populations.shape[0]):
             if i != l:
-                x_temp.append(x_input[i])
+                x_temp.append(x_input[i]@self.heat_kernels[i])
             elif i==l:
-                x_temp.append(x_tot)
+                x_temp.append(x_tot.T@self.heat_kernels[i])
 
         x_temp = ca.horzcat(*x_temp)
         x_temp = x_temp.T
@@ -183,7 +180,7 @@ class ecosystem_optimization:
 
         one_vec = np.zeros((1, self.populations.shape[0]))
         one_vec[0,l] = 1
-        g = ca.dot(self.ones, self.spectral.M @ x_tot) - 1
+        g = ca.dot(self.ones, self.spectral.M @ (x_tot@self.heat_kernels[l])) - 1
         lbg = 0
         ubg = 0
         lbx = 0*self.strategy_matrix[i]
@@ -197,6 +194,7 @@ class ecosystem_optimization:
         return x_out.full(), np.array(-sol['f'].full())
 
     def heat_kernel_i(self, i, t):
+
         gridx, gridy = np.meshgrid(self.spectral.x, self.spectral.x)
         ker = lambda x, y: np.exp(-(x - y) ** 2 / (4 * self.parameters.clearance_rate[i] * t))
         out = (4 * t * self.parameters.clearance_rate[i] * np.pi) ** (-1 / 2) * ker(gridx, gridy)
@@ -226,10 +224,12 @@ class ecosystem_optimization:
         self.populations = new_pop #self.total_growth()*time_step
 
     def consumed_resources(self): #Move to simulator class
-
+        strat_mat = np.copy(self.strategy_matrix)
+        for i in range(strat_mat.shape[0]):
+            strat_mat[i] = strat_mat[i] @ self.heat_kernels[i]
         consumed_resources = np.zeros(self.layers)
+
         for i in range(len(self.mass_vector)):
-            strat_mat = self.strategy_matrix
             interaction_term = self.parameters.who_eats_who[i] * self.populations
             interaction_term = interaction_term * self.parameters.clearance_rate[i]
             layer_action = np.zeros((self.layers, self.mass_vector.shape[0]))
@@ -340,7 +340,7 @@ class spectral_method:
 
 
 class ecosystem_parameters:
-    def __init__(self, mass_vector, spectral):
+    def __init__(self, mass_vector, spectral, lam = 0.8):
         self.forage_mass = 0.05
 
         self.mass_vector = mass_vector
@@ -349,12 +349,12 @@ class ecosystem_parameters:
         self.handling_times = self.handling_times_setter()
         self.who_eats_who = self.who_eats_who_setter()
         self.clearance_rate = self.clearance_rate_setter() #330/12 * mass_vector**(3/4)
-        self.layered_attack = self.layer_creator(self.attack_matrix, lam = 0.8)
+        self.layered_attack = self.layer_creator(self.attack_matrix, lam = lam)
         self.efficiency = 0.7 #Very good number.
         self.loss_term = self.loss_rate_setter() #mass_vector**(0.75)*0.01
         self.forager_or_not = self.forager_or_not_setter()
         self.foraging_attack_prob = self.foraging_attack_setter()
-        self.layered_foraging = self.layer_creator(self.foraging_attack_prob, lam = 2)
+        self.layered_foraging = self.layer_creator(self.foraging_attack_prob, lam = lam)
 
 
     def forager_or_not_setter(self):
@@ -567,39 +567,83 @@ class simulator: #Expand this class
             pkl.dump(frozen_ecos, f, pkl.HIGHEST_PROTOCOL)
 
 
-def sequential_nash(eco, verbose = False, l2 = False, max_its_seq = 20, time_step = 10**(-4)):
+def sequential_nash(eco, verbose = False, l2 = False, max_its_seq = None, time_step = 10**(-4), max_mem = None):
     x_temp = np.copy(eco.strategy_matrix)
     smooth_xtemp = np.copy(x_temp)
     x_temp2 = np.copy(eco.strategy_matrix)
     smooth_xtemp2 = np.copy(x_temp2)
     error = 1
     iterations = 0
+
+    if max_mem is None:
+        max_mem = eco.populations.shape[0]**eco.populations.shape[0]+eco.populations.shape[0]
+    if max_its_seq is None:
+        max_its_seq = 4*max_mem
+
+    memory_keeper = np.zeros((max_mem, eco.strategy_matrix.shape[0], eco.strategy_matrix.shape[1]))
+    mem = 0
     while error > 10 ** (-6) and iterations <= max_its_seq:
         for k in range(eco.mass_vector.shape[0]):
             result = eco.one_actor_growth(k, x_temp_i=x_temp, time_step=time_step)
             x_temp2[k] = np.array(result).flatten()
             if verbose is True:
                 print(np.sum(np.dot(eco.ones, np.dot(eco.spectral.M, result))), k, "1 Norm of strategy")
+                print(np.sum(np.dot(eco.ones, np.dot(eco.spectral.M, smooth_xtemp[k]))), k, "1 Norm of old smooth strategy")
+
         if l2 is False:
             for k in range(eco.populations.shape[0]):
                 smooth_xtemp[k] = x_temp[k] @ eco.heat_kernels[k]  # Going smooth.
                 smooth_xtemp2[k] = x_temp2[k] @ eco.heat_kernels[k]  # Going smooth.
 
-            error = np.max(np.sum(np.dot(np.abs(smooth_xtemp2 - smooth_xtemp), eco.spectral.M), axis = 1))
-        else:
+            errors = np.sum(np.dot(np.abs(smooth_xtemp2 - smooth_xtemp), eco.spectral.M), axis = 1)
+            error = np.max(errors)
+            print(errors.shape)
 
+        else:
             print(np.dot((x_temp2 - x_temp), eco.spectral.M).shape)
             error = np.max(np.dot((smooth_xtemp - smooth_xtemp2), eco.spectral.M) @ (x_temp2 - x_temp).T)
 
         if verbose is True:
-            print("Error: ", error)
-        x_temp = np.copy(x_temp2)
+            print("Error: ", error, errors)
+        error_col = np.max([errors, errors**(0)], axis = 1).reshape(-1, 1)
+        good_mem = 0
+        mem_err = 1
+        if error > 10**(-6):
+            for k in range(memory_keeper.shape[0]):
+                mem_err = np.sum(np.abs(memory_keeper[k] - x_temp2))
+                if mem_err < 10**(-6):
+                    good_mem = k
+
+        if mem_err<10**(-6):
+            bottom = min(mem, good_mem)
+            top = max(mem, good_mem)
+            if top == bottom:
+                top = max_mem
+                bottom = 0
+            else:
+                top += 1
+            x_temp = np.mean(memory_keeper[bottom: top], axis = 0)
+            print(x_temp, "Memory used for mean", memory_keeper[bottom: top], "Total memory",  memory_keeper)
+            print("Memory working", top, bottom)
+            error = mem_err
+        else:
+            x_temp = np.copy(x_temp2)
+
+         #(error_col) * x_temp2 + (1-1/error_col)*x_temp #np.copy(x_temp2)
+        memory_keeper[mem] = np.copy(x_temp2)
+        mem += 1
+        mem = int(mem % max_mem)
+        #print(mem)
         iterations += 1
+    iterations_newt = 0
     if iterations > max_its_seq and error > 10**(-6):
+        print("Entering newton-phase for strategy mixing")
+
+
+    if iterations_newt > max_its_seq and error > 10**(-6):
         print(iterations, "Entering hillclimbing")
         x_temp = hillclimb_nash(eco, verbose = verbose)
 
-    print(x_temp[0])
     return x_temp
 
 def hillclimb_nash(eco, verbose = False, l2 = False):

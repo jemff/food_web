@@ -11,93 +11,60 @@ for i in range(len(tableau20)):
     r, g, b = tableau20[i]
     tableau20[i] = (r / 255., g / 255., b / 255.)
 
-depth = 20 #Previously 5 has worked well.
-layers = 30 #5 works well.
-log_size_range = 12 # 9.5 #8 did NOT work well.
-size_classes = 3
-t_end = 2/730 #30/365
-lam = 1
-time_step = 10**(-5) #1/500000
-res_max = stats.norm.pdf(obj.x, loc = 2)
+from size_based_ecosystem import *
+import copy as copy
+import scipy.stats as stats
+import pickle as pkl
 
-simulate = False
+depth = 10
+layers = 100
+size_classes = 1
+lam = 1
+simulate = True
 verbose = False
 daily_cycle = 365*2*np.pi
-mass_vector = np.array([1, 20, 400]) #np.array([1, 30, 300, 400, 800, 16000])
 
 
-from scipy import stats
 obj = spectral_method(depth, layers-1) #This is the old off-by-one error... Now we have added another fucked up error!
-logn = stats.norm.pdf(obj.x, loc = 2)
-res_start = 5*logn #0.1*(1-obj.x/depth)
+#norm_dist = stats.norm.pdf(obj.x, loc = 3, scale = 3)
+#print(norm_dist)
+norm_dist = stats.norm.pdf(obj.x, loc = 3)
+res_start = 3*norm_dist #0.1*(1-obj.x/depth)
+res_max = 10*norm_dist
+
+water_start = water_column(obj, res_start, layers = layers, resource_max = res_max, replacement = lam, advection = 0, diffusion = 0)
+list_of_sizes = np.array([1, 20, 8000]) #, 1, 400, 1600, 40000])
+
+l2 = False
+size_classes = 2
+m_v_t = list_of_sizes #list_of_sizes[0:size_classes]
+params = ecosystem_parameters(m_v_t, obj)
+eco = ecosystem_optimization(m_v_t, layers, params, obj, water_start, l2 = l2, output_level = 5, movement_cost = 0)
+#OG_layered_attack = np.copy(eco.parameters.layered_attack)
+eco.population_setter(np.array([0.1, 20, 0.1]) )#, 1, 1, 1, 0.1]))
+eco.parameters.handling_times = 0 * eco.parameters.handling_times
+OG_layered_attack = np.copy(params.layered_attack)
+frozen_ecos = []
+
+stability = False
+time_step = 10**(-4)
+#max_err = time_step*1/10
+x_res = sequential_nash(eco, verbose=True, l2=l2, max_its_seq = 20)
+for i in range(3):
+    plt.plot(obj.x, x_res[i]@eco.heat_kernels[i])
+plt.show()
+
+for i in range(100):
+    eco.population_setter(np.array([0.1*(i+2), 20, 0.1]) )#, 1, 1, 1, 0.1]))
+    x_res = sequential_nash(eco, verbose=True, l2=l2, max_its_seq=40)
+    eco.strategy_setter(x_res)
+    print("Current iteration", i)
 
 
-water_start = water_column(obj, res_start, layers = layers, resource_max = res_max, time_step = time_step, replacement = lam, advection = 0.01, diffusion = 0)
+for i in range(3):
+    plt.plot(obj.x, x_res[i]@eco.heat_kernels[i])
 
-params = ecosystem_parameters(mass_vector, obj)
-eco = ecosystem_optimization(mass_vector, layers, params, obj, water_start, loss = 'constr')
-OG_layered_attack = np.copy(eco.parameters.layered_attack)
+plt.show()
 
-eco.population_setter(np.array([1, 0.000001, 0.0000001]) )#, 1, 1, 1, 0.1]))
-#eco.parameters.handling_times = np.array([0, 0, 0])
-#eco.parameters.layered_attack = 0 * OG_layered_attack
-#eco.strategy_setter(np.sqrt(eco.strategy_matrix.flatten())) THis is for the L2 version... Quantum fish ahoy
-
-
-
-if simulate is True:
-
-    print(graph_builder(eco), "Original graph")
-    seq_nash = np.array(sequential_nash(eco, verbose=True))
-    print(seq_nash)
-    eco.strategy_setter(seq_nash)
-    print(graph_builder(eco), "New graph")
-
-    plt.figure()
-    for i in range(size_classes):
-        plt.plot(obj.x, seq_nash[i] ** 2)
-    plt.plot(obj.x, eco.water.res_counts)
-    plt.show()
-
-    time_span = np.linspace(0, t_end, int(t_end/time_step))
-#    fig, ax = plt.subplots()
-    strategy_history = np.zeros((time_span.shape[0], size_classes, layers))
-    population_history = np.zeros((time_span.shape[0], size_classes))
-    for i, t in enumerate(time_span):
-        eco.parameters.layered_attack = 1/2*(1.0000+np.cos(t*daily_cycle))*OG_layered_attack
-        x_res = sequential_nash(eco, verbose = verbose)
-        eco.strategy_setter(x_res)
-        print(eco.total_growth(), t, eco.populations)
-        eco.population_setter(eco.total_growth() * time_step + eco.populations)
-
-#        eco.consume_resources(time_step)
-
-#        eco.water.update_resources()
-
-#        print(eco.populations, min(eco.water.res_counts), max(eco.water.res_counts), eco.total_growth(x_res))
-        strategy_history[i] = eco.strategy_matrix
-        population_history[i] = eco.populations
-
-    np.save('strategies.npy', strategy_history)
-    np.save('populations.npy', population_history)
-    plt.figure()
-    for i in range(size_classes):
-        plt.plot(obj.x, x_res[i]**2)
-    plt.plot(obj.x, eco.water.res_counts)
-    plt.show()
-
-    plt.figure()
-    for i in range(size_classes):
-        plt.plot(obj.x, np.mean(strategy_history**2, axis = 0)[i])
-    plt.plot(obj.x, eco.water.res_counts)
-    plt.show()
-
-
-elif simulate is False:
-    strategy_history = np.load('strategies.npy')
-    population_history = np.load('populations.npy')
-    time_span = np.linspace(0, t_end, int(t_end/time_step))
-
-    for i, t in enumerate(time_span):
-        plt.plot(obj.x, strategy_history[i,2]**2, alpha = 0.01, color = tableau20[6])
-    plt.show()
+with open('simulate_test.pkl', 'wb') as f:
+    pkl.dump(eco, f, pkl.HIGHEST_PROTOCOL)

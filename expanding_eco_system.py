@@ -15,7 +15,7 @@ daily_cycle = 365*2*np.pi
 obj = spectral_method(depth, layers-1) #This is the old off-by-one error... Now we have added another fucked up error!
 #norm_dist = stats.norm.pdf(obj.x, loc = 3, scale = 3)
 #print(norm_dist)
-norm_dist = stats.norm.pdf(obj.x, loc = 2)
+norm_dist = stats.norm.pdf(obj.x, loc = 3)
 res_start = 3*norm_dist #0.1*(1-obj.x/depth)
 res_max = 10*norm_dist
 
@@ -55,12 +55,13 @@ if simulate is True:
         new_pop = delta_pop * time_step + eco.populations
         error = np.linalg.norm(new_pop - pop_old)
 
-        while error>0.001 or min(new_pop)>1.1*min(pop_old):
-            new_pop = delta_pop * time_step + eco.populations
-            error = np.linalg.norm(new_pop - pop_old)
-            time_step = max(0.75*time_step, 10**(-12))
-            eco.heat_kernel_creator(time_step)
-            x_res = sequential_nash(eco, verbose=True, l2=l2, max_its_seq=20, time_step=time_step)
+        #while error>0.01 or min(new_pop)>1.1*min(pop_old):
+        #    new_pop = delta_pop * time_step + eco.populations
+        #    error = np.linalg.norm(new_pop - pop_old)
+        #    time_step = max(0.75*time_step, 10**(-12))
+        #    eco.heat_kernel_creator(time_step)
+
+        x_res = sequential_nash(eco, verbose=True, l2=l2, max_its_seq=20, time_step=time_step)
 
         eco.population_setter(eco.total_growth(x_res) * time_step + eco.populations)
         eco.strategy_setter(x_res)
@@ -68,9 +69,9 @@ if simulate is True:
         print("I'm here")
         print(error, eco.populations, np.sum(eco.water.res_counts), time_step, new_pop - pop_old)
 
-        if error<10**(-4):
-            time_step = min(5/4*time_step, 10**(-5))
-            eco.heat_kernel_creator(time_step)
+        #if error<10**(-4):
+        #    time_step = min(5/4*time_step, 10**(-4))
+        #    eco.heat_kernel_creator(time_step)
 
 
 

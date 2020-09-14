@@ -1,5 +1,5 @@
 depth = 20 #Previously 5 has worked well.
-layers = 30 #5 works well.
+layers = 50 #5 works well.
 size_classes = 2
 lam = 2
 time_step = 0.0001
@@ -13,7 +13,7 @@ from size_based_ecosystem import *
 import pickle as pkl
 
 
-mass_vector = np.array([1, 20]) #np.array([1, 30, 300, 400, 800, 16000])
+mass_vector = np.array([20, 8000]) #np.array([1, 30, 300, 400, 800, 16000])
 from scipy import stats
 obj = spectral_method(depth, layers-1) #This is the old off-by-one error... Now we have added another fucked up error!
 logn = stats.lognorm.pdf(obj.x, 1, 0)
@@ -27,26 +27,24 @@ water_start = water_column(obj, res_start, layers = layers, resource_max = res_m
 params = ecosystem_parameters(mass_vector, obj)
 #params.handling_times = np.zeros(2)
 
-eco = ecosystem_optimization(mass_vector, layers, params, obj, water_start, l2 = l2)
+eco = ecosystem_optimization(mass_vector, layers, params, obj, water_start, l2 = l2, movement_cost=0)
 eco.population_setter(np.array([1, 0.0000001]) )
-print(params.layered_attack[:, 1, :], eco.strategy_matrix)
-print((eco.strategy_matrix*params.layered_attack[:, 1, :].T).T )
-print((eco.strategy_matrix*params.layered_attack[:, 1, :].T) @ obj.M @ eco.strategy_matrix[1])
+OG_layered_attack = np.copy(eco.parameters.layered_attack)
+time_step = 10**(-4)
 
 error = 1
+strategies = []
+population_list = []
 time = 0
 
-while (error>10**(-8) and error>1/10*time_step) or time<1:
+while time<0.2:
     x_res = sequential_nash(eco, verbose=verbose, l2=l2)
+    strategies.append(x_res)
     pop_old = np.copy(eco.populations)
     delta_pop = eco.total_growth(x_res)
     new_pop = delta_pop * time_step + eco.populations
+    population_list.append(new_pop)
     error = np.linalg.norm(new_pop - pop_old)
-
-    while error > 0.01 or min(new_pop) > 1.1 * min(pop_old):
-        new_pop = delta_pop * time_step + eco.populations
-        error = np.linalg.norm(new_pop - pop_old)
-        time_step = max(0.75 * time_step, 10 ** (-12))
 
     eco.population_setter(eco.total_growth(x_res) * time_step + eco.populations)
     eco.strategy_setter(x_res)
@@ -54,8 +52,13 @@ while (error>10**(-8) and error>1/10*time_step) or time<1:
     print("I'm here")
     print(error, eco.populations, np.sum(eco.water.res_counts), time_step, new_pop - pop_old, time)
     time += time_step
-    time_step = min(5 / 4 * time_step, 10 ** (-5))
+    eco.parameters.layered_attack = 1/2*(1+np.cos(time*365*2*np.pi))*OG_layered_attack
 
 with open('eco_test.pkl', 'wb') as f:
     pkl.dump(eco, f, pkl.HIGHEST_PROTOCOL)
 
+with open('strategies_eco_test.pkl', 'wb') as f:
+    pkl.dump(strategies, f, pkl.HIGHEST_PROTOCOL)
+
+with open('population_eco_test.pkl', 'wb') as f:
+    pkl.dump(population_list, f, pkl.HIGHEST_PROTOCOL)
