@@ -25,7 +25,7 @@ res_max = 10*norm_dist
 water_start = water_column(obj, res_start, layers = layers, resource_max = res_max, replacement = lam, advection = 0, diffusion = 0)
 
 params = ecosystem_parameters(mass_vector, obj)
-#params.handling_times = np.zeros(2)
+params.handling_times = np.zeros(2)
 
 eco = ecosystem_optimization(mass_vector, layers, params, obj, water_start, l2 = l2, movement_cost=0)
 eco.population_setter(np.array([1, 0.0000001]) )
@@ -35,6 +35,7 @@ time_step = 10**(-4)
 error = 1
 strategies = []
 population_list = []
+resource_list = []
 time = 0
 
 while time<0.2:
@@ -43,11 +44,14 @@ while time<0.2:
     pop_old = np.copy(eco.populations)
     delta_pop = eco.total_growth(x_res)
     new_pop = delta_pop * time_step + eco.populations
-    population_list.append(new_pop)
+    population_list.append(pop_old)
     error = np.linalg.norm(new_pop - pop_old)
 
     eco.population_setter(eco.total_growth(x_res) * time_step + eco.populations)
     eco.strategy_setter(x_res)
+    r_c = np.copy(eco.water.res_counts)
+    resource_list.append(r_c)
+
     eco.water.update_resources(consumed_resources=eco.consumed_resources(), time_step=time_step)
     print("I'm here")
     print(error, eco.populations, np.sum(eco.water.res_counts), time_step, new_pop - pop_old, time)
@@ -62,3 +66,6 @@ with open('strategies_eco_test.pkl', 'wb') as f:
 
 with open('population_eco_test.pkl', 'wb') as f:
     pkl.dump(population_list, f, pkl.HIGHEST_PROTOCOL)
+
+with open('resource_eco_test.pkl', 'wb') as f:
+    pkl.dump(resource_list, f, pkl.HIGHEST_PROTOCOL)
