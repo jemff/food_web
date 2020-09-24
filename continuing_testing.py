@@ -18,7 +18,7 @@ obj = spectral_method(depth, layers-1) #This is the old off-by-one error... Now 
 logn = stats.lognorm.pdf(obj.x, 1, 0)
 
 norm_dist = stats.norm.pdf(obj.x, loc = 2)
-res_start = norm_dist #0.1*(1-obj.x/depth)
+res_start = 3*norm_dist #0.1*(1-obj.x/depth)
 res_max = 10*norm_dist
 
 water_start = water_column(obj, res_start, layers = layers, resource_max = res_max, replacement = lam, advection = 0, diffusion = 0)
@@ -27,9 +27,9 @@ params = ecosystem_parameters(mass_vector, obj)
 params.handling_times = np.zeros(2)
 
 eco = ecosystem_optimization(mass_vector, layers, params, obj, water_start, l2 = l2, movement_cost=0)
-eco.population_setter(np.array([2, 0.1]) )
+eco.population_setter(np.array([1, 0.001]) )
 OG_layered_attack = np.copy(eco.parameters.layered_attack)
-time_step = 1/48*1/365 #Time-step is half an hour.
+time_step = 1/192*1/365 #Time-step is half an hour.
 
 error = 1
 strategies = []
@@ -38,7 +38,7 @@ resource_list = []
 time = 0
 prior_sol = quadratic_optimizer(eco)
 
-while time<1:
+while time<0.2:
     prior_sol = quadratic_optimizer(eco)
     x_res = (prior_sol[0:eco.populations.size*eco.layers]).reshape((eco.populations.size, -1))
     strategies.append(x_res)
