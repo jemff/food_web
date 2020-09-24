@@ -589,7 +589,7 @@ def payoff_matrix_builder(eco, i, j):
 
 
 
-def quadratic_optimizer(eco, payoff_matrix = None):
+def quadratic_optimizer(eco, payoff_matrix = None, prior_sol=None):
 
     A=np.zeros((eco.populations.size, eco.populations.size*eco.layers))
     for k in range(eco.populations.size):
@@ -624,16 +624,18 @@ def quadratic_optimizer(eco, payoff_matrix = None):
     prob = {'x': x, 'f': f, 'g': g}
     solver = ca.nlpsol('solver', 'ipopt', prob, s_opts)
     #prior_sol = False
-    #if prior_sol is None:
+    if prior_sol is None:
+        sol = solver(lbx=lbx, ubg=ubg, lbg=lbg)
+
     #    x0 = np.zeros(x.size())
     #    x0 = x0.flatten()
     #    x0[0:eco.layers * eco.populations.size] = eco.strategy_matrix.flatten()
     #    sol = solver(x0 = x0, lbx=lbx, ubg=ubg, lbg=lbg)
     #    print(prior_sol)
 
-    #else:
-    #    print(prior_sol)
-    sol = solver(lbx=lbx, ubg=ubg, lbg=lbg)
+    else:
+        sol = solver(x0=prior_sol, lbx=lbx, ubg=ubg, lbg=lbg)
+
 
 
     x_out = np.array(sol['x']).flatten()

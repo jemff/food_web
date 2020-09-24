@@ -42,7 +42,7 @@ for i in range(total_time_steps):
     current_loss = loss_t[i % day_interval]
     current_foraging = foraging_gain_builder(eco)
     payoff_matrix = total_payoff_matrix_builder_memory_improved(eco, eco.populations, total_reward_matrix=current_reward, total_loss_matrix=current_loss, foraging_gain=current_foraging)
-    prior_sol = quadratic_optimizer(eco, payoff_matrix = payoff_matrix)
+    prior_sol = quadratic_optimizer(eco, payoff_matrix = payoff_matrix, prior_sol=prior_sol)
     x_res = (prior_sol[0:eco.populations.size * eco.layers]).reshape((eco.populations.size, -1))
     pop_old = np.copy(eco.populations)
 
