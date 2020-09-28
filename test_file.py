@@ -1,6 +1,6 @@
-depth = 100 #Previously 5 has worked well.
-layers = 5 #5 works well.
-segments = 50
+depth = 30 #Previously 5 has worked well.
+layers = 120 #5 works well.
+segments = 1
 size_classes = 2
 lam = 2
 simulate = False
@@ -24,13 +24,13 @@ res_max = 10*norm_dist
 
 water_start = water_column(obj, res_start, layers = layers*segments, resource_max = res_max, replacement = lam, advection = 0, diffusion = 0)
 
-params = ecosystem_parameters(mass_vector, obj, lam=0.4)
+params = ecosystem_parameters(mass_vector, obj, lam=0.2)
 params.handling_times = np.zeros(2)
 
 eco = ecosystem_optimization(mass_vector, layers*segments, params, obj, water_start, l2 = l2, movement_cost=0)
 eco.population_setter(np.array([2, 0.1]) )
 OG_layered_attack = np.copy(eco.parameters.layered_attack)
-time_step = 1/48*1/365 #Time-step is half an hour.
+time_step = 1/192*1/365 #Time-step is half an hour.
 eco.heat_kernels[1] = eco.heat_kernels[0]
 error = 1
 strategies = []
@@ -40,8 +40,12 @@ time = 0
 prior_sol = quadratic_optimizer(eco)
 
 print(prior_sol)
+print(np.sum(eco.spectral.M@(prior_sol[0:layers*segments]@eco.heat_kernels[0])))
+print(np.sum(eco.spectral.M@(prior_sol[layers*segments:2*layers*segments]@eco.heat_kernels[1])))
 
-plt.plot(eco.spectral.x, prior_sol[0:layers*segments]@eco.heat_kernels[0])
+plt.plot(eco.spectral.x, np.cumsum(eco.spectral.M @(prior_sol[0:layers*segments]@eco.heat_kernels[0])))
+plt.plot(eco.spectral.x, np.cumsum(eco.spectral.M @(prior_sol[layers*segments:2*layers*segments]@eco.heat_kernels[1])))
+
 plt.show()
 
 

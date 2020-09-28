@@ -1,6 +1,7 @@
-depth = 20 #Previously 5 has worked well.
-layers = 50 #5 works well.
-size_classes = 2
+depth = 30 #Previously 5 has worked well.
+layers = 120 #5 works well.
+segments = 1
+size_classes = 4
 lam = 2
 simulate = False
 verbose = True
@@ -14,20 +15,26 @@ import pickle as pkl
 
 mass_vector = np.array([1, 20, 400, 8000]) #np.array([1, 30, 300, 400, 800, 16000])
 from scipy import stats
-obj = spectral_method(depth, layers-1) #This is the old off-by-one error... Now we have added another fucked up error!
+obj = spectral_method(depth, layers) #This is the old off-by-one error... Now we have added another fucked up error!
 logn = stats.lognorm.pdf(obj.x, 1, 0)
 
-norm_dist = stats.norm.pdf(obj.x, loc = 2)
-res_start = 3*norm_dist #0.1*(1-obj.x/depth)
-res_max = 15*norm_dist
+obj = spectral_method(depth, layers, segments = segments)
+logn = stats.lognorm.pdf(obj.x, 1, 0)
 
-water_start = water_column(obj, res_start, layers = layers, resource_max = res_max, replacement = lam, advection = 0, diffusion = 0)
+norm_dist = stats.norm.pdf(obj.x, loc = 6, scale = 6)
+res_start = norm_dist #0.1*(1-obj.x/depth)
+res_max = 10*norm_dist
 
-params = ecosystem_parameters(mass_vector, obj)
+water_start = water_column(obj, res_start, layers = layers*segments, resource_max = res_max, replacement = lam, advection = 0, diffusion = 0)
+
+params = ecosystem_parameters(mass_vector, obj, lam=0.2)
 params.handling_times = np.zeros(4)
 
 eco = ecosystem_optimization(mass_vector, layers, params, obj, water_start, l2 = l2, movement_cost=0)
 eco.population_setter(np.array([1, 0.0000001, 0.0000001, 0.0000001]) )
+eco.heat_kernels[1] = eco.heat_kernels[0]
+eco.heat_kernels[2] = eco.heat_kernels[0]
+eco.heat_kernels[3] = eco.heat_kernels[0]
 
 OG_layered_attack = np.copy(eco.parameters.layered_attack)
 time_step = 10**(-4)

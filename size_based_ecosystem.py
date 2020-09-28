@@ -7,7 +7,7 @@ import casadi as ca
 import scipy.stats as stats
 import copy as copy
 import pickle as pkl
-
+import lemkelcp as lcp
 import matplotlib.pyplot as plt
 
 eng = matlab.engine.start_matlab()
@@ -441,69 +441,6 @@ class water_column:
 
 
 
-class simulator: #Expand this class
-    def __init__(self, time_step, end_time, step_by_step, animals = None, landscape = None, spectral = None, verbose = False):
-        self.end_time = end_time
-        self.time_step = time_step
-        self.step_by_step = step_by_step
-        self.verbose = verbose
-
-        self.animals = animals
-        self.landscape = landscape
-        self.spectral = spectral
-        self.animals.landscape = landscape
-
-        self.graph = np.zeros((self.animals.populations.shape[0]+1, self.animals.populations.shape[0]))
-
-
-    def simulate_iterative(self):
-        frozen_ecos = []
-        size_classes = 1
-        stability = False
-        list_of_sizes = self.animals.parameters.mass_vector
-
-        while size_classes < len(list_of_sizes) + 1:
-
-            x_res = self.sequential_nash(self.animals, verbose=self.verbose)
-            pop_old = np.copy(self.animals.populations)
-            new_pop = self.animals.total_growth(x_res) * self.time_step + self.animals.populations
-            error = np.linalg.norm(pop_old - new_pop)
-
-            if error > 0.01:
-                self.time_step = max(0.75 * self.time_step, 10 ** (-12))
-            else:
-                self.time_step = min(5 / 4 * self.time_step, 10 ** (-5))
-                self.animals.population_setter(eco.total_growth(x_res) * self.time_step + eco.populations)
-                self.animals.strategy_setter(x_res)
-                self.landscape.update_resources(consumed_resources=eco.consumed_resources(), time_step=self.time_step)
-
-            if error / self.time_step < min(1 / 10, np.min(self.animals.populations / 2)):
-                stability = True
-
-            if stability is True:
-                old_eco = copy.deepcopy(eco)
-                strat_old = np.copy(eco.strategy_matrix)
-
-                print("New regime")
-                frozen_ecos.append(old_eco)
-                pops = np.copy(old_eco.populations)
-                size_classes += 1
-                m_v_t = np.copy(list_of_sizes[0:size_classes])
-
-                params = ecosystem_parameters(m_v_t, self.spectral)
-                print(params.forager_or_not)
-                eco = ecosystem_optimization(m_v_t, self.landscape.layers, params, self.spectral, self.landscape.start_value, l2=self.animals.l2)
-                eco.strategy_matrix[0:size_classes - 1] = strat_old
-                eco.populations[0:size_classes - 1] = pops
-                eco.populations[-1] = 10 ** (-10)
-                eco.parameters.handling_times = np.array([0, 0])
-
-                stability = False
-
-        with open('eco_systems.pkl', 'wb') as f:
-            pkl.dump(frozen_ecos, f, pkl.HIGHEST_PROTOCOL)
-
-
 def sequential_nash(eco, verbose = False, l2 = False, max_its_seq = None, time_step = 10**(-4), max_mem = None):
     x_temp = np.copy(eco.strategy_matrix)
     smooth_xtemp = np.copy(x_temp)
@@ -612,11 +549,43 @@ def payoff_matrix_builder(eco, i, j):
 
 
 
+def lemke_optimizer(eco, payoff_matrix = None):
+    A = np.zeros((eco.populations.size, eco.populations.size * eco.layers))
+    for k in range(eco.populations.size):
+        A[k, k * eco.layers:(k + 1) * eco.layers] = -1
+
+    q = np.zeros(eco.populations.size + eco.populations.size * eco.layers)
+    q[eco.populations.size * eco.layers:] = -1
+    q = q.reshape(-1, 1)
+    if payoff_matrix is None:
+        payoff_matrix = total_payoff_matrix_builder(eco)
+
+    H = np.block([[-payoff_matrix, A.T], [-A, np.zeros((A.shape[0], eco.populations.size))]])
+
+    sol = lcp.lemkelcp(H, q, maxIter = 10000)
+    if sol[1]==0:
+        return sol[0]
+    else:
+        return quadratic_optimizer(eco, payoff_matrix=payoff_matrix)
+
 def quadratic_optimizer(eco, payoff_matrix = None, prior_sol=None):
 
     A=np.zeros((eco.populations.size, eco.populations.size*eco.layers))
+#    if eco.spectral.segments == 1:
+#        for k in range(eco.populations.size):
+#            A[k,k*eco.layers:(k+1)*eco.layers] = -1
+
+#    if eco.spectral.segments != 1:
+#        Temp = np.copy(eco.ones)
+#        Temp[::eco.spectral.n] = 0
+#        Temp[0] = 1
+#        Temp[-1] = 1
+
+#        for k in range(eco.populations.size):
+#            A[k, k * eco.layers:(k + 1) * eco.layers] = -Temp
+
     for k in range(eco.populations.size):
-        A[k,k*eco.layers:(k+1)*eco.layers] = -1
+        A[k, k * eco.layers:(k + 1) * eco.layers] = -1
 
     q = np.zeros(eco.populations.size+eco.populations.size*eco.layers)
     q[eco.populations.size*eco.layers:] = -1
@@ -664,12 +633,6 @@ def quadratic_optimizer(eco, payoff_matrix = None, prior_sol=None):
     #prior_sol = False
     if prior_sol is None:
         sol = solver(lbx=lbx, ubg=ubg, lbg=lbg)
-
-    #    x0 = np.zeros(x.size())
-    #    x0 = x0.flatten()
-    #    x0[0:eco.layers * eco.populations.size] = eco.strategy_matrix.flatten()
-    #    sol = solver(x0 = x0, lbx=lbx, ubg=ubg, lbg=lbg)
-    #    print(prior_sol)
 
     else:
         sol = solver(x0=prior_sol, lbx=lbx, ubg=ubg, lbg=lbg)
