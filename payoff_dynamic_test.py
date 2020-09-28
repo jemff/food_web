@@ -1,101 +1,93 @@
+depth = 20  # Previously 5 has worked well.
+layers = 50  # 5 works well.
+lam = 2
+simulate = False
+verbose = True
+l2 = False
+
 from size_based_ecosystem import *
+import pickle as pkl
 
+mass_vector = np.array([20, 8000])  # np.array([1, 30, 300, 400, 800, 16000])
+from scipy import stats
 
+obj = spectral_method(depth,
+                      layers - 1)  # This is the old off-by-one error... Now we have added another fucked up error!
+logn = stats.lognorm.pdf(obj.x, 1, 0)
 
-def periodic_attack(layered_attack, day_interval = 96):
-    OG_layered_attack = np.copy(layered_attack)
-    periodic_layers = np.zeros((day_interval,*layered_attack.shape))
-    for i in range(day_interval):
-        periodic_layers[i] = 1/2*(1+np.cos(i*2*np.pi/day_interval))*OG_layered_attack
+norm_dist = stats.norm.pdf(obj.x, loc=2)
+res_start = 3 * norm_dist  # 0.1*(1-obj.x/depth)
+res_max = 10 * norm_dist
 
-    return periodic_layers
+water_start = water_column(obj, res_start, layers=layers, resource_max=res_max, replacement=lam, advection=0,
+                           diffusion=0)
 
-def reward_loss_time_dependent(eco, periodic_layers):
-    rewards = []
-    losses = []
-    for i in range(periodic_layers.shape[0]):
-        reward_i, loss_i = loss_and_reward_builder(eco, periodic_layers[i])
+params = ecosystem_parameters(mass_vector, obj)
+params.handling_times = np.zeros(2)
 
-        rewards.append[reward_i]
-        losses.append[loss_i]
+eco = ecosystem_optimization(mass_vector, layers, params, obj, water_start, l2=l2, movement_cost=0)
+eco.population_setter(np.array([1, 0.001]) )
 
-    return rewards, losses
+day_interval = 192
+time_step = 1 / 365 * 1 / day_interval
 
+resource_list = []
+population_list = []
+strategy_list = []
 
-def total_payoff_matrix_builder_memory_improved(eco, populations, total_reward_matrix, total_loss_matrix, foraging_gain):
-    total_rew_mat = np.copy(total_reward_matrix)
-    total_loss_mat = np.copy(total_loss_matrix)
+periodic_layers = periodic_attack(params.layered_attack, day_interval=day_interval)
+print("Checkpoint 0")
+reward_t, loss_t = reward_loss_time_dependent(eco, periodic_layers=periodic_layers)
+print("Checkpoint 1")
+total_time_steps = 120 * day_interval  # Yup
+time = 0
+for i in range(total_time_steps):
+    current_reward = reward_t[i % day_interval]
+    current_loss = loss_t[i % day_interval]
+    current_foraging = foraging_gain_builder(eco)
+    payoff_matrix = total_payoff_matrix_builder_memory_improved(eco, eco.populations,
+                                                                total_reward_matrix=current_reward,
+                                                                total_loss_matrix=current_loss,
+                                                                foraging_gain=current_foraging)
 
-    for i in range(eco.populations.size):
-        for j in range(eco.populations.size):
-            total_rew_mat[i * eco.layers:(i + 1) * eco.layers, j * eco.layers: (j + 1) * eco.layers] = eco.parameters.efficiency*total_reward_matrix[i * eco.layers:(i + 1) * eco.layers, j * eco.layers: (j + 1) * eco.layers]
-            total_loss_mat[i * eco.layers:(i + 1) * eco.layers, j * eco.layers: (j + 1) * eco.layers] = populations[j]*total_loss_matrix[i * eco.layers:(i + 1) * eco.layers, j * eco.layers: (j + 1) * eco.layers]
+    prior_sol = quadratic_optimizer(eco, payoff_matrix=payoff_matrix)
+    x_res = (prior_sol[0:eco.populations.size * eco.layers]).reshape((eco.populations.size, -1))
+    strategy_list.append(x_res)
 
-    total_payoff_matrix = total_rew_mat + foraging_gain - total_loss_mat
+    pop_old = np.copy(eco.populations)
+    population_list.append(pop_old)
+    eco.parameters.layered_attack = periodic_layers[i % day_interval]
+    delta_pop = eco.total_growth(x_res)
+    new_pop = delta_pop * time_step + eco.populations
+    error = np.linalg.norm(new_pop - pop_old)
 
-    return total_payoff_matrix - np.max(total_payoff_matrix) - 0.0001
+    eco.population_setter(eco.total_growth(x_res) * time_step + eco.populations)
+    eco.strategy_setter(x_res)
+    r_c = np.copy(eco.water.res_counts)
+    resource_list.append(r_c)
 
-def foraging_gain_builder(eco, resources = None):
-    if resources is None:
-        resources = eco.water.res_counts
+    eco.water.update_resources(consumed_resources=eco.consumed_resources(), time_step=time_step)
+    print("I'm here")
+    print(error, eco.populations, np.sum(eco.water.res_counts), time_step, new_pop - pop_old, time, i)
+    time += time_step
 
-    foragers = np.where(eco.parameters.forager_or_not == 1)
-    foraging_gain = np.zeros((eco.populations.size*eco.layers, eco.populations.size*eco.layers))
-    for forager in foragers:
-        foraging_gain_i = eco.heat_kernels[forager] @ eco.spectral.M @ resources/np.sum(eco.parameters.who_eats_who[:, foragers])
-        np.vstack([foraging_gain_i]*eco.layers)
-        eaters = np.where(eco.parameters.who_eats_who[:,forager] == 1)
-        for eater in eaters:
-            foraging_gain[forager * eco.layers:(eater + 1) * eco.layers, eater * eco.layers: (eater + 1) * eco.layers] = foraging_gain_i
+with open('eco_big.pkl', 'wb') as f:
+    pkl.dump(eco, f, pkl.HIGHEST_PROTOCOL)
 
-    return foraging_gain
+with open('strategies_eco_big.pkl', 'wb') as f:
+    pkl.dump(strategy_list, f, pkl.HIGHEST_PROTOCOL)
 
+with open('population_eco_big.pkl', 'wb') as f:
+    pkl.dump(population_list, f, pkl.HIGHEST_PROTOCOL)
 
-def loss_and_reward_builder(eco, layered_attack = None):
-    if layered_attack is None:
-        layered_attack = eco.parameters.layered_attack
+with open('resource_eco_big.pkl', 'wb') as f:
+    pkl.dump(resource_list, f, pkl.HIGHEST_PROTOCOL)
 
-    total_reward_matrix = np.zeros((eco.populations.size*eco.layers, eco.populations.size*eco.layers))
-    total_loss_matrix = np.zeros((eco.populations.size*eco.layers, eco.populations.size*eco.layers))
-    for i in range(eco.populations.size):
-        for j in range(eco.populations.size):
-            if i != j:
-                i_vs_j = reward_matrix_builder(eco, layered_attack, i, j)
-                j_vs_i = loss_matrix_builder(eco, layered_attack, i, j)
-            elif i == j:
-                i_vs_j = np.zeros((eco.layers, eco.layers))
+with open('rewards_eco_big.pkl', 'wb') as f:
+    pkl.dump(reward_t, f, pkl.HIGHEST_PROTOCOL)
 
-            total_reward_matrix[i * eco.layers:(i + 1) * eco.layers, j * eco.layers: (j + 1) * eco.layers] = i_vs_j
-            total_loss_matrix[i * eco.layers:(i + 1) * eco.layers, j * eco.layers: (j + 1) * eco.layers] = j_vs_i
+with open('losses_eco_big.pkl', 'wb') as f:
+    pkl.dump(loss_t, f, pkl.HIGHEST_PROTOCOL)
 
-    return total_reward_matrix, total_loss_matrix
-
-
-def reward_matrix_builder(eco, layered_attack, i, j):
-    reward_i = np.zeros((eco.layers, eco.layers))
-
-    for k in range(eco.layers):
-        one_k_vec = np.zeros(eco.layers)
-        one_k_vec[k] = 1
-        for n in range(eco.layers):
-            one_n_vec = np.zeros(eco.layers)
-            one_n_vec[n] = 1
-            strat_mat = np.vstack([one_k_vec, one_n_vec])
-            reward_i[k, n] = lin_growth_no_pops_no_res(eco, i, j, layered_attack, strat_mat)
-
-    return reward_i
-
-
-def loss_matrix_builder(eco, layered_attack, i, j):
-    loss_i = np.zeros((eco.layers, eco.layers))
-
-    for k in range(eco.layers):
-        one_k_vec = np.zeros(eco.layers)
-        one_k_vec[k] = 1
-        for n in range(eco.layers):
-            one_n_vec = np.zeros(eco.layers)
-            one_n_vec[n] = 1
-            strat_mat = np.vstack([one_k_vec, one_n_vec])
-            loss_i[k, n] = lin_growth_no_pops_no_res(eco, j, i, layered_attack, strat_mat)
-
-    return loss_i
+with open('periodic_layers_eco_big.pkl', 'wb') as f:
+    pkl.dump(periodic_layers, f, pkl.HIGHEST_PROTOCOL)

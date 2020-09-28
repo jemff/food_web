@@ -12,9 +12,6 @@ import matplotlib.pyplot as plt
 
 eng = matlab.engine.start_matlab()
 
-#Add interpolation logic (Convert to Lagrange, evaluate Lagrange in bigger point set, optimize again)
-#Add cheeger constant calculator
-#Fix water resource renewal logic.
 #Implement simulation class
 
 class ecosystem_optimization:
@@ -118,8 +115,6 @@ class ecosystem_optimization:
         gridx, gridy = np.meshgrid(self.spectral.x, self.spectral.x)
         ker = lambda x, y: np.exp(-(x - y) ** 2 / (4 * self.parameters.clearance_rate[i] * t))
         out = (4 * t * self.parameters.clearance_rate[i] * np.pi) ** (-1 / 2) * ker(gridx, gridy)
-        one = np.zeros(self.layers)
-        one[0] = 1
         normalizations = self.spectral.M @ (self.ones @ (self.spectral.M @ out))
         normalizations = np.diag(1/normalizations)
         return normalizations @ self.spectral.M @ out
@@ -128,6 +123,20 @@ class ecosystem_optimization:
     def heat_kernel_creator(self, t):
         for i in range(self.populations.shape[0]):
             self.heat_kernels[i] = self.heat_kernel_i(i, t)
+
+
+    def dirac_delta_creator_i(self, i):
+        I_n = np.identity(self.layers)
+        normalizations = np.sum(self.spectral.M @ I_n, axis = 0)
+        #normalizations = self.spectral.M @ (self.ones @ (self.spectral.M @ out))
+        normalizations = np.diag(1/normalizations)
+        return normalizations @ I_n
+
+
+    def dirac_delta_creator(self):
+        for i in range(self.populations.shape[0]):
+            self.heat_kernels[i] = self.dirac_delta_creator_i(i)
+
 
     def total_growth(self, x_temp = None):
         if x_temp is None:
@@ -206,13 +215,13 @@ def lin_growth_no_pops_no_res(eco, i, j, layered_attack, strategy):
 
 
 class spectral_method:
-    def __init__(self, depth, layers):
+    def __init__(self, depth, layers, segments = 1):
 
         self.n = layers
 
         JacobiGL = lambda x, y, z: eng.JacobiGL(float(x), float(y), float(z), nargout=1)
 
-        x = np.array(list(itertools.chain(JacobiGL(0, 0, layers))))
+        x = np.array(list(itertools.chain(JacobiGL(0, 0, layers-1))))
         self.x = np.reshape(x, x.shape[0])
 
         D_calc = lambda n: np.matmul(np.transpose(self.vandermonde_dx()),
@@ -224,6 +233,20 @@ class spectral_method:
 
         self.M = M_calc(layers)
         self.x = ((self.x+1)/2) * depth
+        self.segments = segments
+
+        if segments>1:
+            M_T = np.zeros((layers*segments, layers*segments))
+            x_T = np.zeros(layers*segments)
+            s_x = depth/segments
+            x_n = np.copy(self.x)/segments
+
+            for k in range(segments):
+                M_T[k*layers:(k+1)*layers, k*layers:(k+1)*layers] = self.M/segments
+                x_T[k*layers:(k+1)*layers] = x_n + k*s_x
+            self.M = M_T
+            self.x = x_T
+
 
     def JacobiP(self, x, alpha, beta, n):
         P_n = np.zeros((n, x.shape[0]))
@@ -267,13 +290,13 @@ class spectral_method:
     def vandermonde_calculator(self):
         n = self.n
         x = self.x
-        return (self.JacobiP_n(x, 0, 0, n + 1))
+        return (self.JacobiP_n(x, 0, 0, n))
 
 
     def vandermonde_dx(self):
         n = self.n
         x = self.x
-        return (self.GradJacobi_n(x, 0, 0, n + 1))
+        return (self.GradJacobi_n(x, 0, 0, n))
 
     def expander(self, old_spec = None, small_vec = None):
 
@@ -365,7 +388,7 @@ class ecosystem_parameters:
        # print(layers.shape, obj.shape, self.spectral.x.shape[0])
 
         for i in range(self.spectral.x.shape[0]):
-            layers[i] = weights[i] * obj
+            layers[i] = (weights[i] + 0.01)* obj
         return layers
 
     def clearance_rate_setter(self):
@@ -600,11 +623,19 @@ def quadratic_optimizer(eco, payoff_matrix = None, prior_sol=None):
     q = q.reshape(-1, 1)
     if payoff_matrix is None:
         payoff_matrix = total_payoff_matrix_builder(eco)
+        print("IM HERE!!!")
 
     p = ca.SX.sym('p', eco.populations.size*eco.layers)
     y = ca.SX.sym('y', eco.populations.size)
     u = ca.SX.sym('u', eco.populations.size*eco.layers)
     v = ca.SX.sym('v', eco.populations.size)
+
+    cont_conds = []
+    if eco.spectral.segments>1:
+        for j in range(eco.spectral.segments-1):
+            cont_conds.append(p[j*eco.spectral.n] - p[(j+1)*eco.spectral.n])
+            cont_conds.append(u[j*eco.spectral.n] - u[(j+1)*eco.spectral.n])
+
 
     z = ca.vertcat(*[p, y])
     w = ca.vertcat(*[u, v])
@@ -613,11 +644,18 @@ def quadratic_optimizer(eco, payoff_matrix = None, prior_sol=None):
 #    print(H.shape)
 
     f = ca.dot(w, z)
-    g = w - H @ z - q #ca.norm_2()
+    if eco.spectral.segments > 1:
+        g = ca.vertcat(*[*cont_conds, w - H @ z - q])
+
+    else:
+        g = w - H @ z - q #ca.norm_2()
+
+
+
     x = ca.vertcat(z, w)
     lbx = np.zeros(x.size())
-    ubg = 0*q
-    lbg = 0*q
+    ubg = np.zeros(g.size())
+    lbg = np.zeros(g.size())
 
 
     s_opts = {'ipopt': {'print_level': 5}}
@@ -701,11 +739,11 @@ def graph_builder(eco, layered_attack=None, populations=None, resources=None, st
     return inflows
 
 
-def periodic_attack(layered_attack, day_interval = 96):
+def periodic_attack(layered_attack, day_interval = 96, darkness_length = 0, minimum_attack = 0):
     OG_layered_attack = np.copy(layered_attack)
     periodic_layers = np.zeros((day_interval,*layered_attack.shape))
     for i in range(day_interval):
-        periodic_layers[i] = 1/2*(1+np.cos(i*2*np.pi/day_interval))*OG_layered_attack
+        periodic_layers[i] = 1/2*(1+minimum_attack+min(max((darkness_length+1)*np.cos(i*2*np.pi/day_interval), -1), 1))*OG_layered_attack
 
     return periodic_layers
 
@@ -727,7 +765,7 @@ def total_payoff_matrix_builder_memory_improved(eco, populations, total_reward_m
 
     for i in range(eco.populations.size):
         for j in range(eco.populations.size):
-            total_rew_mat[i * eco.layers:(i + 1) * eco.layers, j * eco.layers: (j + 1) * eco.layers] = eco.parameters.efficiency*total_reward_matrix[i * eco.layers:(i + 1) * eco.layers, j * eco.layers: (j + 1) * eco.layers]
+            total_rew_mat[i * eco.layers:(i + 1) * eco.layers, j * eco.layers: (j + 1) * eco.layers] = eco.parameters.efficiency*populations[j]*total_reward_matrix[i * eco.layers:(i + 1) * eco.layers, j * eco.layers: (j + 1) * eco.layers]
             total_loss_mat[i * eco.layers:(i + 1) * eco.layers, j * eco.layers: (j + 1) * eco.layers] = populations[j]*total_loss_matrix[i * eco.layers:(i + 1) * eco.layers, j * eco.layers: (j + 1) * eco.layers]
 
     total_payoff_matrix = total_rew_mat + foraging_gain - total_loss_mat

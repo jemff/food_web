@@ -14,7 +14,7 @@ import pickle as pkl
 
 mass_vector = np.array([20, 8000]) #np.array([1, 30, 300, 400, 800, 16000])
 from scipy import stats
-obj = spectral_method(depth, layers-1) #This is the old off-by-one error... Now we have added another fucked up error!
+obj = spectral_method(depth, layers)
 logn = stats.lognorm.pdf(obj.x, 1, 0)
 
 norm_dist = stats.norm.pdf(obj.x, loc = 2)
@@ -30,7 +30,7 @@ eco = ecosystem_optimization(mass_vector, layers, params, obj, water_start, l2 =
 eco.population_setter(np.array([2, 0.1]) )
 OG_layered_attack = np.copy(eco.parameters.layered_attack)
 time_step = 1/48*1/365 #Time-step is half an hour.
-
+eco.heat_kernels[1] = eco.heat_kernels[0]
 error = 1
 strategies = []
 population_list = []
@@ -38,7 +38,7 @@ resource_list = []
 time = 0
 prior_sol = quadratic_optimizer(eco)
 
-while time<1:
+while time<0.1:
     prior_sol = quadratic_optimizer(eco)
     x_res = (prior_sol[0:eco.populations.size*eco.layers]).reshape((eco.populations.size, -1))
     strategies.append(x_res)
