@@ -47,7 +47,7 @@ time = 0
 prior_sol = quadratic_optimizer(eco)
 
 while time<1:
-    prior_sol = quadratic_optimizer(eco, prior_sol=prior_sol)
+    prior_sol = lemke_optimizer(eco, prior_sol=prior_sol)
     x_res = (prior_sol[0:eco.populations.size*eco.layers]).reshape((eco.populations.size, -1))
     strategies.append(x_res)
     pop_old = np.copy(eco.populations)

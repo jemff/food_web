@@ -564,9 +564,9 @@ def lemke_optimizer(eco, payoff_matrix = None):
 
     sol = lcp.lemkelcp(H, q, maxIter = 10000)
     if sol[1]==0:
-        return sol[0]
+        return sol[0][0:eco.layers*eco.populations.size].reshape((eco.populations.size, -1))
     else:
-        return quadratic_optimizer(eco, payoff_matrix=payoff_matrix)
+        return quadratic_optimizer(eco, payoff_matrix=payoff_matrix)[0:eco.layers*eco.populations.size].reshape((eco.populations.size, -1))
 
 def quadratic_optimizer(eco, payoff_matrix = None, prior_sol=None):
 

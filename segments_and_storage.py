@@ -105,36 +105,3 @@ with open('losses_eco_high_definition.pkl', 'wb') as f:
 with open('periodic_layers_eco_high_definition.pkl', 'wb') as f:
     pkl.dump(periodic_layers, f, pkl.HIGHEST_PROTOCOL)
 
-
-while time<0.1:
-    prior_sol = quadratic_optimizer(eco)
-    x_res = (prior_sol[0:eco.populations.size*eco.layers]).reshape((eco.populations.size, -1))
-    strategies.append(x_res)
-    pop_old = np.copy(eco.populations)
-    delta_pop = eco.total_growth(x_res)
-    new_pop = delta_pop * time_step + eco.populations
-    population_list.append(pop_old)
-    error = np.linalg.norm(new_pop - pop_old)
-
-    eco.population_setter(eco.total_growth(x_res) * time_step + eco.populations)
-    eco.strategy_setter(x_res)
-    r_c = np.copy(eco.water.res_counts)
-    resource_list.append(r_c)
-
-    eco.water.update_resources(consumed_resources=eco.consumed_resources(), time_step=time_step)
-    print("I'm here")
-    print(error, eco.populations, np.sum(eco.water.res_counts), time_step, new_pop - pop_old, time)
-    time += time_step
-    eco.parameters.layered_attack = 1/2*(1+np.cos(time*365*2*np.pi))*OG_layered_attack
-
-with open('eco_test.pkl', 'wb') as f:
-    pkl.dump(eco, f, pkl.HIGHEST_PROTOCOL)
-
-with open('strategies_eco_test.pkl', 'wb') as f:
-    pkl.dump(strategies, f, pkl.HIGHEST_PROTOCOL)
-
-with open('population_eco_test.pkl', 'wb') as f:
-    pkl.dump(population_list, f, pkl.HIGHEST_PROTOCOL)
-
-with open('resource_eco_test.pkl', 'wb') as f:
-    pkl.dump(resource_list, f, pkl.HIGHEST_PROTOCOL)
