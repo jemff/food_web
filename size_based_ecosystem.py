@@ -1,16 +1,11 @@
-import numpy as np
-import scipy.optimize as optm
-import matlab.engine
 import scipy as scp
-import itertools as itertools
 import casadi as ca
 import scipy.stats as stats
-import copy as copy
-import pickle as pkl
 import lemkelcp as lcp
-import matplotlib.pyplot as plt
+from matrix_infrastructure import *
 
-eng = matlab.engine.start_matlab()
+
+#eng = matlab.engine.start_matlab()
 
 #Implement simulation class
 
@@ -110,26 +105,34 @@ class ecosystem_optimization:
         return x_out
 
 
-    def heat_kernel_i(self, i, t):
+    def heat_kernel_i(self, t, k):
 
         gridx, gridy = np.meshgrid(self.spectral.x, self.spectral.x)
-        ker = lambda x, y: np.exp(-(x - y) ** 2 / (4 * self.parameters.clearance_rate[i] * t))
-        out = (4 * t * self.parameters.clearance_rate[i] * np.pi) ** (-1 / 2) * ker(gridx, gridy)
+        ker = lambda x, y: np.exp(-(x - y) ** 2 / (4 * k * t))
+        out = (4 * t * k * np.pi) ** (-1 / 2) * ker(gridx, gridy)
         normalizations = self.spectral.M @ (self.ones @ (self.spectral.M @ out))
         normalizations = np.diag(1/normalizations)
         return normalizations @ self.spectral.M @ out
 
 
-    def heat_kernel_creator(self, t):
-        for i in range(self.populations.shape[0]):
-            self.heat_kernels[i] = self.heat_kernel_i(i, t)
+    def heat_kernel_creator(self, t, k = None):
+        if k is None:
+            for i in range(self.populations.shape[0]):
+                self.heat_kernels[i] = self.heat_kernel_i(t, self.parameters.clearance_rate[i])
+        else:
+            for i in range(self.populations.shape[0]):
+                self.heat_kernels[i] = self.heat_kernel_i(t, k)
 
 
-    def dirac_delta_creator_i(self, i):
+
+    def dirac_delta_creator_i(self, i, normalize = True):
         I_n = np.identity(self.layers)
         normalizations = np.sum(self.spectral.M @ I_n, axis = 0)
         #normalizations = self.spectral.M @ (self.ones @ (self.spectral.M @ out))
-        normalizations = np.diag(1/normalizations)
+        if normalize is True:
+            normalizations = np.diag(1/normalizations)
+        else:
+            normalizations = np.diag(normalizations)
         return normalizations @ I_n
 
 
@@ -145,7 +148,7 @@ class ecosystem_optimization:
         total_growth = np.zeros((self.populations.shape[0]))
         for i in range(self.populations.shape[0]):
             total_growth[i] = self.one_actor_growth(i, x_temp_i=x_temp, solve_mode=False)
-        print(self.parameters.loss_term, total_growth)
+        #print(self.parameters.loss_term, total_growth)
         return (total_growth - self.parameters.loss_term)*self.populations
 
     def strategy_setter(self, strat_vec): #Keep in population state class
@@ -192,6 +195,7 @@ class ecosystem_optimization:
                               self.parameters.clearance_rate[i] * self.parameters.layered_foraging[:, i]).reshape(
             (1, self.layers)) @ (self.spectral.M @ x)
         foraging_term_self = foraging_term_self / (self.populations.size - 1)
+
         actual_growth = self.parameters.efficiency * (lin_growth + foraging_term_self)
 
         pred_loss = x.T @ predator_hunger
@@ -209,7 +213,7 @@ def lin_growth_no_pops_no_res(eco, i, j, layered_attack, strategy):
     interaction_term = eco.parameters.who_eats_who[i, j] * eco.parameters.clearance_rate[i]
     lin_growth = interaction_term * (x_temp[1] * layered_attack[:, i, j].T) @ eco.spectral.M @ x
 
-    actual_growth = eco.parameters.efficiency * lin_growth
+    actual_growth = lin_growth
 
     return actual_growth
 
@@ -219,10 +223,9 @@ class spectral_method:
 
         self.n = layers
 
-        JacobiGL = lambda x, y, z: eng.JacobiGL(float(x), float(y), float(z), nargout=1)
+#        JacobiGL = lambda x, y, z: eng.JacobiGL(float(x), float(y), float(z), nargout=1)
 
-        x = np.array(list(itertools.chain(JacobiGL(0, 0, layers-1))))
-        self.x = np.reshape(x, x.shape[0])
+        self.x = self.JacobiGL(0, 0, layers-1)
 
         D_calc = lambda n: np.matmul(np.transpose(self.vandermonde_dx()),
                                                    np.linalg.inv(np.transpose(self.vandermonde_calculator())))*(depth/2)
@@ -247,6 +250,26 @@ class spectral_method:
             self.M = M_T
             self.x = x_T
 
+    def JacobiGL(self, a, b, n):
+
+        alpha = a + 1
+        beta = b + 1
+        N = n - 2
+        if N == 0:
+            x = np.array([(alpha - beta) / (alpha + beta + 2)])
+            w = 2
+            return x, w
+        else:
+            h1 = 2 * np.arange(0, N + 1) + alpha + beta
+            J1 = np.diag(-1 / 2 * (alpha ** 2 - beta ** 2) / (h1 + 2) / h1)
+            J2 = np.diag(2 / (h1[0:N] + 2) * np.sqrt(np.arange(1, N + 1) * (np.arange(1, N + 1) + alpha + beta) *
+                                                     (np.arange(1, N + 1) + alpha) * (np.arange(1, N + 1) + beta) * (
+                                                                 1 / (h1[0:N] + 1)) * (1 / (h1[0:N] + 3))), 1)
+            J = J1 + J2
+            J = J + J.T
+            x, w = np.linalg.eig(J)
+
+        return np.array([-1, *np.sort(x), 1])
 
     def JacobiP(self, x, alpha, beta, n):
         P_n = np.zeros((n, x.shape[0]))
@@ -300,7 +323,7 @@ class spectral_method:
 
     def expander(self, old_spec = None, small_vec = None):
 
-        new_vm = self.JacobiP(self.x, 0, 0, small_vec.shape[0])
+        new_vm = self.JacobiP((self.x/(self.x[-1])-1), 0, 0, small_vec.shape[0])
         old_vm = np.linalg.inv(old_spec.vandermonde_calculator())
 
         #print(small_vec)
@@ -309,7 +332,7 @@ class spectral_method:
     def projector(self, old_spec, big_vec):
         pass
 
-    def interpolater(old_vec, old_size, new_size, size_classes, old_spec, new_spec):
+    def interpolater(self, old_vec, old_size, new_size, size_classes, old_spec, new_spec):
         new_vec = np.zeros(new_size * size_classes)
         for k in range(size_classes):
             new_strat = new_spec.expander(old_spec=old_spec, small_vec=old_vec[old_size * k:old_size * (k + 1)])
@@ -321,8 +344,9 @@ class spectral_method:
 
 
 class ecosystem_parameters:
-    def __init__(self, mass_vector, spectral, lam = 0.8):
-        self.forage_mass = 0.05
+    def __init__(self, mass_vector, spectral, lam = 0.8, min_attack_rate = 10**(-4), forage_mass = 0.05):
+        self.forage_mass = forage_mass
+        self.min_attack_rate = min_attack_rate
 
         self.mass_vector = mass_vector
         self.spectral = spectral
@@ -336,8 +360,7 @@ class ecosystem_parameters:
         self.forager_or_not = self.forager_or_not_setter()
         self.foraging_attack_prob = self.foraging_attack_setter()
         self.layered_foraging = self.layer_creator(self.foraging_attack_prob, lam = lam)
-
-
+        self.layered_foraging = self.layered_foraging/self.layered_foraging
     def forager_or_not_setter(self):
         fo_or_not = (np.copy(self.mass_vector))/self.forage_mass
         fo_or_not[fo_or_not > 1600] = 0
@@ -388,7 +411,7 @@ class ecosystem_parameters:
        # print(layers.shape, obj.shape, self.spectral.x.shape[0])
 
         for i in range(self.spectral.x.shape[0]):
-            layers[i] = (weights[i] + 0.01)* obj
+            layers[i] = (weights[i] + self.min_attack_rate)* obj
         return layers
 
     def clearance_rate_setter(self):
@@ -399,7 +422,7 @@ class ecosystem_parameters:
 
 
 class water_column:
-    def __init__(self, spectral, res_vec, advection = 1, diffusion = 0.5, resource_max = None, replacement = 1.2, layers = 2):
+    def __init__(self, spectral, res_vec, advection = 1, diffusion = 0.5, resource_max = None, replacement = 1.2, layers = 2, logistic = False):
         self.adv = advection
         self.diff = diffusion
         if resource_max is None:
@@ -420,13 +443,20 @@ class water_column:
             self.diff_op[0] = 0
             self.diff_op[0,0] = 1
 
-
+        self.logistic = logistic
     def resource_setter(self, new_res):
         self.res_counts = new_res
 
     def update_resources(self, consumed_resources = 0, time_step = 0.001):
         ##Chemostat step
-        self.res_counts += (self.lam*(self.resource_max - self.res_counts) - consumed_resources)*time_step
+        if self.logistic is False:
+            self.res_counts += (self.lam*(self.resource_max - self.res_counts) - consumed_resources)*time_step
+            self.res_counts[self.res_counts < 0] = 0
+
+        else:
+            self.res_counts += (self.lam*self.res_counts*(1-self.res_counts/self.resource_max) - consumed_resources)*time_step
+            self.res_counts[self.res_counts < 0] = 10 ** (-8)
+
         ##Advection diffusion
         if self.diff != 0 or self.adv != 0: #THIS IS HORRIBLY BROKEN ATM!!!
             sol_vec = np.copy(self.res_counts)
@@ -516,39 +546,6 @@ def sequential_nash(eco, verbose = False, l2 = False, max_its_seq = None, time_s
     return x_temp
 
 
-def total_payoff_matrix_builder(eco):
-    total_payoff_matrix = np.zeros((eco.populations.size*eco.layers, eco.populations.size*eco.layers))
-    for i in range(eco.populations.size):
-        for j in range(eco.populations.size):
-            if i != j:
-                i_vs_j = payoff_matrix_builder(eco, i, j)
-            elif i == j:
-                i_vs_j = np.zeros((eco.layers, eco.layers))
-            #if i == 1:
-            #    total_payoff_matrix[i*eco.layers:(i+1)*eco.layers, j*eco.layers: (j+1)*eco.layers] = i_vs_j.T
-            #else:
-
-            total_payoff_matrix[i * eco.layers:(i + 1) * eco.layers, j * eco.layers: (j + 1) * eco.layers] = i_vs_j
-
-    total_payoff_matrix = total_payoff_matrix - np.max(total_payoff_matrix) - 0.00001 #Making sure everything is negative
-    return total_payoff_matrix
-
-def payoff_matrix_builder(eco, i, j):
-    payoff_i = np.zeros((eco.layers, eco.layers))
-
-    for k in range(eco.layers):
-        one_k_vec = np.zeros(eco.layers)
-        one_k_vec[k] = 1
-        for n in range(eco.layers):
-            one_n_vec = np.zeros(eco.layers)
-            one_n_vec[n] = 1
-            strat_mat = np.vstack([one_k_vec, one_n_vec])
-            payoff_i[k, n] = eco.lin_growth(i, j, strat_mat)
-
-    return payoff_i
-
-
-
 def lemke_optimizer(eco, payoff_matrix = None):
     A = np.zeros((eco.populations.size, eco.populations.size * eco.layers))
     for k in range(eco.populations.size):
@@ -571,18 +568,19 @@ def lemke_optimizer(eco, payoff_matrix = None):
 def quadratic_optimizer(eco, payoff_matrix = None, prior_sol=None):
 
     A=np.zeros((eco.populations.size, eco.populations.size*eco.layers))
-#    if eco.spectral.segments == 1:
-#        for k in range(eco.populations.size):
-#            A[k,k*eco.layers:(k+1)*eco.layers] = -1
+    if eco.spectral.segments == 1:
+        for k in range(eco.populations.size):
+            A[k,k*eco.layers:(k+1)*eco.layers] = -1
+    if eco.spectral.segments != 1:
+        Temp = -np.copy(eco.ones).astype(float)
+        Temp[::eco.spectral.n] += 1/2
+        Temp[eco.spectral.n-1::eco.spectral.n] += 1/2
 
-#    if eco.spectral.segments != 1:
-#        Temp = np.copy(eco.ones)
-#        Temp[::eco.spectral.n] = 0
-#        Temp[0] = 1
-#        Temp[-1] = 1
-
-#        for k in range(eco.populations.size):
-#            A[k, k * eco.layers:(k + 1) * eco.layers] = -Temp
+        Temp[0] = -1
+        Temp[-1] = -1
+        print(Temp)
+        for k in range(eco.populations.size):
+            A[k, k * eco.layers:(k + 1) * eco.layers] = -Temp
 
     for k in range(eco.populations.size):
         A[k, k * eco.layers:(k + 1) * eco.layers] = -1
@@ -592,7 +590,6 @@ def quadratic_optimizer(eco, payoff_matrix = None, prior_sol=None):
     q = q.reshape(-1, 1)
     if payoff_matrix is None:
         payoff_matrix = total_payoff_matrix_builder(eco)
-        print("IM HERE!!!")
 
     p = ca.SX.sym('p', eco.populations.size*eco.layers)
     y = ca.SX.sym('y', eco.populations.size)
@@ -612,16 +609,16 @@ def quadratic_optimizer(eco, payoff_matrix = None, prior_sol=None):
     H = np.block([[-payoff_matrix, A.T], [-A, np.zeros((A.shape[0], eco.populations.size))]])
 #    print(H.shape)
 
-    f = ca.dot(w, z)
+    f = ca.norm_2(w.T @ z)
     if eco.spectral.segments > 1:
         g = ca.vertcat(*[*cont_conds, w - H @ z - q])
 
     else:
-        g = w - H @ z - q #ca.norm_2()
+        g = w - H @ z - q #ca.norm_2() H @ z + q
 
 
 
-    x = ca.vertcat(z, w)
+    x = ca.vertcat(z, w) #
     lbx = np.zeros(x.size())
     ubg = np.zeros(g.size())
     lbg = np.zeros(g.size())
@@ -632,17 +629,59 @@ def quadratic_optimizer(eco, payoff_matrix = None, prior_sol=None):
     solver = ca.nlpsol('solver', 'ipopt', prob, s_opts)
     #prior_sol = False
     if prior_sol is None:
-        sol = solver(lbx=lbx, ubg=ubg, lbg=lbg)
+        sol = solver(lbx=lbx, lbg=lbg, ubg = ubg) #ubg=ubg
 
     else:
-        sol = solver(x0=prior_sol, lbx=lbx, ubg=ubg, lbg=lbg)
+        sol = solver(x0=prior_sol, lbx=lbx, lbg=lbg, ubg = ubg) #ubg=ubg,
 
 
-
+    print(sol['f'])
     x_out = np.array(sol['x']).flatten()
-    print(np.min(x_out), np.dot(x_out[0:eco.populations.size*(eco.layers+1)], x_out[eco.populations.size*(eco.layers+1):]))
+    #print(np.min(x_out), np.dot(x_out[0:eco.populations.size*(eco.layers+1)], x_out[eco.populations.size*(eco.layers+1):]))
     #print(x_out[0:eco.layers*eco.populations.size])
     return x_out
+
+
+
+
+
+
+def total_payoff_matrix_builder(eco, dirac_mode = False):
+    total_payoff_matrix = np.zeros((eco.populations.size*eco.layers, eco.populations.size*eco.layers))
+    for i in range(eco.populations.size):
+        for j in range(eco.populations.size):
+            if i != j:
+                i_vs_j = payoff_matrix_builder(eco, i, j, dirac_mode = dirac_mode)
+            elif i == j:
+                i_vs_j = np.zeros((eco.layers, eco.layers))
+            #if i == 1:
+            #    total_payoff_matrix[i*eco.layers:(i+1)*eco.layers, j*eco.layers: (j+1)*eco.layers] = i_vs_j.T
+            #else:
+
+            total_payoff_matrix[i * eco.layers:(i + 1) * eco.layers, j * eco.layers: (j + 1) * eco.layers] = i_vs_j
+#    print("MAXIMM PAYDAY ORIGINAL",  np.max(total_payoff_matrix))
+    total_payoff_matrix = total_payoff_matrix - np.max(total_payoff_matrix) #- 1 #Making sure everything is negative  #- 0.00001
+    return total_payoff_matrix
+
+def payoff_matrix_builder(eco, i, j, dirac_mode = False):
+    payoff_i = np.zeros((eco.layers, eco.layers))
+    diracs = eco.dirac_delta_creator_i(0, normalize = True)
+    for k in range(eco.layers):
+        one_k_vec = np.zeros(eco.layers)
+        if dirac_mode is True:
+            one_k_vec = diracs[i] #np.zeros(eco.layers)
+        else:
+            one_k_vec[k] = 1
+        for n in range(eco.layers):
+            one_n_vec = np.zeros(eco.layers)
+            if dirac_mode is True:
+                one_n_vec = diracs[n]
+            else:
+                one_n_vec[n] = 1
+            strat_mat = np.vstack([one_k_vec, one_n_vec])
+            payoff_i[k, n] = eco.lin_growth(i, j, strat_mat)
+
+    return payoff_i
 
 
 def graph_builder_old(eco):  # Move into ecosystem class
@@ -710,12 +749,12 @@ def periodic_attack(layered_attack, day_interval = 96, darkness_length = 0, mini
 
     return periodic_layers
 
-def reward_loss_time_dependent(eco, periodic_layers):
+def reward_loss_time_dependent(eco, periodic_layers, dirac_mode = False):
     rewards_t = np.zeros((periodic_layers.shape[0], eco.layers*eco.populations.size, eco.layers*eco.populations.size))
     losses_t = np.zeros((periodic_layers.shape[0], eco.layers*eco.populations.size, eco.layers*eco.populations.size))
     for i in range(periodic_layers.shape[0]):
         print(i)
-        reward_i, loss_i = loss_and_reward_builder(eco, periodic_layers[i])
+        reward_i, loss_i = loss_and_reward_builder(eco, periodic_layers[i], dirac_mode = dirac_mode)
         rewards_t[i] = reward_i
         losses_t[i] = loss_i
 
@@ -728,31 +767,39 @@ def total_payoff_matrix_builder_memory_improved(eco, populations, total_reward_m
 
     for i in range(eco.populations.size):
         for j in range(eco.populations.size):
-            total_rew_mat[i * eco.layers:(i + 1) * eco.layers, j * eco.layers: (j + 1) * eco.layers] = eco.parameters.efficiency*populations[j]*total_reward_matrix[i * eco.layers:(i + 1) * eco.layers, j * eco.layers: (j + 1) * eco.layers]
+            total_rew_mat[i * eco.layers:(i + 1) * eco.layers, j * eco.layers: (j + 1) * eco.layers] = populations[j]*total_reward_matrix[i * eco.layers:(i + 1) * eco.layers, j * eco.layers: (j + 1) * eco.layers]
             total_loss_mat[i * eco.layers:(i + 1) * eco.layers, j * eco.layers: (j + 1) * eco.layers] = populations[j]*total_loss_matrix[i * eco.layers:(i + 1) * eco.layers, j * eco.layers: (j + 1) * eco.layers]
 
-    total_payoff_matrix = total_rew_mat + foraging_gain - total_loss_mat
+    total_payoff_matrix = eco.parameters.efficiency*(total_rew_mat + foraging_gain) - total_loss_mat
+    #print(np.max(total_payoff_matrix), "MAXIMUM PAYDAY")
+    return total_payoff_matrix - np.max(total_payoff_matrix) #- 0.00001
 
-    return total_payoff_matrix - np.max(total_payoff_matrix) - 0.0001
-
-def foraging_gain_builder(eco, resources = None):
+def foraging_gain_builder(eco, resources = None, dirac_mode = False):
     if resources is None:
         resources = eco.water.res_counts
 
     foragers = np.where(eco.parameters.forager_or_not == 1)
     foraging_gain = np.zeros((eco.populations.size*eco.layers, eco.populations.size*eco.layers))
+    foraging_gain_i = np.zeros((eco.layers, eco.layers))
+    diracs = eco.dirac_delta_creator_i(0, normalize=False)
+
     for forager in foragers:
-        foraging_gain_i = eco.heat_kernels[forager[0]] @ (eco.spectral.M @ resources)/np.sum(eco.parameters.who_eats_who[:, forager[0]])
-        #print(foraging_gain_i, np.sum(eco.parameters.who_eats_who[:, forager[0]]), eco.heat_kernels[forager[0]])
-        np.vstack([foraging_gain_i]*eco.layers)
-        eaters = np.where(eco.parameters.who_eats_who[:,forager] == 1)
+        for i in range(eco.layers):
+            one = np.zeros(eco.layers)
+            if dirac_mode is True:
+                one = diracs[i]  # np.zeros(eco.layers)
+            else:
+                one[i] = 1
+            foraging_gain_i[i] = eco.parameters.clearance_rate[forager[0]]*(one @ eco.heat_kernels[forager[0]] * eco.parameters.layered_foraging[:,forager[0]]) @ (eco.spectral.M @ (resources))/np.sum(eco.parameters.who_eats_who[:, forager[0]])
+
+        eaters = np.where(eco.parameters.who_eats_who[:,forager[0]] == 1)
         for eater in eaters:
-            foraging_gain[forager[0] * eco.layers:(eater[0] + 1) * eco.layers, eater[0] * eco.layers: (eater[0] + 1) * eco.layers] = foraging_gain_i
+            foraging_gain[forager[0] * eco.layers:(forager[0] + 1) * eco.layers, eater[0] * eco.layers: (eater[0] + 1) * eco.layers] = foraging_gain_i
 
     return foraging_gain
 
 
-def loss_and_reward_builder(eco, layered_attack = None):
+def loss_and_reward_builder(eco, layered_attack = None, dirac_mode = False):
     if layered_attack is None:
         layered_attack = eco.parameters.layered_attack
 
@@ -761,8 +808,8 @@ def loss_and_reward_builder(eco, layered_attack = None):
     for i in range(eco.populations.size):
         for j in range(eco.populations.size):
             if i != j:
-                i_vs_j = reward_matrix_builder(eco, layered_attack, i, j)
-                j_vs_i = loss_matrix_builder(eco, layered_attack, i, j)
+                i_vs_j = reward_matrix_builder(eco, layered_attack, i, j, dirac_mode = dirac_mode)
+                j_vs_i = loss_matrix_builder(eco, layered_attack, i, j, dirac_mode = dirac_mode)
             elif i == j:
                 i_vs_j = np.zeros((eco.layers, eco.layers))
                 j_vs_i = np.zeros((eco.layers, eco.layers))
@@ -773,30 +820,43 @@ def loss_and_reward_builder(eco, layered_attack = None):
     return total_reward_matrix, total_loss_matrix
 
 
-def reward_matrix_builder(eco, layered_attack, i, j):
+def reward_matrix_builder(eco, layered_attack, i, j, dirac_mode = False):
     reward_i = np.zeros((eco.layers, eco.layers))
+    diracs = eco.dirac_delta_creator_i(0, normalize = True)
 
     for k in range(eco.layers):
         one_k_vec = np.zeros(eco.layers)
-        one_k_vec[k] = 1
+        if dirac_mode is True:
+            one_k_vec = diracs[i] #np.zeros(eco.layers)
+        else:
+            one_k_vec[k] = 1
         for n in range(eco.layers):
             one_n_vec = np.zeros(eco.layers)
-            one_n_vec[n] = 1
+            if dirac_mode is True:
+                one_n_vec = diracs[n]
+            else:
+                one_n_vec[n] = 1
             strat_mat = np.vstack([one_k_vec, one_n_vec])
             reward_i[k, n] = lin_growth_no_pops_no_res(eco, i, j, layered_attack, strat_mat)
 
     return reward_i
 
 
-def loss_matrix_builder(eco, layered_attack, i, j):
+def loss_matrix_builder(eco, layered_attack, i, j, dirac_mode = False):
     loss_i = np.zeros((eco.layers, eco.layers))
-
+    diracs = eco.dirac_delta_creator_i(0, normalize = True)
     for k in range(eco.layers):
         one_k_vec = np.zeros(eco.layers)
-        one_k_vec[k] = 1
+        if dirac_mode is True:
+            one_k_vec = diracs[i] #np.zeros(eco.layers)
+        else:
+            one_k_vec[k] = 1
         for n in range(eco.layers):
             one_n_vec = np.zeros(eco.layers)
-            one_n_vec[n] = 1
+            if dirac_mode is True:
+                one_n_vec = diracs[n]
+            else:
+                one_n_vec[n] = 1
             strat_mat = np.vstack([one_k_vec, one_n_vec])
             loss_i[k, n] = lin_growth_no_pops_no_res(eco, j, i, layered_attack, strat_mat)
 

@@ -1,5 +1,5 @@
 depth = 30 #Previously 5 has worked well.
-layers = 120 #5 works well.
+layers = 60 #5 works well.
 segments = 1
 size_classes = 4
 lam = 2
