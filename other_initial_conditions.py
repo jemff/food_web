@@ -1,11 +1,3 @@
-
-import sys
-sys.path.append('/home/jaem/projects/food_web/')
-from size_based_ecosystem import *
-import pickle as pkl
-import siconos.numerics as sn
-import numpy as np
-from scipy import stats
 import matplotlib.pyplot as plt
 from utility_functions import *
 
@@ -42,9 +34,17 @@ eco.heat_kernels[2] = eco.heat_kernels[0]
 eco.parameters.who_eats_who[1,0] = 1
 
 opt_sol = lemke_optimizer(eco)
+opt_sol_quad_opt = quadratic_optimizer(eco)
+
+
 plt.plot(obj.x, opt_sol[0:layers]@eco.heat_kernels[0])
 plt.plot(obj.x, opt_sol[layers:2*layers]@eco.heat_kernels[0])
 plt.plot(obj.x, opt_sol[2*layers:3*layers]@eco.heat_kernels[0])
 plt.show()
 
-simulator(eco, params, "proper_tritrophic")
+plt.plot(obj.x, opt_sol_quad_opt[0:layers]@eco.heat_kernels[0])
+plt.plot(obj.x, opt_sol_quad_opt[layers:2*layers]@eco.heat_kernels[0])
+plt.plot(obj.x, opt_sol_quad_opt[2*layers:3*layers]@eco.heat_kernels[0])
+plt.show()
+
+simulator(eco, params, "proper_tritrophic", total_days=180, lemke = False)

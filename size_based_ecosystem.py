@@ -108,7 +108,8 @@ class ecosystem_optimization:
     def heat_kernel_i(self, t, k):
 
         gridx, gridy = np.meshgrid(self.spectral.x, self.spectral.x)
-        ker = lambda x, y: np.exp(-(x - y) ** 2 / (4 * k * t))
+        ker = lambda x, y: np.exp(-(x - y) ** 2 / (4 * k * t)) + np.exp(-(-y - x) ** 2 / (4 * k * t)) \
+                           + np.exp(-(2*self.spectral.x[-1] - x - y) ** 2 / (4 * k * t)) #np.exp(-(x - y) ** 2 / (4 * k * t))
         out = (4 * t * k * np.pi) ** (-1 / 2) * ker(gridx, gridy)
         normalizations = self.spectral.M @ (self.ones @ (self.spectral.M @ out))
         normalizations = np.diag(1/normalizations)
@@ -624,7 +625,7 @@ def quadratic_optimizer(eco, payoff_matrix = None, prior_sol=None):
     lbg = np.zeros(g.size())
 
 
-    s_opts = {'ipopt': {'print_level': 5}}
+    s_opts = {'ipopt': {'print_level': 5, 'tol':1E-5}}
     prob = {'x': x, 'f': f, 'g': g}
     solver = ca.nlpsol('solver', 'ipopt', prob, s_opts)
     #prior_sol = False

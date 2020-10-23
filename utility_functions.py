@@ -1,15 +1,12 @@
 import siconos.numerics as sn
-import numpy as np
 import pickle as pkl
-import sys
 import copy as copy
-sys.path.append('/home/jaem/projects/food_web/')
 from size_based_ecosystem import *
 
 
 def heat_kernel(spectral, t, k):
     gridx, gridy = np.meshgrid(spectral.x, spectral.x)
-    ker = lambda x, y: np.exp(-(x - y) ** 2 / (4 * k * t)) #+np.exp(-(y - x) ** 2 / (4 * k * t))
+    ker = lambda x, y: np.exp(-(x - y) ** 2 / (4 * k * t)) + np.exp(-(-y - x) ** 2 / (4 * k * t)) + np.exp(-(2*spectral.x[-1] - x - y) ** 2 / (4 * k * t))
     out = (4 * t * k * np.pi) ** (-1 / 2) * ker(gridx, gridy)
     normalizations = np.sum(spectral.M @ out, axis = 0)
     normalizations = np.diag(1/normalizations)
@@ -36,7 +33,7 @@ def lemke_optimizer(eco, payoff_matrix = None, dirac_mode = True):
     z = np.zeros((eco.layers*eco.populations.size+eco.populations.size,), np.float64)
     w = np.zeros_like(z)
     options = sn.SolverOptions(sn.SICONOS_LCP_PIVOT)
-    #sn.SICONOS_IPARAM_MAX_ITER = 10000000
+    #sn.SICONOS_IPARAM_MAX_ITER = 10000000<
     options.iparam[sn.SICONOS_IPARAM_MAX_ITER] = 1000000
     options.dparam[sn.SICONOS_DPARAM_TOL] = 10**(-5)
     info = sn.linearComplementarity_driver(lcp, z, w, options)
