@@ -180,17 +180,20 @@ class ecosystem_optimization:
             print(np.sum(np.dot(self.spectral.M, consumed_resources)), "Consumed resources")
         return consumed_resources
 
-    def lin_growth(self, i, j, strategy):
+    def lin_growth(self, i, j, strategy, current_layered_attack = None):
+        if current_layered_attack is None:
+            current_layered_attack = self.parameters.layered_attack
+
         x_temp = np.copy(strategy)
         x_temp[0] = x_temp[0] @ self.heat_kernels[i]  # Going smooth.
 
         x_temp[1] = x_temp[1] @ self.heat_kernels[j]  # Going smooth.
 
-        predator_hunger = self.parameters.clearance_rate[j] * self.populations[j] * np.dot(self.spectral.M, self.parameters.layered_attack[:, j, i] * x_temp[1]) * self.parameters.who_eats_who[j, i]
+        predator_hunger = self.parameters.clearance_rate[j] * self.populations[j] * np.dot(self.spectral.M, current_layered_attack[:, j, i] * x_temp[1]) * self.parameters.who_eats_who[j, i]
 
         x = x_temp[0].reshape(-1, 1)
         interaction_term = self.parameters.who_eats_who[i, j] * self.populations[j] * self.parameters.clearance_rate[i]
-        lin_growth = interaction_term * (x_temp[1] * self.parameters.layered_attack[:, i, j].T) @ self.spectral.M @ x
+        lin_growth = interaction_term * (x_temp[1] * current_layered_attack[:, i, j].T) @ self.spectral.M @ x
 
         foraging_term_self = (self.water.res_counts * self.parameters.forager_or_not[i] *
                               self.parameters.clearance_rate[i] * self.parameters.layered_foraging[:, i]).reshape(
@@ -603,13 +606,13 @@ def quadratic_optimizer(eco, payoff_matrix = None, prior_sol=None):
             cont_conds.append(p[j*eco.spectral.n] - p[(j+1)*eco.spectral.n])
             cont_conds.append(u[j*eco.spectral.n] - u[(j+1)*eco.spectral.n])
 
-
+    print("Here")
     z = ca.vertcat(*[p, y])
     w = ca.vertcat(*[u, v])
 #    print(np.block([-A]).shape)
     H = np.block([[-payoff_matrix, A.T], [-A, np.zeros((A.shape[0], eco.populations.size))]])
 #    print(H.shape)
-
+    print("Here")
     f = ca.norm_2(w.T @ z)
     if eco.spectral.segments > 1:
         g = ca.vertcat(*[*cont_conds, w - H @ z - q])
@@ -617,20 +620,22 @@ def quadratic_optimizer(eco, payoff_matrix = None, prior_sol=None):
     else:
         g = w - H @ z - q #ca.norm_2() H @ z + q
 
-
+    print("Here")
 
     x = ca.vertcat(z, w) #
     lbx = np.zeros(x.size())
     ubg = np.zeros(g.size())
     lbg = np.zeros(g.size())
 
-
+    print("Just before optimizing")
     s_opts = {'ipopt': {'print_level': 5, 'tol':1E-5}}
     prob = {'x': x, 'f': f, 'g': g}
     solver = ca.nlpsol('solver', 'ipopt', prob, s_opts)
+    print("Solver decleared")
     #prior_sol = False
     if prior_sol is None:
         sol = solver(lbx=lbx, lbg=lbg, ubg = ubg) #ubg=ubg
+        print("Solved")
 
     else:
         sol = solver(x0=prior_sol, lbx=lbx, lbg=lbg, ubg = ubg) #ubg=ubg,
@@ -647,12 +652,16 @@ def quadratic_optimizer(eco, payoff_matrix = None, prior_sol=None):
 
 
 
-def total_payoff_matrix_builder(eco, dirac_mode = False):
+def total_payoff_matrix_builder(eco, current_layered_attack = None, dirac_mode = False):
     total_payoff_matrix = np.zeros((eco.populations.size*eco.layers, eco.populations.size*eco.layers))
+
+    if current_layered_attack is None:
+        current_layered_attack = eco.params.layered_attack
+
     for i in range(eco.populations.size):
         for j in range(eco.populations.size):
             if i != j:
-                i_vs_j = payoff_matrix_builder(eco, i, j, dirac_mode = dirac_mode)
+                i_vs_j = payoff_matrix_builder(eco, i, j, current_layered_attack = current_layered_attack, dirac_mode = dirac_mode)
             elif i == j:
                 i_vs_j = np.zeros((eco.layers, eco.layers))
             #if i == 1:
@@ -664,7 +673,7 @@ def total_payoff_matrix_builder(eco, dirac_mode = False):
     total_payoff_matrix = total_payoff_matrix - np.max(total_payoff_matrix) #- 1 #Making sure everything is negative  #- 0.00001
     return total_payoff_matrix
 
-def payoff_matrix_builder(eco, i, j, dirac_mode = False):
+def payoff_matrix_builder(eco, i, j, current_layered_attack, dirac_mode = False):
     payoff_i = np.zeros((eco.layers, eco.layers))
     diracs = eco.dirac_delta_creator_i(0, normalize = True)
     for k in range(eco.layers):
@@ -680,7 +689,7 @@ def payoff_matrix_builder(eco, i, j, dirac_mode = False):
             else:
                 one_n_vec[n] = 1
             strat_mat = np.vstack([one_k_vec, one_n_vec])
-            payoff_i[k, n] = eco.lin_growth(i, j, strat_mat)
+            payoff_i[k, n] = eco.lin_growth(i, j, strat_mat, current_layered_attack)
 
     return payoff_i
 

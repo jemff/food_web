@@ -3,6 +3,9 @@ import pickle as pkl
 import copy as copy
 from size_based_ecosystem import *
 
+import pandas as pd
+import pvlib
+from pvlib import clearsky
 
 def heat_kernel(spectral, t, k):
     gridx, gridy = np.meshgrid(spectral.x, spectral.x)
@@ -106,6 +109,7 @@ def simulator(eco, params, filename, h_k = None, lemke = True, min_attack_rate =
 
     periodic_layers = periodic_attack(params.layered_attack, day_interval=day_interval, minimum_attack=min_attack_rate,
                                       darkness_length= darkness_length)
+
     reward_t, loss_t = reward_loss_time_dependent(eco, periodic_layers=periodic_layers)
     total_time_steps = int(total_days * day_interval)  # Yup
     time = 0
@@ -166,3 +170,112 @@ def simulator(eco, params, filename, h_k = None, lemke = True, min_attack_rate =
         pkl.dump(periodic_layers, f, pkl.HIGHEST_PROTOCOL)
 
 
+def phyto_growth(t, lat, depth):
+    """t in days, latitude in degrees, depth in meters"""
+
+    return np.exp(-0.025 * depth) * (1 - 0.8 * np.sin(np.pi * lat / 180) * np.cos(2 * np.pi * t / 365))
+
+def attack_coefficient(It, z, k=0.05*4, beta_0 = 10**(-3)):
+    """It in watt, z is a vector of depths in meters, k in m^{-1}"""
+    return 2*It*np.exp(-k*z)*(1+It*np.exp(-k*z))+10**(-3)
+
+def new_layer_attack(params, solar_levels, k = 0.05*4, beta_0 = 10**(-3)):
+    weights = attack_coefficient(solar_levels, params.spectral.x, k = k, beta_0=beta_0)
+    layers = np.zeros((params.spectral.x.shape[0], *params.mass_vector.shape))
+
+    for i in range(params.spectral.x.shape[0]):
+        layers[i] = weights[i] * params.attack_matrix
+
+
+    return layers
+
+
+#latitude = 34.5531, longitude = 18.0480 #Middelhavet
+def solar_input_calculator(latitude = 55.571831046, longitude = 12.822830042, tz = 'Europe/Vatican', name = 'Oresund', start_date = '2014-04-01', end_date = '2014-10-01', freq = '15Min'):
+    altitude = 0
+    times = pd.date_range(start=start_date, end=end_date, freq=freq, tz=tz)
+
+    solpos = pvlib.solarposition.get_solarposition(times, latitude, longitude)
+
+    apparent_elevation = solpos['apparent_elevation']
+
+    aod700 = 0.1
+
+    precipitable_water = 1
+
+    pressure = pvlib.atmosphere.alt2pres(altitude)
+
+    dni_extra = pvlib.irradiance.get_extra_radiation(times)
+
+    # an input is a Series, so solis is a DataFrame
+
+    solis = clearsky.simplified_solis(apparent_elevation, aod700, precipitable_water,
+
+                                      pressure, dni_extra)
+
+
+    return solis.dhi.values
+
+
+
+def simulator_new(eco, params, filename, h_k = None, lemke = True, min_attack_rate = 10**(-4), start_date =  '2014-04-01', end_date = '2014-10-01', day_interval = 96, latitude = 55.571831046, longitude = 12.822830042):
+    population_list = []
+    resource_list = []
+    strategy_list = []
+
+    time_step = (1 / 365) * (1 / day_interval)
+    solar_levels = solar_input_calculator(latitude=latitude, longitude=longitude, start_date=start_date, end_date=end_date)
+    if h_k is None:
+        h_k = heat_kernel(eco.spectral, time_step, 90000)
+
+    total_time_steps = len(solar_levels)
+
+    for i in range(total_time_steps):
+        current_layered_attack = new_layer_attack(eco.params, solar_levels[i])
+        payoff_matrix = total_payoff_matrix_builder(eco, current_layered_attack)
+
+        pop_old = np.copy(eco.populations)
+        population_list.append(pop_old)
+        if lemke is True:
+            prior_sol = lemke_optimizer(eco, payoff_matrix=payoff_matrix)
+        else:
+            prior_sol = quadratic_optimizer(eco, payoff_matrix=payoff_matrix)
+        x_res = (prior_sol[0:eco.populations.size * eco.layers]).reshape((eco.populations.size, -1))
+        strategy_list.append(x_res)
+
+        delta_pop = eco.total_growth(x_res)
+        new_pop = delta_pop * time_step + eco.populations
+        error = np.linalg.norm(new_pop - pop_old)
+
+        eco.population_setter(eco.total_growth(x_res) * time_step + eco.populations)
+        eco.strategy_setter(x_res)
+        r_c = np.copy(eco.water.res_counts)
+        resource_list.append(r_c)
+
+        eco.water.update_resources(consumed_resources=eco.consumed_resources(), time_step=time_step)
+        eco.water.res_counts = eco.water.res_counts @ h_k
+
+        print(error, eco.populations, np.sum(eco.water.res_counts), time_step, new_pop - pop_old,
+              np.cos(i * 2 * np.pi / day_interval), i / total_time_steps)
+        time += time_step
+
+    with open('eco'+filename+'.pkl', 'wb') as f:
+        pkl.dump(eco, f, pkl.HIGHEST_PROTOCOL)
+
+    with open('strategies' + filename + '.pkl', 'wb') as f:
+        pkl.dump(strategy_list, f, pkl.HIGHEST_PROTOCOL)
+
+    with open('population' + filename + '.pkl', 'wb') as f:
+        pkl.dump(population_list, f, pkl.HIGHEST_PROTOCOL)
+
+    with open('resource' + filename + '.pkl', 'wb') as f:
+        pkl.dump(resource_list, f, pkl.HIGHEST_PROTOCOL)
+
+    with open('rewards' + filename + '.pkl', 'wb') as f:
+        pkl.dump(reward_t, f, pkl.HIGHEST_PROTOCOL)
+
+    with open('losses'  + filename + '.pkl', 'wb') as f:
+        pkl.dump(loss_t, f, pkl.HIGHEST_PROTOCOL)
+
+    with open('periodic'  + filename + '.pkl', 'wb') as f:
+        pkl.dump(periodic_layers, f, pkl.HIGHEST_PROTOCOL)

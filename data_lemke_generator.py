@@ -34,6 +34,4 @@ eco = ecosystem_optimization(mass_vector, layers * segments, params, obj, water_
 eco.population_setter(np.array([10, 0.1]))
 
 eco.dirac_delta_creator()
-print(total_payoff_matrix_builder(eco)[100:,100:])
-
 simulator(eco, params, "non_random")
