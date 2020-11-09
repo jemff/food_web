@@ -656,7 +656,7 @@ def total_payoff_matrix_builder(eco, current_layered_attack = None, dirac_mode =
     total_payoff_matrix = np.zeros((eco.populations.size*eco.layers, eco.populations.size*eco.layers))
 
     if current_layered_attack is None:
-        current_layered_attack = eco.params.layered_attack
+        current_layered_attack = eco.parameters.layered_attack
 
     for i in range(eco.populations.size):
         for j in range(eco.populations.size):
@@ -671,6 +671,7 @@ def total_payoff_matrix_builder(eco, current_layered_attack = None, dirac_mode =
             total_payoff_matrix[i * eco.layers:(i + 1) * eco.layers, j * eco.layers: (j + 1) * eco.layers] = i_vs_j
 #    print("MAXIMM PAYDAY ORIGINAL",  np.max(total_payoff_matrix))
     total_payoff_matrix = total_payoff_matrix - np.max(total_payoff_matrix) #- 1 #Making sure everything is negative  #- 0.00001
+    #total_payoff_matrix = total_payoff_matrix/np.max(-total_payoff_matrix)
     return total_payoff_matrix
 
 def payoff_matrix_builder(eco, i, j, current_layered_attack, dirac_mode = False):
@@ -734,19 +735,19 @@ def graph_builder(eco, layered_attack=None, populations=None, resources=None, st
     x_temp = np.zeros((2, eco.layers))
 
     for i in range(classes):
-        x_temp[0] = strategies[i] @ eco.heat_kernels[i]  # Going smooth.
+        x_temp[0] = strategies[i] @ eco.heat_kernels[0]  # Going smooth.
         inflows[i + 1, 0] = (eco.parameters.forager_or_not[i] * eco.parameters.clearance_rate[
             i] * eco.parameters.layered_foraging[:, i] * resources) @ (eco.spectral.M @ x_temp[0])
 
         for j in range(classes):
-            x_temp[1] = strategies[j] @ eco.heat_kernels[j]  # Going smooth.
+            x_temp[1] = strategies[j] @ eco.heat_kernels[0]  # Going smooth.
             x = x_temp[0].reshape(-1, 1)
             interaction_term = eco.parameters.who_eats_who[i, j] * eco.parameters.clearance_rate[i]
-            lin_growth = interaction_term * (x_temp[1] * layered_attack[:, i, j].T) @ eco.spectral.M @ x
+            lin_growth = interaction_term * (x_temp[1] * layered_attack[:, i, j].T) @ (eco.spectral.M @ x)
 
             actual_growth = eco.parameters.efficiency * lin_growth
 
-            inflows[i + 1, j + 1] = actual_growth * populations[i] * populations[j]
+            inflows[i + 1, j + 1] = actual_growth * populations[j]
 
     return inflows
 

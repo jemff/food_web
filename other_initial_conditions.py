@@ -11,7 +11,7 @@ simulate = False
 verbose = True
 l2 = False
 min_attack_rate = 10**(-3)
-mass_vector = np.array([0.05, 20, 2000])  # np.array([1, 30, 300, 400, 800, 16000])
+mass_vector = np.array([0.05, 20, 6000])  # np.array([1, 30, 300, 400, 800, 16000])
 
 obj = spectral_method(depth, layers, segments=segments)
 logn = stats.lognorm.pdf(obj.x, 1, 0)
