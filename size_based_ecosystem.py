@@ -651,7 +651,6 @@ def quadratic_optimizer(eco, payoff_matrix = None, prior_sol=None):
 
 
 
-
 def total_payoff_matrix_builder(eco, current_layered_attack = None, dirac_mode = False):
     total_payoff_matrix = np.zeros((eco.populations.size*eco.layers, eco.populations.size*eco.layers))
 
