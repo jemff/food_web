@@ -1,0 +1,37 @@
+
+\section{Model}
+The basic model we are considering is that of a size-based marine ecosystem, with a resource and size specific feeding preference. 
+
+Let $\phi_i$ be the probability density function describing the location of the $i$'th size class in the water column, and the vector of these functions as $\Phi$. Let $A$ be a binary matrix describing the possible predator-prey interactions, with $A_{i,j} = 1$ indicating that size class $i$ can consume class $j$.
+Likewise, let $a$ be a matrix describing the size-preferences of each class, with the $a_{i,j}$ entry denoting the affinity of class $i$ towards class $j$. The vector $c$ gives the size-specific clearance rates, and $h$ denotes the size-specific maximal consumption rate. 
+Additionally, the vector $F$ denotes which size-classes are foragers, and the vector $f$ gives the foraging affinity. 
+Both the interspecific and foraging specific affinity decline with depth, due to decreasing light levels and decreasing temperature. In order to describe this we introduce matrix and a vector valued functions $\mathbf{a}(z), \mathbf{f}(z)$. $r(z)$ describes the resource concentration at depth $z$.
+All actors are assumed to have a Holling Type II functional response, and we assume they interact randomly if they are in the same location. The probability of actor $i$ being in the interval $dx$ is $\phi_i dx$. Assuming that we have independent actors, the probability that species $i$ and species $j$ both occupy $dx$ is $\phi_i(x) \phi_j(x) dx$. Integrating over the entire water column gives the total encounter probability $\ip{\phi_i}{\phi_j}$. Each individual actor wants to maximize its location distribution so that it is located where the growth is highest. We assume the population is monomorphic and follows the optimal strategy exclusively, aligning itself with the probability distribution. Before proceeding, we remark that a vector $v$ in a Hilbert space $H$ acts naturally on a tuple of vectors $(w_j)_{j = 1}^n$ in $H^n$, via. $\ip{v}{w} = \sum_{j =1}^n \ip{v}{w_j}$. Using this extension of the inner product eases the notation considerably in the following.  
+
+
+The instantaneous growth pr. capita of species $i$ excluding predation is 
+\begin{align*}
+	G_i &= \pa{\ip{\phi_i}{c_i A_{i,} N \mathbf{a}(z)_{i,}\Phi} + \ip{\phi_i}{\mathbf{f}_i F_i r}}^{-1} \\
+	&\cdot \pa{1 + h_i^{-1}  \ip{\phi_i}{c_i A_{i,} N \mathbf{a}_{i,}\Phi} + \ip{\phi_i}{\mathbf{f}_i F_i r(z)}}
+\end{align*}
+The total pr. capita predation pressure is
+\begin{align*}
+	&P_i = \sum_{j \in I} 1_{A_{j,i} = 1}  \left ( (\ip{\phi_i}{\phi_j N_j c_j A_{j,i} \mathbf{a}_{i,j}}) \right . \\ & \left . (1 + h_j^{-1} \ip{\phi_j}{c_j A_{j,} N \mathbf{a}_{j,}\Phi} + \ip{\phi_j}{\mathbf{f}_j F_j r})^{-1} \right )
+\end{align*}
+With $\mu_i$ denoting the pr. capita metabolic cost the pr. capita growth function is 
+\begin{align*}
+	H_i = G_i - P_i - \mu_i 
+\end{align*}
+In case $P_i$ is zero, we add an $L^2$ penalization corresponding to external predation, $\kappa_i \ip{\phi_i}{\phi_i}$.
+
+We assume all actors attempt to maximize their growth simulatenously with full knowledge of the current state. In order to find the Nash equilibrium of this game, we initialize the distributions of all actors as uniform in space. Given this distribution, we maximize all growth functions simulatenously. We iterate this process until the maximization process at stage $n$ and stage $n-1$ give the same distributions. In the numerical experiments the algorithm converges apart from the situation where the ideal spatial distribution of a size class is degenerate.  
+
+Letting $c$ denote the consumption rate of resources at depth $z$, the dynamics of this system are given by
+\begin{align*}
+	\part_t r &= a\part_z^2 r - b\part_z r - c(z,t)\\
+	\dot{N_i} &= N_i(H_i-\mu_i) 
+\end{align*}
+With the boundary of $r$ conditions of $r$ given by $\part_t (r_0) = \lambda (\overline{r} - \int_{0}^{1/10 depth} r(t) dz)$ and $\part_x r_{bottom} = 0$. 
+
+We solve the system using the method of lines, ie. a mixture of one-step and single-step optimization. The spatial dimension is discretized with a Legendre Gauss-Lobatto grid. This allows us to evaluate the growth functionals using exact Legendre mass matrices to perform the integration. Thus we can use the built in SLSQP optimizer in SciPy where the probabiltiy criterion is imposed as a Lagrangian constraint to find the probability measure which maximizes the growth functional in the Hilbert space $L^2((0,depth))$. With the optimal strategies in hand we can evolve the time using a semi-implicit Euler scheme with Legendre differentation matrices as differentation operators. That is, we use a high-order spectral collocation approach in the spatial dimension and a 1'st order method for the time-evoluton. 
+

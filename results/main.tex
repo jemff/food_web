@@ -1,0 +1,141 @@
+\documentclass[10pt]{article}
+\usepackage{pgf,comment}
+\usepackage[utf8]{inputenc}
+\usepackage{graphics,epsfig}
+\usepackage{subcaption}
+\usepackage[T1]{fontenc}
+\usepackage{float}
+\usepackage{url}
+\usepackage{srcltx}
+\usepackage{hyperref}
+\usepackage{ulem,amsmath,amsfonts ,amssymb,ulem,fancyhdr,setspace,lastpage,comment,graphics, cleveref,natbib}
+\usepackage{mathrsfs}
+\usepackage[all]{xy}
+
+
+
+
+\DeclareMathOperator{\argmax}{argmax}
+\DeclareMathOperator{\id}{id}
+\DeclareMathOperator{\Nil}{Nil}
+\DeclareMathOperator{\ran}{Ran}
+\DeclareMathOperator{\conv}{conv}
+\DeclareMathOperator{\cont}{cont}
+\DeclareMathOperator{\sign}{sign}
+\DeclareMathOperator{\diag}{diag}
+\DeclareMathOperator{\colim}{colim}
+\DeclareMathOperator{\sing}{sing}
+\DeclareMathOperator{\coker}{Coker}
+\DeclareMathOperator{\im}{Im}
+\DeclareMathOperator{\loc}{loc}
+\DeclareMathOperator{\comp}{comp}
+\DeclareMathOperator{\findex}{index}
+\DeclareMathOperator{\dist}{dist}
+\DeclareMathOperator{\op}{op}
+\DeclareMathOperator{\spin}{Spin}
+\DeclareMathOperator{\pin}{Pin}
+\DeclareMathOperator{\SO}{SO}
+\DeclareMathOperator{\dom}{Dom}
+\DeclareMathOperator{\lip}{Lip}
+\DeclareMathOperator{\supp}{supp}
+\DeclareMathOperator{\GL}{GL}
+\DeclareMathOperator{\Cg}{C^*_{\lambda}(G)}
+\DeclareMathOperator{\elset}{\text{ else }}
+\DeclareMathOperator{\ift}{\text{ if }}
+\DeclareMathOperator{\red}{\text{red}}
+\DeclareMathOperator{\Lie}{Lie}
+\DeclareMathOperator{\End}{End}
+\DeclareMathOperator{\spn}{span}
+\DeclareMathOperator{\ind}{Ind}
+
+
+
+%i\DeclareMathOperator{\exp}{exp}
+\newcommand{\sta}[1]{\text{#1}^{\text{\sout{o}}}}
+\newcommand{\de}[2]{\frac{\text{d} #1}{\text{d} #2}}
+%\newcommand{\titlez}[1]{\title{#1}\rhead{#1}}
+\newcommand{\Lr}{\Leftrightarrow}
+\newcommand{\pa}[1]{\left ( #1 \right )}
+\newcommand{\nintd}[4]{\int_{#3}^{#4} \!#1 \,\text{d}#2}
+\newcommand{\nint}[2]{\int \!#1 \,\text{d}#2}
+\newcommand{\refz}[1]{(\ref{#1})}
+\newcommand{\dpart}[2]{\frac{\partial #1}{\partial #2}}
+\newcommand{\dt}[1]{d{#1}}
+\newcommand{\df}[1]{\ensuremath{\mathop{\makebox[0pt]{\hspace{10.5pt}{\(^{\text{-}}\)}}d}} #1}
+\newcommand{\abs}[1]{\left | #1 \right |}
+\newcommand{\for}[0]{\text{ for }}
+\newcommand{\nin}[0]{\notin}
+\newcommand{\ol}[0]{\overline}
+\newcommand{\comm}[1]{\left [ #1 \right ]}
+\newcommand{\F}{\mathcal{F}}
+\newcommand{\AS}{\mathfrak{S}}
+\newcommand{\osum}{\oplus}
+\newcommand{\G}{\mathcal{G}}
+\newcommand{\g}{\mathfrak{g}}
+\newcommand{\K}{\mathbb{K}}
+\newcommand{\V}{\mathcal{V}}
+\newcommand{\Adel}{\mathbb{A}}
+\newcommand{\De}{\mathbb{D}}
+\newcommand{\Cstar}{$C^*~$}
+\newcommand{\DO}{\mathfrak{D}}
+\newcommand{\E}[0]{\mathcal{E}}
+\newcommand{\lin}[0]{\mathcal{L}}
+\newcommand{\pd}[0]{$\Psi$DO }
+\newcommand{\dlim}{\lim\limits_{\longrightarrow}}
+\newcommand{\overbar}[1]{\mkern 1.5mu\overline{\mkern-1.5mu#1\mkern-1.5mu}\mkern 1.5mu}
+\newcommand{\exre}[0]{\overbar{\boldsymbolb{R}}}
+\newcommand{\lsp}[1]{\mathcal{L}^{ #1 }}
+\newcommand{\ip}[2]{\left \langle #1,#2 \right \rangle}
+\newcommand{\brak}[1]{\langle #1 \rangle}
+\newcommand{\N}[0]{\mathbb{N}}
+\newcommand{\C}[0]{\mathbb{C}}
+\newcommand{\Z}[0]{\mathbb{Z}}
+\newcommand{\T}[0]{\mathcal{T}}
+\newcommand{\R}[0]{\mathbb{R}}
+\newcommand{\Q}[0]{\mathbb{Q}}
+\newcommand{\B}[0]{\mathcal{B}}
+\newcommand{\Cl}[0]{\C l}
+\newcommand{\M}[0]{\mathfrak{M}}
+\newcommand{\tensh}[0]{\hat{\otimes}}
+\newcommand{\optens}{\widetilde{\otimes}}
+\newcommand{\A}[0]{\mathcal{A}}
+\newcommand{\Cu}{\mathcal{O}}
+\newcommand{\bwed}[1]{\bigwedge\nolimits^{\!#1}}
+\newcommand{\Zred}{\hat{\mathbb{Z}}}
+\newcommand{\norm}[1]{\left \Vert #1 \right \Vert }
+\newcommand{\D}[0]{\mathscr{D}}
+\newcommand{\tens}[0]{\otimes}
+\newcommand{\bra}[1]{\langle #1 \rvert}
+\newcommand{\ket}[1]{\lvert #1 \rangle}
+
+
+\renewcommand{\H}{\mathbb{H}}
+\renewcommand{\S}[0]{\mathcal{S}}
+\renewcommand{\part}[0]{\partial}
+\renewcommand{\Re}{\text{Re}}
+
+
+\let\oldphi\phi \let\phi\varphi \let\varphi\oldphi
+\let\oldphi\phi \let\epsilon\varepsilon
+
+
+%\title{Fast adaptive behavior in a tri-trophic system: Breakdown of the paradox of enrichment}
+\title{Emergent population dynamics from behavioral optimization in the water column}
+\author{Emil Friis Frølich, Uffe Høgsbro Thygesen}
+\date{November 2020}
+
+\begin{document}
+
+\maketitle
+
+\input{introduction.tex}
+\input{model.tex}
+\input{results.tex}
+%\input{discussion.tex}
+%\input{conclusion.tex}
+
+
+\bibliographystyle{alpha}
+\bibliography{bibliography}
+
+\end{document}
