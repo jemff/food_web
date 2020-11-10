@@ -15,8 +15,8 @@ obj = spectral_method(depth, layers, segments=segments)
 logn = stats.lognorm.pdf(obj.x, 1, 0)
 
 norm_dist = stats.norm.pdf(obj.x, loc=0, scale=3)
-res_start = 4*norm_dist  # 0.1*(1-obj.x/depth)
-res_max = 8*norm_dist
+res_start = 8*norm_dist  # 0.1*(1-obj.x/depth)
+res_max = 10*norm_dist
 
 water_start = water_column(obj, res_start, layers=layers * segments, resource_max=res_max, replacement=lam, advection=0,
                            diffusion=0, logistic = True)
@@ -25,13 +25,13 @@ params = ecosystem_parameters(mass_vector, obj, lam=0.3, min_attack_rate = min_a
 params.handling_times = np.zeros(2)
 
 eco = ecosystem_optimization(mass_vector, layers * segments, params, obj, water_start, l2=l2, movement_cost=0)
-eco.population_setter(np.array([1, 0.05]))
+eco.population_setter(np.array([10, 0.1]))
 
 eco.dirac_delta_creator()
 simulator_new(eco, "non_random_oresund", k = 0.2, min_attack_rate=min_attack_rate)
 
-res_start = 4*norm_dist  # 0.1*(1-obj.x/depth)
-res_max = 8*norm_dist
+res_start = 8*norm_dist  # 0.1*(1-obj.x/depth)
+res_max = 10*norm_dist
 
 water_start = water_column(obj, res_start, layers=layers * segments, resource_max=res_max, replacement=lam, advection=0,
                            diffusion=0, logistic = True)
@@ -44,12 +44,12 @@ eco = ecosystem_optimization(mass_vector, layers * segments, params, obj, water_
 eco.heat_kernel_creator(10**(-1))
 eco.heat_kernels[1] = eco.heat_kernels[0]
 
-eco.population_setter(np.array([1, 0.05]))
+eco.population_setter(np.array([10, 0.1]))
 
-#simulator_new(eco, "more_random_oresund", k = 0.2)
+simulator_new(eco, "more_random_oresund", k = 0.2)
 
-res_start = 4*norm_dist  # 0.1*(1-obj.x/depth)
-res_max = 8*norm_dist
+res_start = 8*norm_dist  # 0.1*(1-obj.x/depth)
+res_max = 10*norm_dist
 
 water_start = water_column(obj, res_start, layers=layers * segments, resource_max=res_max, replacement=lam, advection=0,
                            diffusion=0, logistic = True)
@@ -65,6 +65,6 @@ eco.heat_kernels[1] = eco.heat_kernels[0]
 
 #eco.heat_kernels[1] = eco.heat_kernels[0]
 
-eco.population_setter(np.array([1, 0.05]))
+eco.population_setter(np.array([10, 0.1]))
 
 simulator_new(eco, "completely_random_oresund", optimal = False, k = 0.2, min_attack_rate=min_attack_rate)

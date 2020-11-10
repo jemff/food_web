@@ -15,6 +15,28 @@ def heat_kernel(spectral, t, k):
     normalizations = np.diag(1/normalizations)
     return normalizations @ spectral.M @ out
 
+def total_payoff_matrix_builder_sparse(eco, current_layered_attack = None, dirac_mode = False):
+    total_payoff_matrix = np.zeros((eco.populations.size*eco.layers, eco.populations.size*eco.layers))
+
+    if current_layered_attack is None:
+        current_layered_attack = eco.parameters.layered_attack
+
+    for i in range(eco.populations.size):
+        for j in range(eco.populations.size):
+            if i != j:
+                i_vs_j = payoff_matrix_builder(eco, i, j, current_layered_attack = current_layered_attack, dirac_mode = dirac_mode)
+            elif i == j:
+                i_vs_j = np.zeros((eco.layers, eco.layers))
+            #if i == 1:
+            #    total_payoff_matrix[i*eco.layers:(i+1)*eco.layers, j*eco.layers: (j+1)*eco.layers] = i_vs_j.T
+            #else:
+
+            total_payoff_matrix[i * eco.layers:(i + 1) * eco.layers, j * eco.layers: (j + 1) * eco.layers] = i_vs_j
+#    print("MAXIMM PAYDAY ORIGINAL",  np.max(total_payoff_matrix))
+    total_payoff_matrix[total_payoff_matrix != 0] = total_payoff_matrix[total_payoff_matrix != 0] - np.max(total_payoff_matrix) #- 1 #Making sure everything is negative  #- 0.00001
+    #total_payoff_matrix = total_payoff_matrix/np.max(-total_payoff_matrix)
+    #print(np.where(total_payoff_matrix == 0))
+    return total_payoff_matrix
 
 def lemke_optimizer(eco, payoff_matrix = None, dirac_mode = True):
     A = np.zeros((eco.populations.size, eco.populations.size * eco.layers))
@@ -220,7 +242,8 @@ def solar_input_calculator(latitude = 55.571831046, longitude = 12.822830042, tz
 
 
 
-def simulator_new(eco, filename, h_k = None, lemke = True, min_attack_rate = 10**(-4), start_date =  '2014-04-01', end_date = '2014-10-01', day_interval = 96, latitude = 55.571831046, longitude = 12.822830042, optimal=True, diffusion = 5000, k = 4*0.07):
+def simulator_new(eco, filename, h_k = None, lemke = True, min_attack_rate = 10**(-4), start_date =  '2014-04-01',
+                  end_date = '2014-10-01', day_interval = 96, latitude = 55.571831046, longitude = 12.822830042, optimal=True, diffusion = 5000, k = 4*0.05, sparse = True):
     population_list = []
     resource_list = []
     strategy_list = []
@@ -238,7 +261,10 @@ def simulator_new(eco, filename, h_k = None, lemke = True, min_attack_rate = 10*
         pop_old = np.copy(eco.populations)
         population_list.append(pop_old)
         if optimal is True:
-            payoff_matrix = total_payoff_matrix_builder(eco, current_layered_attack)
+            if sparse is False:
+                payoff_matrix = total_payoff_matrix_builder(eco, current_layered_attack)
+            else:
+                payoff_matrix = total_payoff_matrix_builder_sparse(eco, current_layered_attack)
             if lemke is True:
                 prior_sol = lemke_optimizer(eco, payoff_matrix=payoff_matrix)
             else:
