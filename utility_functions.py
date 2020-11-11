@@ -24,7 +24,7 @@ def total_payoff_matrix_builder_sparse(eco, current_layered_attack = None, dirac
     for i in range(eco.populations.size):
         for j in range(eco.populations.size):
             if i != j:
-                i_vs_j = payoff_matrix_builder(eco, i, j, current_layered_attack = current_layered_attack, dirac_mode = dirac_mode)
+                i_vs_j = jit_wrapper(eco, i, j, current_layered_attack = current_layered_attack, dirac_mode = dirac_mode) #payoff_matrix_builder(eco, i, j, current_layered_attack = current_layered_attack, dirac_mode = dirac_mode)
             elif i == j:
                 i_vs_j = np.zeros((eco.layers, eco.layers))
             #if i == 1:
@@ -33,7 +33,7 @@ def total_payoff_matrix_builder_sparse(eco, current_layered_attack = None, dirac
 
             total_payoff_matrix[i * eco.layers:(i + 1) * eco.layers, j * eco.layers: (j + 1) * eco.layers] = i_vs_j
 #    print("MAXIMM PAYDAY ORIGINAL",  np.max(total_payoff_matrix))
-    total_payoff_matrix[total_payoff_matrix != 0] = total_payoff_matrix[total_payoff_matrix != 0] - np.max(total_payoff_matrix) #- 1 #Making sure everything is negative  #- 0.00001
+    total_payoff_matrix[total_payoff_matrix != 0] = total_payoff_matrix[total_payoff_matrix != 0] - np.max(total_payoff_matrix) - 1 #Making sure everything is negative  #- 0.00001
     #total_payoff_matrix = total_payoff_matrix/np.max(-total_payoff_matrix)
     #print(np.where(total_payoff_matrix == 0))
     return total_payoff_matrix

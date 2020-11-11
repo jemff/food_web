@@ -5,31 +5,46 @@
 \end{abstract}
 \section{Introduction}
 
-The diel vertical migration, (DVM), is the largest migration of organisms on earth, \citep{}, dwarfing the great migrations on the african savannah and annual bird migrations, \citep{}. During the day of billions of small fish and zoo-plankton migrate from the upper layers of the ocean to the deeper, darker layers. With sun down, they begin migrating upwards again, staying in the mixed layer at night to feed. At day, the migration has been measured world-wide as the deep scattering layer, \citep{}. The migration acts as a driver of ocean population dynamics, with a majority of predator-prey interactions taking place at dusk and dawn in the mixed layer, \citep{}.
+The diel vertical migration, (DVM), is the largest migration of organisms on earth, \citep{}, dwarfing the great migrations on the african savannah and annual bird migrations, \citep{}. During the day of billions of small fish and zoo-plankton migrate from the upper layers of the ocean to the deeper, darker layers.
+
+At dusk, the small fish and zoo-plankton begin migrating upwards again, staying in the mixed layer at night to feed. At day, the migration has been measured world-wide as the deep scattering layer, \citep{}. The migration acts as a driver of ocean population dynamics, with a majority of predator-prey interactions taking place at dusk and dawn in the mixed layer, \citep{}.
 
 
-Though understanding the DVM is of central importance in understanding ocean dynamics and carbon flux, \citep{}, the cause of the migration is not entirely clear. Performing the migration must confer some advantage, measured in terms of increased fitness. A dominating theory is that the DVM is driven by the attempt to avoid risk from visual predation, and as such is driven by the abundance of light, \citep{}.
+Though understanding the DVM is of central importance in understanding ocean dynamics and carbon flux, \citep{}, the cause of the migration is not entirely clear. Performing the migration must confer some advantage, measured in terms of increased fitness.  A dominating theory is that the DVM is driven by the attempt to avoid risk from visual predation, and as such is driven by the abundance of light, \citep{}, evels (e.g., Murray
+et al. (1912) and Nilsson et al. (2003))..
+
+Emprical studies show that predators generally follow their prey in their vertical migrations, Josse et al. (1998) observed the
+vertical movements of tuna and the sound scattering layer,
+and Sims et al. (2005) observed baskin sharks.
 
 
-Though the DVM acts as a driver for ocean population dynamics, most models incorporating behavior do not incorporate population dynamics. When models include population dynamics, it is by discretizing the ocean into two or three zones and losing the continuous nature of the water column. Conversely, models of the DVM with a continuous ocean do not work with population dynamics, \citep{}, \citep{}.
+The distribution of predators depends on the distribution of prey, and vice versa. In a sense, the predators and prey are playing a game of hide and seek across the water column. Viewing the DVM as an emergent phenomenom from behavorial optimization was pioneered by \citep{Iwasawa}. Qualitive characteristics of the DVM emerged purely from behavior, such as the emergence of the deep scattering layer, \citep{}, and a mixing of predators and prey in the mixed layer at night, \citep{}. This was accomplished by discretizing the water column in two zones, an upper layer and a lower dark layer, and simplifying the day-night cycle into a day and night stage, neglecting dawn and dusk. ith these simplifications
 
-The work we present is a logical continuoation of the work in \citep{}.
-
-We examine how the distribution of predators and prey change throughout the seasons, along with their population dynamics.
-
-Our approach provides a unified framework for examining the population and behavorial time-scales.
+Advances in computational power and new modelling approaches have led to an exploration of models with continuous space and discontinuous time, \citep{verticaljerome}, and fully continuous models \citep{verticaluffe}.
+Expanding the complexity of the models allows prediction of fine-grained dynamics of the vertical migration, such as the exact location and size of the deep scattering layer \citep{verticaljerome,verticaluffe}, and the magnitude of feeding at dawn and dusk, \citep{verticaluffe} incorporate the continuous nature of the column.
+Generally, organisms in game-theortical are modeled as perfectly rational actors, acting on perfect state information. This seems patently unreasonable, as fish and zooplankton do not have perfect information on the state of the water column. In addition the minor gain in fitness from the almost-perfect choice to the perfect choice seems like it would be outweighed by the higher cognitive or sensorial cost of finding the perfect strategy.
 
 
-Understanding advanced interest in undersntading the emergent patterns from the vertical game between predator and prey.
+Models of optimal behavior generally do not incorporate population dynamics, with notable exceptions, \citep{krivan,lake}. In particular, in previous models with a continuous spatial dimension, modeling population dynamics has been infeasible, \citep{.., ..}.
 
-Look at feeding dynamics, and compare the slow population dynamics with fast optimization, look at how optimal behavior changes the daily fluxes.
+
+In this paper we present a new modelling approach for population games in continuous space, applied to for the diel vertical migration. We rephrase the vertical game as a linear complementarity problem, \citep{miller1991copositive}, which can solved efficiently. The model we use for the diel is a logical continuoation of the work in \citep{}.
+Our approach provides a unified framework for examining the population and behavorial time-scales.  Unifying the two time-scales allows us to examine how the vertical distribution of predators and prey change throughout the seasons and how this influences the population dynamics. We investigate the length and magnitude of the feeding rates of predators and consumers at dusk and dawn in spring, summer and autumn.
+
+Animals are not perfectly rational, as being perfectly rational is neither energitically nor physically feasible. We incorporate this feature in our model by letting the animals maximize an expectation value with respect to their strategy, and letting their strategy incorporates noise. This allows us to examine how the optimal behavior with noise differs from that without noise, and how it changes the population dynamics. Again, this is only feasible due to the numerical scheme we have chosen to examine the system. We examine how vertical the migration patterns differ between fully rational actors, and actors with bounded rationality. A change away from full rationality is expected to impact the fitness negatively but by how much? We examine this by looking at the population dynamics for the fully rational organisms compared to those with bounded rationality. As a baseline, we compare against the system with no behavorial optimization to see how the population dynamics evolve there.
+
+
+%Look at feeding dynamics, and compare the slow population dynamics with fast optimization, look at how optimal behavior changes the daily fluxes.
+
+
+%Understanding advanced interest in undersntading the emergent patterns from the vertical game between predator and prey.
+
+
  %Iwasawa et al.
 
 %Reference Jerome, UHTH
+%is generic, and can easily be adapted to other situations.
 
 
-
-%
-Our method of solving the propose a novel method to solve continuous multi-population games, applying it to the concrete example of a predator-prey game.
-
-Animals are not perfectly rational, as being perfectly rational is neither energitically nor physically feasible. We incorporate this feature in our model by letting the animals maximize an expectation value with respect to their strategy, and letting their strategy incorporates noise. This allows us to examine how the optimal behavior with noise differs from that without noise, and how it changes the population dynamics. Again, this is only feasible due to the numerical scheme we have chosen to examine the system.
+%%
+%ur method of solving the propose a novel method to solve continuous multi-population games, applying it to the concrete example of a predator-prey game.

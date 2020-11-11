@@ -29,6 +29,7 @@ def lemke_optimizer_sparse(eco, payoff_matrix = None, dirac_mode = True):
      print(sn.lcp_compute_error(lcp,z,w, ztol), "Error")
     return z
 
+#@njit(parallel = True)
 def total_payoff_matrix_builder_sparse(eco, current_layered_attack = None, dirac_mode = False):
     total_payoff_matrix = np.zeros((eco.populations.size*eco.layers, eco.populations.size*eco.layers))
 

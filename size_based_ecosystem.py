@@ -3,8 +3,7 @@ import casadi as ca
 import scipy.stats as stats
 import lemkelcp as lcp
 from matrix_infrastructure import *
-
-
+from numba import njit
 #eng = matlab.engine.start_matlab()
 
 #Implement simulation class
@@ -206,6 +205,98 @@ class ecosystem_optimization:
 
         return actual_growth - pred_loss
 
+
+def jit_wrapper(eco, i, j, current_layered_attack, dirac_mode = False):
+    resources = eco.water.res_counts
+    populations = eco.populations
+    current_layered_attack = current_layered_attack
+    heat_kernel = eco.heat_kernels[0]
+    clearance_rate = eco.parameters.clearance_rate
+    M = eco.spectral.M
+    who_eats_who = eco.parameters.who_eats_who
+    forager_or_not = eco.parameters.forager_or_not
+    layered_foraging = eco.parameters.layered_foraging
+    efficiency = eco.parameters.efficiency
+    payoff_i = jit_payoff_matrix_builder(resources, populations, i, j, current_layered_attack = current_layered_attack,
+                   heat_kernel = heat_kernel, clearance_rate = clearance_rate,
+                   M = M, who_eats_who = who_eats_who,
+                   forager_or_not = forager_or_not, layered_foraging = layered_foraging, efficiency = efficiency)
+
+    return payoff_i
+
+
+#@njit
+def lin_growth_jit(resources, populations, i, j, strategy, current_layered_attack = None,
+                   heat_kernel = None, clearance_rate = None,
+                   M = None, who_eats_who = None,
+                   forager_or_not = None, layered_foraging = None, efficiency = None):
+
+    x_temp = np.copy(strategy)
+    x_temp[0] = x_temp[0] @ heat_kernel  # Going smooth.
+
+    x_temp[1] = x_temp[1] @ heat_kernel  # Going smooth.
+
+    predator_hunger = clearance_rate[j] * populations[j] * np.dot(M, current_layered_attack[:, j, i] * x_temp[1]) * who_eats_who[j, i]
+
+    x = x_temp[0].reshape(-1, 1)
+    interaction_term = who_eats_who[i, j] * populations[j] * clearance_rate[i]
+    lin_growth = interaction_term * (x_temp[1] * current_layered_attack[:, i, j].T) @ M @ x
+
+    foraging_term_self = (resources * forager_or_not[i] *
+                          clearance_rate[i] * layered_foraging[:, i]).reshape(
+        (1, -1)) @ (M @ x)
+    foraging_term_self = foraging_term_self / (populations.size - 1)
+
+    actual_growth = efficiency * (lin_growth + foraging_term_self)
+
+    pred_loss = x.T @ predator_hunger
+
+    return actual_growth - pred_loss
+
+@njit(parallel=True, fastmath=True)
+def jit_payoff_matrix_builder(resources, populations, i, j, current_layered_attack,
+                   heat_kernel = None, clearance_rate = None,
+                   M = None, who_eats_who = None,
+                   forager_or_not = None, layered_foraging = None, efficiency = None):
+    layers = current_layered_attack.shape[0]
+    payoff_i = np.zeros((current_layered_attack.shape[0], current_layered_attack.shape[0]))
+    for k in range(current_layered_attack.shape[0]):
+        one_k_vec = np.zeros(layers)
+        one_k_vec[k] = 1
+        for n in range(layers):
+            one_n_vec = np.zeros(layers)
+            one_n_vec[n] = 1
+            strat_mat = np.vstack((one_k_vec, one_n_vec))
+            x_temp = np.copy(strat_mat)
+            x_temp[0] = x_temp[0] @ heat_kernel  # Going smooth.
+
+            x_temp[1] = x_temp[1] @ heat_kernel  # Going smooth.
+
+            predator_hunger = clearance_rate[j] * populations[j] * np.dot(M, current_layered_attack[:, j, i] * x_temp[1]) * \
+                              who_eats_who[j, i]
+
+            x = x_temp[0].reshape(-1, 1)
+            interaction_term = who_eats_who[i, j] * populations[j] * clearance_rate[i]
+            lin_growth = interaction_term * (x_temp[1] * current_layered_attack[:, i, j].T) @ M @ x
+
+            foraging_term_self = (resources * forager_or_not[i] *
+                                  clearance_rate[i] * layered_foraging[:, i]).reshape(
+                (1, -1)) @ (M @ x)
+            foraging_term_self = foraging_term_self / (populations.size - 1)
+
+            actual_growth = efficiency * (lin_growth[0] + foraging_term_self[0])
+
+            pred_loss = x.T @ predator_hunger
+            #print(pred_loss, actual_growth)
+
+            payoff_i[k, n] = actual_growth[0] - pred_loss[0]
+
+            #lin_growth_jit(resources, populations, i, j, strat_mat, current_layered_attack = current_layered_attack,
+                   #heat_kernel = heat_kernel, clearance_rate = clearance_rate,
+                   #M = M, who_eats_who = who_eats_who,
+                   #forager_or_not = forager_or_not, layered_foraging = layered_foraging, efficiency = efficiency).astype(float)
+
+    return payoff_i
 
 def lin_growth_no_pops_no_res(eco, i, j, layered_attack, strategy):
     x_temp = np.copy(strategy)
@@ -660,7 +751,7 @@ def total_payoff_matrix_builder(eco, current_layered_attack = None, dirac_mode =
     for i in range(eco.populations.size):
         for j in range(eco.populations.size):
             if i != j:
-                i_vs_j = payoff_matrix_builder(eco, i, j, current_layered_attack = current_layered_attack, dirac_mode = dirac_mode)
+                i_vs_j = jit_wrapper(eco, i, j, current_layered_attack = current_layered_attack, dirac_mode = dirac_mode) #payoff_matrix_builder
             elif i == j:
                 i_vs_j = np.zeros((eco.layers, eco.layers))
             #if i == 1:
@@ -673,10 +764,12 @@ def total_payoff_matrix_builder(eco, current_layered_attack = None, dirac_mode =
     #total_payoff_matrix = total_payoff_matrix/np.max(-total_payoff_matrix)
     return total_payoff_matrix
 
+
+#@njit(parallel=True)
 def payoff_matrix_builder(eco, i, j, current_layered_attack, dirac_mode = False):
-    payoff_i = np.zeros((eco.layers, eco.layers))
+    payoff_i = np.zeros((current_layered_attack.shape[0], current_layered_attack.shape[0]))
     diracs = eco.dirac_delta_creator_i(0, normalize = True)
-    for k in range(eco.layers):
+    for k in range(current_layered_attack.shape[0]):
         one_k_vec = np.zeros(eco.layers)
         if dirac_mode is True:
             one_k_vec = diracs[i] #np.zeros(eco.layers)
@@ -692,6 +785,8 @@ def payoff_matrix_builder(eco, i, j, current_layered_attack, dirac_mode = False)
             payoff_i[k, n] = eco.lin_growth(i, j, strat_mat, current_layered_attack)
 
     return payoff_i
+
+
 
 
 def graph_builder_old(eco):  # Move into ecosystem class
