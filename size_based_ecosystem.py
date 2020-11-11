@@ -253,7 +253,7 @@ def lin_growth_jit(resources, populations, i, j, strategy, current_layered_attac
 
     return actual_growth - pred_loss
 
-@njit(parallel=True, fastmath=True)
+@njit(fastmath=True)
 def jit_payoff_matrix_builder(resources, populations, i, j, current_layered_attack,
                    heat_kernel = None, clearance_rate = None,
                    M = None, who_eats_who = None,
