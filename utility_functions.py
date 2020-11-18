@@ -243,7 +243,8 @@ def solar_input_calculator(latitude = 55.571831046, longitude = 12.822830042, tz
 
 
 def simulator_new(eco, filename, h_k = None, lemke = True, min_attack_rate = 10**(-4), start_date =  '2014-04-01',
-                  end_date = '2014-10-01', day_interval = 96, latitude = 55.571831046, longitude = 12.822830042, optimal=True, diffusion = 5000, k = 4*0.05, sparse = True):
+                  end_date = '2014-10-01', day_interval = 96, latitude = 55.571831046, longitude = 12.822830042,
+                  optimal=True, diffusion = 5000, k = 4*0.05, sparse = True, population_dynamics = True):
     population_list = []
     resource_list = []
     strategy_list = []
@@ -278,14 +279,14 @@ def simulator_new(eco, filename, h_k = None, lemke = True, min_attack_rate = 10*
         eco.parameters.layered_attack = current_layered_attack
         new_pop = delta_pop * time_step + eco.populations
         error = np.linalg.norm(new_pop - pop_old)
-
-        eco.population_setter(eco.total_growth(x_res) * time_step + eco.populations)
+        if population_dynamics is True:
+            eco.population_setter(eco.total_growth(x_res) * time_step + eco.populations)
         eco.strategy_setter(x_res)
         r_c = np.copy(eco.water.res_counts)
         resource_list.append(r_c)
-
-        eco.water.update_resources(consumed_resources=eco.consumed_resources(), time_step=time_step)
-        eco.water.res_counts = eco.water.res_counts @ h_k
+        if population_dynamics is True:
+            eco.water.update_resources(consumed_resources=eco.consumed_resources(), time_step=time_step)
+            eco.water.res_counts = eco.water.res_counts @ h_k
 
         print(error, eco.populations, np.sum(eco.water.res_counts), time_step, new_pop - pop_old, solar_levels[i])
         time += time_step

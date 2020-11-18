@@ -11,13 +11,13 @@ from numba import njit
 class ecosystem_optimization:
 
     def __init__(self, mass_vector, layers, parameters, spectral, water, l2 = True, output_level = 0, verbose = False, movement_cost = 0.1, time_step = 10**(-4)):
-        self.layers = layers
+        self.layers = spectral.n*spectral.segments
         self.mass_vector = mass_vector
         self.spectral = spectral
-        self.strategy_matrix = np.vstack([np.repeat(1/(spectral.x[-1]), layers)]*mass_vector.shape[0]) # np.zeros((mass_vector.shape[0], layers))
+        self.strategy_matrix = np.vstack([np.repeat(1/(spectral.x[-1]), spectral.segments*spectral.n)]*mass_vector.shape[0]) # np.zeros((mass_vector.shape[0], layers))
         self.populations = parameters.mass_vector**(-0.75)
         self.parameters = parameters
-        self.ones = np.repeat(1, layers)
+        self.ones = np.repeat(1, spectral.n*spectral.segments)
         self.water = water
         self.l2 = l2
         self.output_level = output_level
@@ -743,7 +743,7 @@ def quadratic_optimizer(eco, payoff_matrix = None, prior_sol=None):
 
 
 def total_payoff_matrix_builder(eco, current_layered_attack = None, dirac_mode = False):
-    total_payoff_matrix = np.zeros((eco.populations.size*eco.layers, eco.populations.size*eco.layers))
+    total_payoff_matrix = np.zeros((eco.populations.size*eco.spectral.n*eco.spectral.segments, eco.populations.size*eco.spectral.n*eco.spectral.segments))
 
     if current_layered_attack is None:
         current_layered_attack = eco.parameters.layered_attack
