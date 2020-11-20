@@ -498,7 +498,7 @@ class ecosystem_parameters:
         return 1/(22.3*self.mass_vector**(0.75))
 
     def loss_rate_setter(self):
-        return 0.1*self.mass_vector**(0.75) #Used to be 1.2, but this was annoying
+        return 0.1*22.3*self.mass_vector**(0.75) #Used to be 1.2, but this was annoying
 
     def layer_creator(self, obj, lam = 0.8):
         weights = 2/(1+np.exp(lam*self.spectral.x)) #Replace with actual function
