@@ -15,11 +15,13 @@ def heat_kernel(spectral, t, k):
     normalizations = np.diag(1/normalizations)
     return normalizations @ spectral.M @ out
 
-def total_payoff_matrix_builder_sparse(eco, current_layered_attack = None, dirac_mode = False):
+def total_payoff_matrix_builder_sparse(eco, current_layered_attack = None, dirac_mode = False, depth_based_loss = None):
     total_payoff_matrix = np.zeros((eco.populations.size*eco.layers, eco.populations.size*eco.layers))
 
     if current_layered_attack is None:
         current_layered_attack = eco.parameters.layered_attack
+    if depth_based_loss is None:
+        dpeth_based_loss = np.copy(total_payoff_matrix)
 
     for i in range(eco.populations.size):
         for j in range(eco.populations.size):
@@ -33,6 +35,7 @@ def total_payoff_matrix_builder_sparse(eco, current_layered_attack = None, dirac
 
             total_payoff_matrix[i * eco.layers:(i + 1) * eco.layers, j * eco.layers: (j + 1) * eco.layers] = i_vs_j
 #    print("MAXIMM PAYDAY ORIGINAL",  np.max(total_payoff_matrix))
+    total_payoff_matrix = total_payoff_matrix - depth_based_loss
     total_payoff_matrix[total_payoff_matrix != 0] = total_payoff_matrix[total_payoff_matrix != 0] - np.max(total_payoff_matrix) - 1 #Making sure everything is negative  #- 0.00001
     #total_payoff_matrix = total_payoff_matrix/np.max(-total_payoff_matrix)
     #print(np.where(total_payoff_matrix == 0))

@@ -700,11 +700,14 @@ def quadratic_optimizer(eco, payoff_matrix = None, prior_sol=None):
     print("Here")
     z = ca.vertcat(*[p, y])
     w = ca.vertcat(*[u, v])
+    #
 #    print(np.block([-A]).shape)
     H = np.block([[-payoff_matrix, A.T], [-A, np.zeros((A.shape[0], eco.populations.size))]])
+  #  w = H @ z + q
+
 #    print(H.shape)
     print("Here")
-    f = ca.norm_2(w.T @ z)
+    f = ca.norm_2(w.T @ z) #ca.norm_2()
     if eco.spectral.segments > 1:
         g = ca.vertcat(*[*cont_conds, w - H @ z - q])
 
@@ -713,9 +716,9 @@ def quadratic_optimizer(eco, payoff_matrix = None, prior_sol=None):
 
     print("Here")
 
-    x = ca.vertcat(z, w) #
+    x = z #ca.vertcat(z, w) #
     lbx = np.zeros(x.size())
-    ubg = np.zeros(g.size())
+    ubg = np.zeros(g.size()) #[ca.inf]*int(g.size()[0]) #np.zeros(g.size())
     lbg = np.zeros(g.size())
 
     print("Just before optimizing")
@@ -902,6 +905,19 @@ def foraging_gain_builder(eco, resources = None, dirac_mode = False):
             foraging_gain[forager[0] * eco.layers:(forager[0] + 1) * eco.layers, eater[0] * eco.layers: (eater[0] + 1) * eco.layers] = foraging_gain_i
 
     return foraging_gain
+
+
+
+def depth_based_loss(who_eats_who, depth_loss_matrix, heat_kernels):
+    layers = depth_loss_matrix.shape[1]
+    actors = depth_loss_matrix.shape[0]
+    giant_loss_matrix = np.zeros((layers*actors, layers*actors))
+    for i in range(depth_loss_matrix.shape[0]):
+        eaters = np.where(who_eats_who[:,i] == 1)
+        for eater in eaters:
+            giant_loss_matrix[i * layers:(i + 1) * layers, eater[0] * layers: (eater[0] + 1) * layers] = heat_kernels[i]@depth_loss_matrix[i]/np.sum(who_eats_who[:, i])
+
+    return giant_loss_matrix
 
 
 def loss_and_reward_builder(eco, layered_attack = None, dirac_mode = False):
