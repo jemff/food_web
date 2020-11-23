@@ -21,7 +21,7 @@ def total_payoff_matrix_builder_sparse(eco, current_layered_attack = None, dirac
     if current_layered_attack is None:
         current_layered_attack = eco.parameters.layered_attack
     if depth_based_loss is None:
-        dpeth_based_loss = np.copy(total_payoff_matrix)
+        depth_based_loss = np.copy(total_payoff_matrix)
 
     for i in range(eco.populations.size):
         for j in range(eco.populations.size):

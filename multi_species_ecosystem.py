@@ -1,8 +1,7 @@
 import matplotlib.pyplot as plt
-depth = 45 #Previously 5 has worked well.
-layers = 100 #5 works well.
+depth = 120 #Previously 5 has worked well.
+layers = 120 #5 works well.
 segments = 1
-size_classes = 4
 lam = 2
 simulate = False
 verbose = True
@@ -23,7 +22,8 @@ logn = stats.lognorm.pdf(obj.x, 1, 0)
 obj = spectral_method(depth, layers, segments = segments)
 logn = stats.lognorm.pdf(obj.x, 1, 0)
 
-norm_dist = stats.norm.pdf(obj.x, loc = 6, scale = 6)
+
+norm_dist = stats.norm.pdf(obj.x, loc = 6, scale = 6) #+ 0.1*stats.norm.pdf(obj.x, loc = depth-6, scale = 6)
 res_start = 8*norm_dist #0.1*(1-obj.x/depth)
 res_max = 10*norm_dist
 
@@ -37,7 +37,7 @@ eco.population_setter(np.array([10, 0.1, 0.01, 0.001]) )
 print(params.who_eats_who)
 eco.dirac_delta_creator()
 SOL = lemke_optimizer(eco, payoff_matrix=total_payoff_matrix_builder_sparse(eco))
-for i in range(size_classes):
+for i in range(mass_vector.shape[0]):
     plt.plot(obj.x, SOL[i*layers:(i+1)*layers]@eco.heat_kernels[0])
 plt.show()
 

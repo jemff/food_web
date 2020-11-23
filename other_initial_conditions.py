@@ -2,8 +2,8 @@ import matplotlib.pyplot as plt
 from utility_functions import *
 
 
-depth = 45
-layers = 80
+depth = 120
+layers = 100
 segments = 1
 size_classes = 2
 lam = 300
