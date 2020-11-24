@@ -54,8 +54,6 @@ Incorporating \Cref{eq:prob_dens} in \Cref{eq:population_growth}, we arrive at e
 
 
 \subsubsection*{Fitness proxies and optimal strategies}
-%Fitness proxies
-%Add introduction to fitness.. Potentially split into growth and loss terms, potentially do this further up.
 
 
 The instantaneous fitness of an individual forage fish $(F_p)$ or copepod $(F_c)$ is given by its growth rate at that instant. As fitness is an individual measure, we arrive at the fitness by dividing the population growth rate \Cref{eq:population_growth_prob_dens} by the total population.
@@ -87,59 +85,41 @@ Our model incorporates that fish are not necessarily perfectly rational, but hav
 	&\partial_z \phi_i \mid_{z=0} = 0 \\
   &\partial_z \phi_i \mid_{z = z_0} = 0
 \end{align}
-Leting $\phi$ denote the density of a standard normal distribution, \Cref{eq:density_PDE} has the solution:
-\begin{align}
-  \phi_i(x_0,z,\sigma=0) &= \delta(z-x_0) \\
-  \phi_i(x_0,z,\sigma) &=\kappa(x_0) \frac{1}{\sqrt{2\sigma}} \pa{\phi\pa{\frac{z-x_0}{\sqrt{2\sigma}}} + \phi\pa{\frac{x_0 - z}{\sqrt{2\sigma}}} }
-\end{align}
-where $\kappa(x_0)$ is a normalization parameter to ensure that $f_Y$ is a probability density. The fundamental solution, or Greens function, is thus
-\begin{align}
-  \label{eq:Greens_function}
-  f_Y =\kappa \frac{1}{\sqrt{2\sigma}} \pa{\phi\pa{\frac{z}{\sqrt{2\sigma}}} + \phi\pa{\frac{- z}{\sqrt{2\sigma}}} }
-\end{align}
-
-
-If a consumer has an initial strategy defined by a random variable $X_c$ with density $f_{X_c}$, to find the final strategy $\phi_c$ we need to solve \Cref{eq:density_PDE} with initial value $f_{X_c}$ and rationality $\sigma$. This is found by convolution with the fundamental solution, \Cref{eq:fundamental_solution}:
-\begin{align}
-  \label{eq:realized_distribution}
-	\phi_c = f_X * f_Y(\sigma)
-\end{align}
+If a consumer has an initial strategy defined by a random variable $X_c$ with density $f_{X_c}$, to find the final strategy $\phi_c$ we need to solve \Cref{eq:density_PDE} with initial value $f_{X_c}$ and rationality $\sigma$. This is done with a Greens function approach, using the method of images to ensure the boundary conditions are satisfied. We denote the fundamental solution of \Cref{eq:density_PDE} as $f_Y$.
 %Remark that if $Y$ is a random variable following a truncated normal distribution on $[0,z_0]$ with density $f_Y$, then $\phi_c$ is exactly the density of the random variable $X_{c}+Y$.
 
 
-Having introduced noise to the strategies of consumers and predators, we can find the Nash equilibrium of their optimal distributions without noise. We find the Nash pair by inserting \Cref{eq:realized_distribution} in \Cref{eq:nash_equilibria} and optimizing over $f_{X_i},~i\in \{c, p\}$.
+Having introduced noise to the strategies of consumers and predators, we can find the Nash equilibrium of their optimal distributions without noise. We find the Nash pair by inserting the fundamental solution in \Cref{eq:nash_equilibria} and optimizing over $f_{X_i},~i\in \{c, p\}$.
 \begin{align}
 	f_{X_c}^{*,NE} &=  \argmax_{f_{X_c} \in P(0,z_0)}  \int_0^{z_0} \varepsilon \beta_c(z,t)(f_{X_c} * f_Y) r(z,t) dz \\ & -  P(t)\int_0^{z_0} \beta_p(z,t) (f_{X_c} * f_Y)(f_{X_p}^{*,NE} * f_Y) dz \\
 	f_{X_p}^{*,NE} &=  \argmax_{f_{X_p} \in P(0,z_0)}C(t) \int_0^{z_0} \varepsilon \beta_p(z,t)(f_{X_c}^{*,NE}  * f_Y)(f_{X_p}* f_Y) dz
 \end{align}
 
-The realized distributions are found by convolution with $f_Y$, \Cref{eq:realized_distribution} as
+The realized distributions are found by convolution with $f_Y$ as
 \begin{align}
   \phi_c^{*,NE} &= f_{X_c}^{*,NE} * f_Y \\
   \phi_p^{*,NE} &= f_{X_p}^{*,NE} * f_Y
 \end{align}
 
 \subsubsection*{Spatial discretization}
-We discretize the interval $[0,z_0]$ with a Gauss-Lobatto grid, \citep{kopriva2009implementing}. Working on a Gauss-Lobatto grid, we are working on a grid naturally accomodated to Legendre polynomials, as the nodes correspond to zeros of Legendre polynomials. This allows the use of spectral methods for integration and differentation, which are fully implicit. Spectral methods are particularly well-suited to working with smooth functions, as the accuracy of integration and procedures on smooth-functions improves faster than any polynomial as a function of the number of grid points, \citep{kopriva2009implementing}.
-We approximate pure strategy of being in a point $z_i$  by a hat-function $h_i$, zero everywhere apart from $z_i$. Due to the non-constant interval size we need to find constants $\alpha_i$ so $h_i$ integrates to 1.
+We discretize the interval $[0,z_0]$ with a spectral scheme based on Legenedre polynomials, \citep{kopriva2009implementing}, which allows precise integration and differentation with only relatively few points.
+We approximate pure strategy of being in a point $z_i$  by a normalized hat-function $e_i$, zero everywhere apart from $z_i$.
 \begin{align}
-	&\alpha_i \int_{z_i}^{z_{i+1}} \tilde{h}_i dz = 1 \\
-	&\tilde{h}_i(z_{i-1}) = 0,~ \tilde{h}_i(z_{i+1}) = 0
-  &h_i(z)=\alpha_i \tilde{h}_i(z)
+	& \int_{z_i}^{z_{i+1}} e_i dz = 1 \\
+	&e_i(z_{i-1}) = 0,~ e_i(z_{i+1}) = 0
 \end{align}
 Working on a grid with $N$ points, a strategy chosen by a consumer or predator then becomes a linear combination of hat-functions,
 \begin{align}
   &\phi_{i} = \sum_{j<N} a_{j,i} h_j, \quad i\in \{c,p\} \\
   &\sum_{j<N} a_{j,i} = 1 \quad i\in \{c,p\}
 \end{align}
-. The strategy of a player is fully determined by the $a_i$'s, and using spectral integration we can easily determine integrals of the type $\int_0^{z_0} \phi_c \phi_p dz$
+Then the strategy of a player is fully determined by the $a_i$'s.
 
-When considering non-optimal actors, we need to implement the convolution with $f_Y$, \Cref{realized_distribution}. This is by initially calculating a convolution matrix $C$, \citep{}, which incorporates the normalization constants $\kappa(x_0)$. Using $C$, we can calculate a convolution of a function $f$ with $f_Y$, \Cref{eq:realized_distribution} by taking the matrix-vector product with $C$. Thereby we get a new set of pure strategies, $\hat{h}_i = h_i * f_Y$.
-An added benefit of incorporating bounded rationality then becomes that our strategy profiles are guaranteed to be smooth, decreasing the number of points needed for exact evaluation of the integrals.
+When considering non-optimal actors, we need to implement the convolution with $f_Y$, which also assures that the resulting distrbution is smooth. An added benefit of incorporating bounded rationality then becomes that our strategy profiles are guaranteed to be smooth, decreasing the number of points needed for exact evaluation of the integrals.
 
 
 \subsubsection*{Finding the nash equilibrium}
-By discretizing space, we have reduced an uncountable strategy set to a more manageable finite amount, with pure strategies $h_i$, or $\hat{h}_i$. For brevity, we simply lump them together as $e_i$. The gain of a consumer playing strategy $e_i$ against a predator playing strategy $e_j$ can be determined as $F_c(e_i,e_j)$, and similary for a predator. This allows us to write up payoff matrices $E_c, E_p$, with entry $(i,j)$ determined through $F_k(e_i,e_j), k \in \{c, p\}$.  Both payoff functions are bi-linear in the strategies, so our discretization has reduced the problem to a bimatrix game. A bimatrix game is a special case of a polymatrix game, where $n$ players play against each other in pairwise games and the total payoff is given by the sum of the payoffs across the pairwise interactions. %, which can be done efficiently via. our spectral discretization.
+By discretizing space, we have reduced an uncountable strategy set to a more manageable finite amount, with pure strategies $e_i$. For brevity, we simply lump them together as $e_i$. The gain of a consumer playing strategy $e_i$ against a predator playing strategy $e_j$ can be determined as $F_c(e_i,e_j)$, and similary for a predator. This allows us to write up payoff matrices $E_c, E_p$, with entry $(i,j)$ determined through $F_k(e_i,e_j), k \in \{c, p\}$.  Both payoff functions are bi-linear in the strategies, so our discretization has reduced the problem to a bimatrix game. A bimatrix game is a special case of a polymatrix game, where $n$ players play against each other in pairwise games and the total payoff is given by the sum of the payoffs across the pairwise interactions. %, which can be done efficiently via. our spectral discretization.
 
 
 
@@ -165,24 +145,7 @@ This was done through two different methods. The interior-point method as implem
 
 \subsubsection*{Time evolution}
 
-We solve the time-evolution of the predator and prey populations using a semi-implicit euler scheme. At each step we find the Nash equilibrium based on the last state, and evolve the populations accordingly. The time-evolution of the resource is solved by the method of exponential time differencing, using a first-order difference, \citep{hochbruck2010exponential}. That is, we write up the exact formula for the solution of $r(z,t+\Delta t)$ based on $r(z,t)$
-\begin{align}
-  r(z,t_{i+1}) &= \exp(\Delta t k \part_x^2) r(z,t_{i}) \\
-  & +\int_{t_i}^{t_{i}+\Delta t} \exp(t' k \part_x^2) r(z,t')\pa{1-\frac{r(z,t')}{r_{max}(z)}} \\
-  & - \beta_c(z,t')\phi_c(z,t')C(t') r(z,t') dt'
-\end{align}
-We recognize $\exp(\Delta t k \part_x^2)$ as acting by convolution with the Greens function $G$ of the heat equation, previously seen in the guise of $f_Y$, \Cref{eq:Greens_function}, with $G(k,\Delta t)=f_Y(k\Delta t)$.
-Doing a first order-approximation, defining
-\begin{align}
-  J(z,t_{i}+\Delta t) &= r(z,t_i) \\
-  &+ \left ( r(z,t_i)\pa{1-\frac{r(z,t_i)}{r_{max}(z)}} \right . \\
-  & \left . - \beta_c(z,t_{i+1})\phi_c(z,t_{i+1})C(t_{i+1}) r(z,t_i) \right ) \Delta t
-\end{align}
-We end with the approximation:
-\begin{align}
-	r(z,t_i + \Delta) \approx G(k, \Delta t)*J(z,t_{i}+\Delta t)
-\end{align}
-The choice of using an exponential integrator ensures smoothness of the solution is preserved numerically, and in general the method of exponential integrators is well-suited for stiff problems, \citep{hochbruck2010exponential}.
+We solve the time-evolution of the predator and prey populations using a semi-implicit euler scheme. At each step we find the Nash equilibrium based on the last state, and evolve the populations accordingly. The time-evolution of the resource is solved by the method of exponential time differencing, using a first-order difference, \citep{hochbruck2010exponential}.
 
 \subsubsection*{Model parametrization}
 Following \citep{yodzis1991}, and \citep{kha_2019}, we parametrize our model in a metabolically scaled manner following Kleibers law, \citep{kleiber}.
