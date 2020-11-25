@@ -10,7 +10,7 @@
 \caption{Total populations of consumers \emph{(blue)}, predators, \emph{(red)} and resources \emph{(purple)} from 1st of april to 1st of october. We vary the rationality, from total rationality \emph{(1)}, bounded rationality ($\sigma = 10...$), \emph{(2)} and fully irrational, $\sigma = \infty$, \emph{(3)}.}
 \label{fig:long_term_populations}
 \end{figure}
-The difference in population dynamics between a system with no behavioral optimization, \Cref{fig:long_term_populations}(3), bounded rationality \Cref{fig:long_term_populations}(2) and full rationality \Cref{fig:long_term_populations}(1) is stark. The resources reach a stable level quickly in all three cases, but the populations of consumers and predators differ markedly. The difference in populations between the system with bounded rationality \Cref{fig:long_term_populations}(2) and the fully rational system appears to be negligible, \Cref{fig:long_term_populations}(1). The main driver seems to be the ability to retreat to a refuge, and not exactly how it happens.
+The difference in population dynamics between a system with no behavioral optimization, \Cref{fig:long_term_populations}(3), bounded rationality \Cref{fig:long_term_populations}(2) and full rationality \Cref{fig:long_term_populations}(1) is stark. The resources reach a stable level quickly in all three cases, but the populations of consumers and predators differ markedly. The difference in populations between the system with bounded rationality \Cref{fig:long_term_populations}(2) and the fully rational system appears to be negligible, \Cref{fig:long_term_populations}(1). The main driver of the change in population dynamics seems to be the ability to retreat to a refuge, and not the exact shape of the distributions when interacting. 
 %Large differences between irrational and the rational possibilities
 \begin{figure}[H]
 \includegraphics{plots/growth_short_rational.pdf}
@@ -40,7 +40,9 @@ At midnight \Cref{fig:specific_dists_rational}(3) the consumers are concentrated
 \caption{Daily distribution of consumers \emph{blue} and predators \emph{red} at midnight \emph{(1)}, noon \emph{(2)} and at 18:45, \emph{(3)} with bounded rationality}
 \label{fig:specific_dists_semi_rational}
 \end{figure}
-Examining snapshots of the migration in the ecosystem with bounded rationalty, \Cref{fig:specific_dists_irrational}, we see roughly the same picture as in \Cref{fig:specific_dists_rational}. The greatest difference is at midnight and dusk, \Cref{fig:specific_dists_irrational}(1,3), where the bounded rationality leads to a smooth shape for the distrbution of consumers. At noon, the distributions in the system with bounded rationality \Cref{fig:specific_dists_irrational}(2) and \Cref{fig:specific_dists_rational}(2) are almost entirely equal.
+Examining snapshots of the migration in the ecosystem with bounded rationalty, \Cref{fig:specific_dists_irrational}, we see roughly the same picture as in \Cref{fig:specific_dists_rational}. The greatest difference is at midnight and dusk, \Cref{fig:specific_dists_irrational}(1,3), where the bounded rationality leads to a smooth shape for the distrbution of consumers. At noon, the distributions in the system with bounded rationality \Cref{fig:specific_dists_irrational}(2) and \Cref{fig:specific_dists_rational}(2) are almost entirely equal. The shapes of the distributions at both day and night seem to agree better with observations in the model with bounded rationality, \citep{visser2001observations, hay1991zooplankton}, lending credence to the idea that copepods are not perfectly rational.
+
+%Compare to behavior visser2001observations, hay1991zooplankton
 \begin{figure}[H]
 \includegraphics{plots/heatmapsday90_nonrandom.pdf}
 \caption{Vertical distribution of consumers \emph{(1)} and predators \emph{(2)} throughout the 1st of July. The time is in hours from noon. }
@@ -53,4 +55,5 @@ The vertical migration of consumers, \Cref{fig:heatmaps_90_nonrandom}(1) is clea
 \caption{Vertical distribution of consumers \emph{(1)} and predators \emph{(2)} throughout the 1st of October. The time is in hours from noon.}
 \label{fig:heatmaps_180_nonrandom}
 \end{figure}
-Moving the hands on the clock forward to October, we again see a clearly defined vertical migration, \Cref{fig:heatmaps_180_nonrandom}. The migration differs from the previous migration, in that the descent and ascent are steeper, and the distributions are wider during the night.
+Moving the hands on the clock forward to October, we again see a clearly defined vertical migration, \Cref{fig:heatmaps_180_nonrandom}. The migration differs from the previous migration, in that the descent and ascent are steeper, and the distributions are wider during the night. That vertical migrations change seasonally due to changes in nutrient and light has been studied in the arabian sea, \citep{wang2014seasonal}, and our method enables testable predictions of how this seasonal migration can vary, allowing comparison with large empirical studies \citep{klevjer2016large}.
+%Compare to wang2014seasonal, klevjer2016large, olivar2017mesopelagic, beaugrand2001geographical, colebrook1979continuous
