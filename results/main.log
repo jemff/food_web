@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.18 (TeX Live 2017/Debian) (preloaded format=pdflatex 2020.4.3)  27 NOV 2020 10:59
+This is pdfTeX, Version 3.14159265-2.6-1.40.18 (TeX Live 2017/Debian) (preloaded format=pdflatex 2020.4.3)  27 NOV 2020 11:06
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -1168,23 +1168,23 @@ LaTeX Warning: Reference `fig:specific_dists_irrational' on page 1 undefined on
 LaTeX Warning: Reference `fig:specific_dists_irrational' on page 1 undefined on
  input line 16.
 
-<plots/heatmapsday90_nonrandom.pdf, id=195, 346.955pt x 169.88399pt>
+<plots/heatmapsday90_nonrandom.pdf, id=195, 346.955pt x 170.524pt>
 File: plots/heatmapsday90_nonrandom.pdf Graphic file (type pdf)
 <use plots/heatmapsday90_nonrandom.pdf>
 Package pdftex.def Info: plots/heatmapsday90_nonrandom.pdf  used on input line 
 19.
-(pdftex.def)             Requested size: 346.95415pt x 169.88356pt.
+(pdftex.def)             Requested size: 346.95415pt x 170.52357pt.
 
 Overfull \hbox (1.95415pt too wide) in paragraph at lines 19--20
 [][][] 
  []
 
-<plots/heatmapsday180_nonrandom.pdf, id=198, 346.955pt x 169.88399pt>
+<plots/heatmapsday180_nonrandom.pdf, id=198, 346.955pt x 170.524pt>
 File: plots/heatmapsday180_nonrandom.pdf Graphic file (type pdf)
 <use plots/heatmapsday180_nonrandom.pdf>
 Package pdftex.def Info: plots/heatmapsday180_nonrandom.pdf  used on input line
  26.
-(pdftex.def)             Requested size: 346.95415pt x 169.88356pt.
+(pdftex.def)             Requested size: 346.95415pt x 170.52357pt.
 
 Overfull \hbox (1.95415pt too wide) in paragraph at lines 26--27
 [][][] 
@@ -1200,13 +1200,13 @@ ion: multiple pdfs with page group included in a single page
 Package natbib Warning: Citation `klevjer2016large' on page 10 undefined on inp
 ut line 30.
 
-<plots/growth_short_rational.pdf, id=234, 341.43306pt x 170.71654pt>
+<plots/growth_short_rational.pdf, id=239, 341.43306pt x 170.71654pt>
 File: plots/growth_short_rational.pdf Graphic file (type pdf)
 <use plots/growth_short_rational.pdf>
 Package pdftex.def Info: plots/growth_short_rational.pdf  used on input line 33
 .
 (pdftex.def)             Requested size: 341.4322pt x 170.71611pt.
-<plots/pop_dyn_comp_full_semi_none.pdf, id=239, 341.43306pt x 170.71654pt>
+<plots/pop_dyn_comp_full_semi_none.pdf, id=244, 341.43306pt x 170.71654pt>
 File: plots/pop_dyn_comp_full_semi_none.pdf Graphic file (type pdf)
 <use plots/pop_dyn_comp_full_semi_none.pdf>
 Package pdftex.def Info: plots/pop_dyn_comp_full_semi_none.pdf  used on input l
@@ -1217,7 +1217,7 @@ ine 40.
 pdfTeX warning: pdflatex (file ./plots/growth_short_rational.pdf): PDF inclusio
 n: multiple pdfs with page group included in a single page
 >]
-<plots/populations.pdf, id=285, 341.43306pt x 170.71654pt>
+<plots/populations.pdf, id=288, 341.43306pt x 170.71654pt>
 File: plots/populations.pdf Graphic file (type pdf)
 <use plots/populations.pdf>
 Package pdftex.def Info: plots/populations.pdf  used on input line 48.
@@ -1318,10 +1318,10 @@ r/sfbx1440.pfb></usr/share/texmf/fonts/type1/public/cm-super/sfrm0900.pfb></usr
 /share/texmf/fonts/type1/public/cm-super/sfrm1000.pfb></usr/share/texmf/fonts/t
 ype1/public/cm-super/sfrm1200.pfb></usr/share/texmf/fonts/type1/public/cm-super
 /sfrm1728.pfb></usr/share/texmf/fonts/type1/public/cm-super/sfti1000.pfb>
-Output written on main.pdf (15 pages, 480880 bytes).
+Output written on main.pdf (15 pages, 480956 bytes).
 PDF statistics:
- 436 PDF objects out of 1000 (max. 8388607)
- 383 compressed objects within 4 object streams
+ 442 PDF objects out of 1000 (max. 8388607)
+ 389 compressed objects within 4 object streams
  112 named destinations out of 1000 (max. 500000)
  80 words of extra memory for PDF output out of 10000 (max. 10000000)
 
