@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.18 (TeX Live 2017/Debian) (preloaded format=pdflatex 2020.4.3)  27 NOV 2020 11:06
+This is pdfTeX, Version 3.14159265-2.6-1.40.18 (TeX Live 2017/Debian) (preloaded format=pdflatex 2020.4.3)  27 NOV 2020 12:21
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -1118,47 +1118,61 @@ t line 26.
 Package srcltx Info: Expanded filename `model.tex' to `model.tex' on input line
  133.
 :<+ model.tex
-(./model.tex [2] [3]
-Overfull \hbox (17.66469pt too wide) detected at line 52
+(./model.tex [2]
+<plots/sketch_for_article.pdf, id=64, 433.62pt x 289.08pt>
+File: plots/sketch_for_article.pdf Graphic file (type pdf)
+<use plots/sketch_for_article.pdf>
+Package pdftex.def Info: plots/sketch_for_article.pdf  used on input line 8.
+(pdftex.def)             Requested size: 433.61894pt x 289.07928pt.
+
+Overfull \hbox (88.61894pt too wide) in paragraph at lines 8--11
+[][][]
+ []
+
+[3 <./plots/sketch_for_article.pdf>]
+Overfull \hbox (17.66469pt too wide) detected at line 57
 []
  []
 
 [4]
 
-LaTeX Warning: Reference `eq:density_PDEs' on page 1 undefined on input line 86
+LaTeX Warning: Reference `eq:density_PDEs' on page 1 undefined on input line 92
 .
 
 [5] [6]
+Overfull \hbox (14.70847pt too wide) in paragraph at lines 154--155
+\T1/cmr/m/n/10 point method as im-ple-mented in IPOPT, [[]], called via. the au
+to-differentation
+ []
 
-Package natbib Warning: Citation `yodzis1991' on page 7 undefined on input line
- 155.
+[7]
+
+Package natbib Warning: Citation `yodzis1991' on page 8 undefined on input line
+ 161.
 
 
-Package natbib Warning: Citation `kleiber' on page 7 undefined on input line 15
-5.
+Package natbib Warning: Citation `kleiber' on page 8 undefined on input line 16
+1.
 
-[7])
+)
 :<-
 Package srcltx Info: Expanded filename `results.tex' to `results.tex' on input 
 line 134.
 :<+ results.tex
 (./results.tex
-<plots/specific_dists_rational.pdf, id=169, 341.43306pt x 170.71654pt>
+<plots/specific_dists_rational.pdf, id=147, 341.43306pt x 170.71654pt>
 File: plots/specific_dists_rational.pdf Graphic file (type pdf)
 <use plots/specific_dists_rational.pdf>
 Package pdftex.def Info: plots/specific_dists_rational.pdf  used on input line 
 3.
 (pdftex.def)             Requested size: 341.4322pt x 170.71611pt.
-<plots/specific_dists_semi_rational.pdf, id=176, 341.43306pt x 170.71654pt>
+ [8]
+<plots/specific_dists_semi_rational.pdf, id=163, 341.43306pt x 170.71654pt>
 File: plots/specific_dists_semi_rational.pdf Graphic file (type pdf)
 <use plots/specific_dists_semi_rational.pdf>
 Package pdftex.def Info: plots/specific_dists_semi_rational.pdf  used on input 
 line 12.
 (pdftex.def)             Requested size: 341.4322pt x 170.71611pt.
- [8 <./plots/specific_dists_rational.pdf>]
-
-LaTeX Warning: Reference `fig:specific_dists_irrational' on page 1 undefined on
- input line 16.
 
 
 LaTeX Warning: Reference `fig:specific_dists_irrational' on page 1 undefined on
@@ -1168,7 +1182,17 @@ LaTeX Warning: Reference `fig:specific_dists_irrational' on page 1 undefined on
 LaTeX Warning: Reference `fig:specific_dists_irrational' on page 1 undefined on
  input line 16.
 
-<plots/heatmapsday90_nonrandom.pdf, id=195, 346.955pt x 170.524pt>
+
+LaTeX Warning: Reference `fig:specific_dists_irrational' on page 1 undefined on
+ input line 16.
+
+[9 <./plots/specific_dists_rational.pdf> <./plots/specific_dists_semi_rational.
+pdf
+
+pdfTeX warning: pdflatex (file ./plots/specific_dists_semi_rational.pdf): PDF i
+nclusion: multiple pdfs with page group included in a single page
+>]
+<plots/heatmapsday90_nonrandom.pdf, id=184, 346.955pt x 170.524pt>
 File: plots/heatmapsday90_nonrandom.pdf Graphic file (type pdf)
 <use plots/heatmapsday90_nonrandom.pdf>
 Package pdftex.def Info: plots/heatmapsday90_nonrandom.pdf  used on input line 
@@ -1179,7 +1203,7 @@ Overfull \hbox (1.95415pt too wide) in paragraph at lines 19--20
 [][][] 
  []
 
-<plots/heatmapsday180_nonrandom.pdf, id=198, 346.955pt x 170.524pt>
+<plots/heatmapsday180_nonrandom.pdf, id=187, 346.955pt x 170.524pt>
 File: plots/heatmapsday180_nonrandom.pdf Graphic file (type pdf)
 <use plots/heatmapsday180_nonrandom.pdf>
 Package pdftex.def Info: plots/heatmapsday180_nonrandom.pdf  used on input line
@@ -1190,39 +1214,34 @@ Overfull \hbox (1.95415pt too wide) in paragraph at lines 26--27
 [][][] 
  []
 
-[9 <./plots/specific_dists_semi_rational.pdf> <./plots/heatmapsday90_nonrandom.
-pdf
+[10 <./plots/heatmapsday90_nonrandom.pdf>]
 
-pdfTeX warning: pdflatex (file ./plots/heatmapsday90_nonrandom.pdf): PDF inclus
-ion: multiple pdfs with page group included in a single page
->]
-
-Package natbib Warning: Citation `klevjer2016large' on page 10 undefined on inp
+Package natbib Warning: Citation `klevjer2016large' on page 11 undefined on inp
 ut line 30.
 
-<plots/growth_short_rational.pdf, id=239, 341.43306pt x 170.71654pt>
+<plots/growth_short_rational.pdf, id=223, 341.43306pt x 170.71654pt>
 File: plots/growth_short_rational.pdf Graphic file (type pdf)
 <use plots/growth_short_rational.pdf>
 Package pdftex.def Info: plots/growth_short_rational.pdf  used on input line 33
 .
 (pdftex.def)             Requested size: 341.4322pt x 170.71611pt.
-<plots/pop_dyn_comp_full_semi_none.pdf, id=244, 341.43306pt x 170.71654pt>
+<plots/pop_dyn_comp_full_semi_none.pdf, id=228, 341.43306pt x 170.71654pt>
 File: plots/pop_dyn_comp_full_semi_none.pdf Graphic file (type pdf)
 <use plots/pop_dyn_comp_full_semi_none.pdf>
 Package pdftex.def Info: plots/pop_dyn_comp_full_semi_none.pdf  used on input l
 ine 40.
 (pdftex.def)             Requested size: 341.4322pt x 170.71611pt.
-[10 <./plots/heatmapsday180_nonrandom.pdf> <./plots/growth_short_rational.pdf
+[11 <./plots/heatmapsday180_nonrandom.pdf> <./plots/growth_short_rational.pdf
 
 pdfTeX warning: pdflatex (file ./plots/growth_short_rational.pdf): PDF inclusio
 n: multiple pdfs with page group included in a single page
 >]
-<plots/populations.pdf, id=288, 341.43306pt x 170.71654pt>
+<plots/populations.pdf, id=272, 341.43306pt x 170.71654pt>
 File: plots/populations.pdf Graphic file (type pdf)
 <use plots/populations.pdf>
 Package pdftex.def Info: plots/populations.pdf  used on input line 48.
 (pdftex.def)             Requested size: 341.4322pt x 170.71611pt.
- [11 <./plots/pop_dyn_comp_full_semi_none.pdf> <./plots/populations.pdf
+ [12 <./plots/pop_dyn_comp_full_semi_none.pdf> <./plots/populations.pdf
 
 pdfTeX warning: pdflatex (file ./plots/populations.pdf): PDF inclusion: multipl
 e pdfs with page group included in a single page
@@ -1233,23 +1252,20 @@ input line 135.
 :<+ discussion.tex
 (./discussion.tex
 
-Package natbib Warning: Citation `thomasetal' on page 12 undefined on input lin
+Package natbib Warning: Citation `thomasetal' on page 13 undefined on input lin
 e 10.
 
 
-Package natbib Warning: Citation `uhth' on page 12 undefined on input line 10.
+Package natbib Warning: Citation `uhth' on page 13 undefined on input line 10.
 
 
-Package natbib Warning: Citation `...' on page 12 undefined on input line 13.
+Package natbib Warning: Citation `...' on page 13 undefined on input line 13.
 
 
-Package natbib Warning: Citation `...' on page 12 undefined on input line 13.
+Package natbib Warning: Citation `...' on page 13 undefined on input line 13.
 
 
-Package natbib Warning: Citation `...' on page 12 undefined on input line 13.
-
-
-LaTeX Warning: Reference `fig' on page 1 undefined on input line 13.
+Package natbib Warning: Citation `...' on page 13 undefined on input line 13.
 
 
 LaTeX Warning: Reference `fig' on page 1 undefined on input line 13.
@@ -1257,7 +1273,10 @@ LaTeX Warning: Reference `fig' on page 1 undefined on input line 13.
 
 LaTeX Warning: Reference `fig' on page 1 undefined on input line 13.
 
-[12]
+
+LaTeX Warning: Reference `fig' on page 1 undefined on input line 13.
+
+[13]
 Overfull \hbox (20.12994pt too wide) in paragraph at lines 44--46
 \T1/cmr/m/n/10 the self-interaction is me-di-ated by the other player. Our game
  has polymorphic-
@@ -1269,14 +1288,14 @@ Overfull \hbox (2.44907pt too wide) in paragraph at lines 48--50
 g more species.
  []
 
-[13])
+[14])
 :<-
 :<+ main.bbl
-(./main.bbl [14])
+(./main.bbl [15])
 :<-
 
 AED: lastpage setting LastPage
-[15]
+[16]
 
 Package natbib Warning: There were undefined citations.
 
@@ -1294,13 +1313,13 @@ LaTeX Warning: There were undefined references.
 Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 142.
  ) 
 Here is how much of TeX's memory you used:
- 20360 strings out of 492982
- 348617 string characters out of 6134897
- 454474 words of memory out of 5000000
- 23418 multiletter control sequences out of 15000+600000
+ 20340 strings out of 492982
+ 348452 string characters out of 6134897
+ 452474 words of memory out of 5000000
+ 23424 multiletter control sequences out of 15000+600000
  19263 words of font info for 64 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
- 48i,14n,45p,3215b,450s stack positions out of 5000i,500n,10000p,200000b,80000s
+ 48i,14n,45p,3215b,452s stack positions out of 5000i,500n,10000p,200000b,80000s
 {/usr/share/texmf/fonts/enc/dvips/cm-super/cm-super-t1.enc}</usr/share/texliv
 e/texmf-dist/fonts/type1/public/amsfonts/cm/cmex10.pfb></usr/share/texlive/texm
 f-dist/fonts/type1/public/amsfonts/cm/cmmi10.pfb></usr/share/texlive/texmf-dist
@@ -1318,10 +1337,10 @@ r/sfbx1440.pfb></usr/share/texmf/fonts/type1/public/cm-super/sfrm0900.pfb></usr
 /share/texmf/fonts/type1/public/cm-super/sfrm1000.pfb></usr/share/texmf/fonts/t
 ype1/public/cm-super/sfrm1200.pfb></usr/share/texmf/fonts/type1/public/cm-super
 /sfrm1728.pfb></usr/share/texmf/fonts/type1/public/cm-super/sfti1000.pfb>
-Output written on main.pdf (15 pages, 480956 bytes).
+Output written on main.pdf (16 pages, 484016 bytes).
 PDF statistics:
- 442 PDF objects out of 1000 (max. 8388607)
- 389 compressed objects within 4 object streams
- 112 named destinations out of 1000 (max. 500000)
- 80 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 421 PDF objects out of 1000 (max. 8388607)
+ 366 compressed objects within 4 object streams
+ 85 named destinations out of 1000 (max. 500000)
+ 85 words of extra memory for PDF output out of 10000 (max. 10000000)
 
