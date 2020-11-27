@@ -1,0 +1,50 @@
+\section{Discussion}
+\begin{enumerate}
+  \item Bounded rationality vs full vs empirics
+
+  When looking at ecosystems, there are two main approaches to incorporating behavior:
+  \begin{enumerate}
+    \item Assume perfect rationality
+    \item Ignore it
+  \end{enumerate}
+  The middle way, where animals take rational choices but with a bound on their rationality is typically not included. Imperfect rationality captures that animals might not be perfectly aware of the state of a system, or when distinguishing between almost-equivalent options, choosing the best might require a disprortionate effort. The distribution of copepods in the water column with bounded rationality closely resembles empirical distributions, \citep{thomasetal}, as the model with perfect rationality suffers from an unphysical discontinuity, also seen in \citep{uhth}. Comparing the distributions with perfectly rational behavior to the ones with bounded behavior also
+
+  \item Population dynamics, short term
+In short-term models, constant populations are typically assumed \citep{...,...,...}. Though the populations change dramatically over the long term,\Cref{fig}, the population levels are essentially unchanged on a daily basis,\Cref{fig}. The proposed population-dynamical passes an essential reality test, as wildly fluctuating populations in the short term cannot represent the underlying physical reality. It becomes clear that the near-constant short-term population emerges from the behavorial optimization in the model when comparing to the model with no behavior, \Cref{fig}.
+%It is interesting that instead of assuming the phenomenom, it emerges purely as a function of the behaviorial optimization migration
+
+
+  \item Population dynamics, long term
+  When looking at the population dynamics of a predator-prey system through half a year, the seasonal impacts stand out. Even though our model is simple in nature, it can catch essential features as the spring-bloom, and varying phytoplankton throughout the seaonss.
+
+  The long-term patterns are invisible when investigating the short-term fluctuations. As we can see the primary trophic interactions happens in a very short time, the system is fundamentally a slow system driven by a fast underlying dynamic.
+
+  \item Distributions throughout the day, snapshot comparison with uffe and toby and Jerome
+
+The migration patterns that we find with our model agree with  recent models of vertical migrations, also based on a game-theoretical perspective. This strengthens the conclusions of all three model families, as they are based on fundamentally different numerical and algorithmic schemes.
+  \item Full migration pattern throughout the day, seasonal differences and empriical findings
+
+The driver of seasonal variations in migration patterns, is a strong point of the model. Clear variatinos in the expected distributions stand out, and these can theoretically be tested via. echo-acoustics.
+%Can see clear emergence of deep scattering layer
+
+
+
+  %\item Applications to real ecosystems
+
+
+  \item Model advantages
+The fitness proxy we use guarantees an ESS, \citep{krivan}. Combing our modeling approach with these theoretical results, it becomes feasible to model multi-actor multi-environment ecosystems. A weakness of the model is, of course, that it does not incorporate a concept of satiation nor ontogenics.
+
+  \item Short feeding bouts driving populatino dynamics,
+
+As short feeding bouts are the drivers of the population dynamics, it becomes quite hard to formulate a long-term model of the slow population dynamics without taking into account the fast feeding dynamics, as these are strongly non-linear and feedback-driven
+  \item Variation in feeding bouts and relation to migration rationality
+
+The boundedly rational distributions we arrive at with our model for zooplankton and forage fish seem to agree qualitively with observations to a relatively degree. As such, our model provides a tentative answer to how much realism is lost by the usual assumption of complete rationality. The results we portray show that the overall patterns agree between a population with bounded rationality and one which is completely rational. The usual assumption of complete rational seems to be reasonable modelling assumption, but care should be taken. We show that it is possible to include bounded rationality in a systematic fashion, allowing it as a tuning parameter in future models.
+  \item Mean-field game
+ The game we study is a mean field game (MFG), where the self-interaction is mediated by the other player. Our game has polymorphic-monomorphic equivalency due to the bilinear nature. Mono-Poly is a necessary requirement for models of DVM, since not all copepods/fish behave exactly the same, and we thereby encapsulate minor variations in each fish.
+  \item Cost of migration
+  The cost of migration is not incorporated in the model, which it could be. Howver, the cost of mirgation could also be introduced through a proxy where there is a constant species-specific penalty-field incentivizing specific depths, eg. disallowing infinetly deep migrations.
+  \item Further work - More species, Vinogradov ladder/cascading migrations?
+  The model we have developed is ready-made for incorporating more species. A logical next step would be to examine the concept of cascading migrations and Vinogradovs ladder. Our approach essentially only depends on the linearity of the fitness proxy, so it could be imagined that ontogenics could be incorporated, via. structuring the populations and considering fitness based on the Leslie matrix, enabling a proxy for life-cycle optimization.
+\end{enumerate}
