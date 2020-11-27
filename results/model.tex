@@ -15,10 +15,10 @@ The light intensity $I$ at depth $z$ is approximately $I(z) = I_0\exp(-kz)$, and
 \end{align*}
 
 
-We model the light-levels at the surface via. the python package pvlib, \citep{}, using a simple Clear Sky model in Oresund between Denmark and Sweden. The light levels are given by the direct horizontal light intensity at the sea-surface, neglecting more complicated optic effects. The model takes the precitibale water $w_a$, and aerosol optical depth, $aod$. We model light decay throughout the water column as $\exp(-kz)$.
+We model the light-levels at the surface via. the python package pvlib, using a simple Clear Sky model in Oresund between Denmark and Sweden. The light levels are given by the direct horizontal light intensity at the sea-surface, neglecting more complicated optic effects. The model takes the precitibale water $w_a$, and aerosol optical depth, $aod$. We model light decay throughout the water column as $\exp(-kz)$.
 
 
-In contrast to forage fish, copepods are olfactory predators, \citep{}, and their clearance rate, $\beta_c$, is essentially independent of depth and light levels, \citep{}.
+In contrast to forage fish, copepods are olfactory predators, and their clearance rate, $\beta_c$, is essentially independent of depth and light levels.
 \begin{align*}
 	\beta_c(z,t) &=  \beta_{c,0}
 \end{align*}
@@ -157,21 +157,24 @@ With a fast algorithm for finding the Nash Equilibrium in hand, we are able to s
 %We solve the time-evolution of the predator and prey populations using a semi-implicit euler scheme. At each step we find the Nash equilibrium based on the last state, and evolve the populations accordingly. The time-evolution of the resource is solved by the method of exponential time differencing, using a first-order difference, \citep{hochbruck2010exponential}, ie. a mixture of a first-order method and an exact Greens function approach.
 
 \subsubsection*{Model parametrization}
-Following \citep{yodzis1991}, and \citep{kha_2019}, we parametrize our model in a metabolically scaled manner following Kleibers law, \citep{kleiber}.
+Following \citep{yodzis1991}, we parametrize the clearance and loss rates in a metabolically scaled manner following Kleibers law, \citep{kleiber}, using scaling constants from \citep{kha_2019},. We use the default parameters in the clear-sky model, modelling a sequence of moonless nights. This is a bit of a simplification, but it should not have a great effect on our results.
 
 
 \begin{tabular}{l | l | l}
-  Precipitable water & $w_a$ & 1 $g \cdot m^{-3}$\\
+  Precipitable water & $w_a$ & 1 g $\cdot$ m$^{-3}$\\
   Aeorosol optical depth & $aod$ & 0.1 \\
-  Light decay & $k$ & $0.05 m^{-1}$\\
-  Ocean depth & $z_0$ & $170 m$ \\
-  Minimal attack rate & $\beta_0$ & $5 \cdot 10^{-3} m^{3} year^{-1}$ \\
+  Light decay & $k$ & 0.1 m$^{-1}$\\
+  Ocean depth & $z_0$ & 90 m \\
   Consumer mass & $m_c$ & 0.05 $g$ \\
   Predator mass & $m_p$ & 20 $g$ \\
-  Consumer clearance rate & $\beta_c$ & 32 $m^{3} year^{-1}$ \\
-  Predator clearance rate & $\beta_p$ & 2837 $m^3 year^{-1}$ \\
-  Phytoplankton growth & $\lambda$ & 300 $year^{-1}$ \\
-  Phytoplankton max & $r_{max}$ & $10\mathcal{N}(0,3)$ \\
-  Irrationality & $\sigma$ & 160 $m^2 year^{-1}$ \\
-  Diffusion rate & k & 500 $m^{2} year^{-1}$
+  Consumer clearance rate & $\beta_c$ & 32 m$^{3}$ year$^{-1}$ \\
+  Predator clearance rate & $\beta_p$ & 2800 m$^3$ year$^{-1}$ \\
+  Consumer metabolic rate & $\mu_c$ & 0.24 g$^{3}$ year$^{-1}$ \\
+  Predator metabolic rate & $\mu_p$ & 21 g$^3$ year$^{-1}$ \\
+
+  Minimal attack rate & $\beta_0$ & $5 \cdot 10^{-3} \beta_p$ \\
+  Phytoplankton growth & $\lambda$ & 100 year$^{-1}$ \\
+  Phytoplankton max & $r_{max}$ & $10\mathcal{N}(0,6)$ g $m$^{-1} \\
+  Irrationality & $\sigma$ & 14 $m^2$ \\
+  Diffusion rate & k & 500 m$^{2}$ year$^{-1}$
 \end{tabular}
