@@ -127,7 +127,7 @@ Finding the Nash Equilibrium in a game in continuous space is usually a very har
 By discretizing space, we have reduced an uncountable strategy set to a more manageable finite amount, with pure strategies $e_i$. The gain of a consumer playing strategy $e_i$ against a predator playing strategy $e_j$ can be determined as $F_c(e_i,e_j)$, \Cref{eq:fitness}, and similarly for a predator. Both payoff functions are bi-linear in the strategies, which allows us to write up payoff matrices $E_c, E_p$, with entry $(i,j)$ determined through $F_k(e_i,e_j), k \in \{c, p\}$. If a predator plays strategy $s_p$, given by a vector $(a_1,\dots,a_N)$ and a consumer plays strategy $s_c$ given by $(b_1,\dots,b_N)$, the consumer and predator payoffs can be determined through $E_c,E_p$ as:
 \begin{align*}
   F_c(s_c,s_p)&=\ip{s_c}{E_c s_p} \\
-  F_p(s_c,s_p)&=\ip{s_p}{E_p s_p}
+  F_p(s_c,s_p)&=\ip{s_p}{E_p s_c}
 \end{align*}
 Our discretization has reduced the problem to a bimatrix game, where finding the Nash equilibrium is more tractable. A bimatrix game is a special case of a polymatrix game, where $n$ players play against each other in pairwise games and the total payoff is given by the sum of the payoffs across the pairwise interactions.
 
