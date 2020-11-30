@@ -707,7 +707,7 @@ def quadratic_optimizer(eco, payoff_matrix = None, prior_sol=None):
 
 #    print(H.shape)
     print("Here")
-    f = ca.norm_2(w.T @ z) #ca.norm_2()
+    f = w.T @ z #ca.norm_2()
     if eco.spectral.segments > 1:
         g = ca.vertcat(*[*cont_conds, w - H @ z - q])
 
@@ -716,7 +716,7 @@ def quadratic_optimizer(eco, payoff_matrix = None, prior_sol=None):
 
     print("Here")
 
-    x = z #ca.vertcat(z, w) #
+    x = ca.vertcat(z, w) #
     lbx = np.zeros(x.size())
     ubg = np.zeros(g.size()) #[ca.inf]*int(g.size()[0]) #np.zeros(g.size())
     lbg = np.zeros(g.size())
