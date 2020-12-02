@@ -722,7 +722,7 @@ def quadratic_optimizer(eco, payoff_matrix = None, prior_sol=None):
     lbg = np.zeros(g.size())
 
     print("Just before optimizing")
-    s_opts = {'ipopt': {'print_level': 5, 'tol':1E-5}}
+    s_opts = {'ipopt': {'print_level': 5, 'tol':1E-7}}
     prob = {'x': x, 'f': f, 'g': g}
     solver = ca.nlpsol('solver', 'ipopt', prob, s_opts)
     print("Solver decleared")

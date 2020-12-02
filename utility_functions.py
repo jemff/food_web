@@ -2,6 +2,7 @@ import siconos.numerics as sn
 import pickle as pkl
 import copy as copy
 from size_based_ecosystem import *
+import LCPSolve as lcpp
 
 import pandas as pd
 import pvlib
@@ -66,7 +67,12 @@ def lemke_optimizer(eco, payoff_matrix = None, dirac_mode = True):
     options.dparam[sn.SICONOS_DPARAM_TOL] = 10**(-5)
     info = sn.linearComplementarity_driver(lcp, z, w, options)
     if sn.lcp_compute_error(lcp,z,w, ztol) > 10**(-5):
-     print(sn.lcp_compute_error(lcp,z,w, ztol), "Error")
+     print(sn.lcp_compute_error(lcp, z, w, ztol), "Error")
+
+    w_ret, z_ret, ret = lcpp.LCPSolve(H, q.flatten(), pivtol=10**(-8))
+
+    print(ret)
+
     return z
 
 
