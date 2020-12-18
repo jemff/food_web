@@ -50,7 +50,7 @@ The resource cannot move actively, so its time dynamics are naturally specified 
 The total population growth of the consumer population is found by integrating the local grazing rate over the entire water column multiplied by a conversion efficiency $\epsilon$, subtracting the loss from predation. The growth of the predators is given by the predation rate integrated over the water column:
 %Incorporating \Cref{eq:prob_dens} in \Cref{eq:population_growth}, we arrive at equations for the population dynamics governed by probability densities:
 \begin{align}
-	\dot{r} &= r(z,t)\pa{1-\frac{r(z,t)}{r_{max}(z)}} - \beta_c(z,t)\phi_c(z,t)C(t) r(z,t)  + k \partial_x^2 r(z,t)\\
+	\dot{r} &= r(z,t)\pa{1-\frac{r(z,t)}{r_{max}(z)}} - \beta_c(z,t)\phi_c(z,t)C(t) r(z,t)  + k \partial_z^2 r(z,t)\\
 	\dot{C} &= C(t)\left ( \int_0^{z_0} \varepsilon \beta_c(z,t)\phi_c(z,t)r(z,t) dz- P(t)\int_0^{z_0} \beta_p(z,t) \phi_c(z,t) \phi_p(z,t) dz - \mu_C \right ) \\
 	\dot{P} &= P(t) \left ( C(t )\int_0^{z_0} \varepsilon \beta_p(z,t) \phi_c(z,t)\phi_p(z,t) dz - \mu_P \right )
   \label{eq:population_growth_prob_dens}
@@ -114,7 +114,7 @@ We approximate pure strategy of being in a point $z_i$  by a normalized hat-func
 Working on a grid with $N$ points, a strategy chosen by a consumer or predator then becomes a linear combination of hat-functions,
 \begin{align*}
   &\phi_{i} = \sum_{j<N} a_{j,i} e_j, \quad i\in \{c,p\} \\
-  &\sum_{j<N} a_{j,i} = 1 \quad i\in \{c,p\}
+  &\sum_{j<N} a_{j,i} = 1 \quad i\in \{c,p\}todo
 \end{align*}
 The strategy of a player is fully determined by the $a_i$'s.
 
@@ -127,8 +127,9 @@ Finding the Nash Equilibrium in a game in continuous space is usually a very har
 By discretizing space, we have reduced an uncountable strategy set to a more manageable finite amount, with pure strategies $e_i$. The gain of a consumer playing strategy $e_i$ against a predator playing strategy $e_j$ can be determined as $F_c(e_i,e_j)$, \Cref{eq:fitness}, and similarly for a predator. Both payoff functions are bi-linear in the strategies, which allows us to write up payoff matrices $E_c, E_p$, with entry $(i,j)$ determined through $F_k(e_i,e_j), k \in \{c, p\}$. If a predator plays strategy $s_p$, given by a vector $(a_1,\dots,a_N)$ and a consumer plays strategy $s_c$ given by $(b_1,\dots,b_N)$, the consumer and predator payoffs can be determined through $E_c,E_p$ as:
 \begin{align*}
   F_c(s_c,s_p)&=\ip{s_c}{E_c s_p} \\
-  F_p(s_c,s_p)&=\ip{s_p}{E_p s_c}
+  F_p(s_c,s_p)&=\ip{s_p}{E_c s_c}
 \end{align*}
+\todo{Ep or Ec?}
 Our discretization has reduced the problem to a bimatrix game, where finding the Nash equilibrium is more tractable. A bimatrix game is a special case of a polymatrix game, where $n$ players play against each other in pairwise games and the total payoff is given by the sum of the payoffs across the pairwise interactions.
 
 It does not appear to have diffused through the literature, but the Nash equilibrium of a polymatrix game can be found by solving a linear complementarity problem \citep{miller1991copositive}. Therefore our approach provides an avenue to reduce the intractable problem of finding a Nash equilibrium of a multiplayer game in continuous space to solving an optimization problem.
@@ -146,9 +147,9 @@ Applying the results of \citep{miller1991copositive}, to find the Nash equilibri
 \end{align}
 where
 \begin{align*}
-  H &= \begin{bmatrix} -R & -A^T \\ A & 0 \end{bmatrix}
-	A &= \begin{bmatrix} -1 &-1 & \dots & -1 \\  -1 &-1 & \dots & -1 \end{bmatrix} \\
-	q &= \begin{pmatrix} 0 &\dots & 0 & -1 & -1 \end{pmatrix}   \\
+  H &= \begin{bmatrix} -R & -A^T \\ A & 0 \end{bmatrix} \\
+	A &= \begin{bmatrix} -1 & \dots & -1 & 0 & \dots & 0 \\ 0 & \dots & 0 & -1 & \dots & -1 \end{bmatrix} \\
+	q &= \begin{pmatrix} 0 & \dots & 0 & -1 & \dots & -1 \end{pmatrix}
 \end{align*}
 
 Solving \Cref{eq:lcp} was done through two different methods. The interior-point method as implemented in IPOPT, \citep{wachter2006implementation}, called via. the auto-differentation software CasADi \citep{Andersson2019}, and Lemkes Algorithm implemented in the Numerics package in Siconos, \citep{acary2019introduction}. Experience showed that Lemkes algorithm was the fastest, but there is probably a situation where the problem has a sparsity structure favorable to IPOPT.
