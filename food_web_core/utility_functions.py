@@ -616,16 +616,16 @@ def simulator_new(eco, filename, h_k = None, lemke = True, min_attack_rate = 10*
         print(error, eco.populations, np.sum(eco.water.res_counts), time_step, new_pop - pop_old, solar_levels[i])
         time += time_step
 
-    with open('eco'+filename+'.pkl', 'wb') as f:
+    with open(filename + '/' + 'eco' +'.pkl', 'wb') as f:
         pkl.dump(eco, f, pkl.HIGHEST_PROTOCOL)
 
-    with open('strategies' + filename + '.pkl', 'wb') as f:
+    with open(filename + '/' + 'strategies' + filename + '.pkl', 'wb') as f:
         pkl.dump(strategy_list, f, pkl.HIGHEST_PROTOCOL)
 
-    with open('population' + filename + '.pkl', 'wb') as f:
+    with open(filename + '/' + 'population' + '.pkl', 'wb') as f:
         pkl.dump(population_list, f, pkl.HIGHEST_PROTOCOL)
 
-    with open('resource' + filename + '.pkl', 'wb') as f:
+    with open(filename + '/' + 'resource' + '.pkl', 'wb') as f:
         pkl.dump(resource_list, f, pkl.HIGHEST_PROTOCOL)
 
 
