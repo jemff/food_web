@@ -122,7 +122,7 @@ When considering non-optimal actors, we need to implement the convolution with $
 
 
 \subsubsection*{Finding the Nash Equilibrium and time-stepping}
-Finding the Nash Equilibrium in a game in continuous space is usually a very hard task, requiring the development of bespoke methods, \citep{verticalmigration}, or very long runtimes, \citep{jerome}. The method we have use circumvents these problems, by combining a little-known result in mathematical optimization with a spectral scheme.
+Finding the Nash Equilibrium in a game in continuous space is usually a hard task, requiring the development of bespoke methods, \citep{verticalmigration}, or very long runtimes, \citep{jerome}. The method we have use circumvents these problems, by combining a little-known result in mathematical optimization with a spectral scheme.
 
 By discretizing space, we have reduced an uncountable strategy set to a more manageable finite amount, with pure strategies $e_i$. The gain of a consumer playing strategy $e_i$ against a predator playing strategy $e_j$ can be determined as $F_c(e_i,e_j)$, \Cref{eq:fitness}, and similarly for a predator. Both payoff functions are bi-linear in the strategies, which allows us to write up payoff matrices $E_c, E_p$, with entry $(i,j)$ determined through $F_k(e_i,e_j), k \in \{c, p\}$. If a predator plays strategy $s_p$, given by a vector $(a_1,\dots,a_N)$ and a consumer plays strategy $s_c$ given by $(b_1,\dots,b_N)$, the consumer and predator payoffs can be determined through $E_c,E_p$ as:
 \begin{align*}
@@ -131,12 +131,15 @@ By discretizing space, we have reduced an uncountable strategy set to a more man
 \end{align*}
 Our discretization has reduced the problem to a bimatrix game, where finding the Nash equilibrium is more tractable. A bimatrix game is a special case of a polymatrix game, where $n$ players play against each other in pairwise games and the total payoff is given by the sum of the payoffs across the pairwise interactions.
 
+
+%The algorithm in \citep{miller1991copositive} has the problem that when the number of players grows very large, solving the problem becomes harder and harder due to the fullness of the matrix. As all interactions between species have a maximal payoff different from zero, we can get away with only subtracting the maximum from the non-zero entries, thereby getting a sparse if we consider a wide food-web.
+
 It does not appear to have diffused through the literature, but the Nash equilibrium of a polymatrix game can be found by solving a linear complementarity problem \citep{miller1991copositive}. Therefore our approach provides an avenue to reduce the intractable problem of finding a Nash equilibrium of a multiplayer game in continuous space to solving an optimization problem.
 When solving the linear complementarity problem, the first step is to introduce the total payoff matrix:
 \begin{align*}
 	R_{init} = \begin{bmatrix} 0 & E_c \\ E_p & 0 \end{bmatrix}
 \end{align*}
-As all entries in $R_{init}$ do not have the same sign, $R_{init}$ is not copositive. We fix this by defining $R=R_{init}-max(R_{init})$.
+As all entries in $R_{init}$ do not have the same sign, $R_{init}$ is not copositive. We fix this by defining $R=R_{init}(R_{init \neq 0})-max(R_{init})-\epsilon$.
 Applying the results of \citep{miller1991copositive}, to find the Nash equilibrium we need to solve the problem:
 \begin{align}
 	(Hz+q) = w & \\

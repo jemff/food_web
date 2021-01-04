@@ -51,25 +51,27 @@ def LCPSolve(M, q, pivtol=1e-8):  # pivtol = smallest allowable pivot element
         tableau = hstack([eye(dimen), -M, -ones((dimen, 1)), asarray(asmatrix(q).T)])
         # Let artificial variable enter the basis
         basis = list(range(dimen))  # basis contains a set of COLUMN indices in the tableau
-        locat = argmin(tableau[:, 2 * dimen + 1])  # row of minimum element in column 2*dimen+1 (last of tableau)
-        basis[locat] = 2 * dimen  # replace that choice with the row
-        cand = locat + dimen
-        pivot = tableau[locat, :] / tableau[locat, 2 * dimen]
+        locat =  unravel_index(argmin(tableau, axis=None), tableau.shape) #argmin(tableau[:, 2 * dimen + 1])  # row of minimum element in column 2*dimen+1 (last of tableau)
+        basis[locat[0]] = locat[0]  # replace that choice with the row
+        cand = locat[0] + dimen
+        pivot = tableau[locat[0], :] / tableau[locat[0], locat[1]]
         tableau -= tableau[:,
                    2 * dimen:2 * dimen + 1] * pivot  # from each column subtract the column 2*dimen, multiplied by pivot
-        tableau[locat, :] = pivot  # set all elements of row locat to pivot
+        tableau[locat[0], :] = pivot  # set all elements of row locat to pivot
         # Perform complementary pivoting
         oldDivideErr = seterr(divide='ignore')['divide']  # suppress warnings or exceptions on zerodivide inside numpy
-        while amax(basis) == 2 * dimen:
+        #print(amax(basis),  locat[1])
+        print(cand)
+        while amax(basis) == locat[0]:
             loopcount += 1
             eMs = tableau[:, cand]  # Note: eMs is a view, not a copy! Do not assign to it...
             missmask = eMs <= 0.
             quots = tableau[:, 2 * dimen + 1] / eMs  # sometimes eMs elements are zero, but we suppressed warnings...
             quots[missmask] = Inf  # in any event, we set to +Inf elements of quots corresp. to eMs <= 0.
             locat = argmin(quots)
-            print(abs(eMs[locat]), missmask.all(), amax(basis))
             if abs(eMs[locat]) > pivtol and not missmask.all():  # and if at least one element is not missing
                 # reduce tableau
+
                 pivot = tableau[locat, :] / tableau[locat, cand]
                 tableau -= tableau[:, cand:cand + 1] * pivot
                 tableau[locat, :] = pivot

@@ -3,7 +3,7 @@ import pickle as pkl
 import copy as copy
 from size_based_ecosystem import *
 import LCPSolve as lcpp
-
+from scipy import special
 import pandas as pd
 import pvlib
 from pvlib import clearsky
@@ -38,11 +38,13 @@ def total_payoff_matrix_builder_sparse(eco, current_layered_attack = None, dirac
 #    print("MAXIMM PAYDAY ORIGINAL",  np.max(total_payoff_matrix))
     total_payoff_matrix = total_payoff_matrix - depth_based_loss
     total_payoff_matrix[total_payoff_matrix != 0] = total_payoff_matrix[total_payoff_matrix != 0] - np.max(total_payoff_matrix) - 1 #Making sure everything is negative  #- 0.00001
-    #total_payoff_matrix = total_payoff_matrix/np.max(-total_payoff_matrix)
+
+    #total_payoff_matrix = total_payoff_matrix/(np.max(total_payoff_matrix)-np.min(total_payoff_matrix))
+    #total_payoff_matrix[total_payoff_matrix != 0] = total_payoff_matrix[total_payoff_matrix != 0] - 0.01
     #print(np.where(total_payoff_matrix == 0))
     return total_payoff_matrix
 
-def lemke_optimizer(eco, payoff_matrix = None, dirac_mode = True):
+def lemke_optimizer(eco, payoff_matrix = None, return_all = False, dirac_mode = True):
     A = np.zeros((eco.populations.size, eco.populations.size * eco.layers))
     for k in range(eco.populations.size):
         A[k, k * eco.layers:(k + 1) * eco.layers] = -1
@@ -69,11 +71,13 @@ def lemke_optimizer(eco, payoff_matrix = None, dirac_mode = True):
     if sn.lcp_compute_error(lcp,z,w, ztol) > 10**(-5):
      print(sn.lcp_compute_error(lcp, z, w, ztol), "Error")
 
-    w_ret, z_ret, ret = lcpp.LCPSolve(H, q.flatten(), pivtol=10**(-8))
+    #w_ret, z_ret, ret = lcpp.LCPSolve(H, q.flatten(), pivtol=10**(-8))
 
-    print(ret)
-
-    return z
+    #print(ret, np.linalg.norm(z_ret-z))
+    if return_all is False:
+        return z
+    else:
+        return z, w
 
 
 def population_growth(eco, populations, resources, payoff_matrix = None, lemke = True, time_step = 1/(96*365)):
@@ -210,8 +214,18 @@ def attack_coefficient(It, z, k=0.05*2, beta_0 = 10**(-4)):
     """It in watt, z is a vector of depths in meters, k in m^{-1}"""
     return 2*It*np.exp(-k*z)/(1+It*np.exp(-k*z))+beta_0
 
+def depth_dependent_clearance(I0, z, swim_speed=8, beta_0=10**(-2), k=0.1, c=10**(6), K = 10**(3)): #The swmming speed is encoded in beta elsewhere in the code, this way ensures maximum flexibility...?
+    """ k specifies the attenueation rate, c is the light detection threshold, I specifies the light level"""
+
+    I = I0*np.exp(-k*z)
+    D = np.real(2.0 * special.lambertw(np.sqrt((K + I) * I / c) * k / 2.0) / k)
+
+    beta = swim_speed*D**2+swim_speed*beta_0**2
+
+    return beta
+
 def new_layer_attack(params, solar_levels, k = 0.05*2, beta_0 = 10**(-4)):
-    weights = attack_coefficient(solar_levels, params.spectral.x, k = k, beta_0=beta_0)
+    weights = depth_dependent_clearance(solar_levels, params.spectral.x, k = k, beta_0=beta_0) #attack_coefficient(solar_levels, params.spectral.x, k = k, beta_0=beta_0)
     layers = np.zeros((params.spectral.x.shape[0], *params.attack_matrix.shape))
 
     for i in range(params.spectral.x.shape[0]):
