@@ -8,7 +8,7 @@ import pandas as pd
 import pvlib
 from pvlib import clearsky
 from numba import njit
-
+import casadi as ca
 
 
 def sequential_nash(eco, verbose = False, l2 = False, max_its_seq = None, time_step = 10**(-4), max_mem = None):
