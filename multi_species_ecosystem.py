@@ -9,7 +9,10 @@ l2 = False
 
 
 
-from  utility_functions import *
+import numpy as np
+from food_web_core.utility_functions import *
+from food_web_core.size_based_ecosystem import *
+
 import scipy.special as special
 import pickle as pkl
 
@@ -41,6 +44,7 @@ def depth_dependent_clearance(I, swim_speed, min_vis=10**(-2), k=0.1, c=10**(6),
 def layer_creator_better(attack_matrix, I, clearance_rates):
     layers = I.shape
 
+
     total_layers = np.zeros(layers, *attack_matrix.shape)
     for i, clearance in enumerate(clearance_rates):
         total_layers[:,i,:] = np.kron(clearance,attack_matrix[i,:])
@@ -58,7 +62,7 @@ params.clearance_rate = params.clearance_rate/(24*365)
 print(params.clearance_rate)
 
 params.handling_times = np.zeros(len(mass_vector))
-params.layered_attack = new_layer_attack(params, np.max(solar_input_calculator(normalized=False)), k = 0.1, beta_0 = 10**(-2))
+params.layered_attack = layer_attack_physiological(params, np.max(solar_input_calculator(normalized=False)), k = 0.1, beta_0 = 10**(-2))
 eco = ecosystem_optimization(mass_vector, layers, params, obj, water_start, l2 = l2, movement_cost=0)
 eco.population_setter(np.array([10, 1, 1, 0.01]) )
 eco.heat_kernel_creator(1, k = 1)
