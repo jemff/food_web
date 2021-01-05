@@ -127,12 +127,66 @@ Finding the Nash Equilibrium in a game in continuous space is usually a very har
 By discretizing space, we have reduced an uncountable strategy set to a more manageable finite amount, with pure strategies $e_i$. The gain of a consumer playing strategy $e_i$ against a predator playing strategy $e_j$ can be determined as $F_c(e_i,e_j)$, \Cref{eq:fitness}, and similarly for a predator. Both payoff functions are bi-linear in the strategies, which allows us to write up payoff matrices $E_c, E_p$, with entry $(i,j)$ determined through $F_k(e_i,e_j), k \in \{c, p\}$. If a predator plays strategy $s_p$, given by a vector $(a_1,\dots,a_N)$ and a consumer plays strategy $s_c$ given by $(b_1,\dots,b_N)$, the consumer and predator payoffs can be determined through $E_c,E_p$ as:
 \begin{align*}
   F_c(s_c,s_p)&=\ip{s_c}{E_c s_p} \\
-  F_p(s_c,s_p)&=\ip{s_p}{E_c s_c}
+  F_p(s_c,s_p)&=\ip{s_p}{E_p s_c}
 \end{align*}
-\todo{Ep or Ec?}
-Our discretization has reduced the problem to a bimatrix game, where finding the Nash equilibrium is more tractable. A bimatrix game is a special case of a polymatrix game, where $n$ players play against each other in pairwise games and the total payoff is given by the sum of the payoffs across the pairwise interactions.
+Our discretization has reduced the problem to a bimatrix game, where finding the Nash equilibrium is more tractable.
 
-It does not appear to have diffused through the literature, but the Nash equilibrium of a polymatrix game can be found by solving a linear complementarity problem \citep{miller1991copositive}. Therefore our approach provides an avenue to reduce the intractable problem of finding a Nash equilibrium of a multiplayer game in continuous space to solving an optimization problem.
+\todo[inline]{Jeg synes vi skal fjerne den efterfølgende sætning, da den ikke bidrager til klarhed. Polymatrixspil kan evt. nævnes som en mulig generalisering i diskussionen: A bimatrix game is a special case of a polymatrix game, where $n$ players play against each other in pairwise games and the total payoff is given by the sum of the payoffs across the pairwise interactions.}
+
+It does not appear to have diffused through the literature, but a Nash equilibrium of a bimatrix game can be found by solving a linear complementarity problem \citep{miller1991copositive}. We repeat the argument from \citep{miller1991copositive}, specialized to the case of two-player games: Assume that $(s_c,s_p)$ constitute a Nash equilibrium in mixed strategies with values $\gamma_c = \ip{s_c}{E_c s_p}$ and   $\gamma_p = \ip{s_p}{E_p s_c}$ to the consumer and predator, respectively. Then
+\todo[inline]{Jeg har vist indført lidt inkonsistent notationen her ...}
+\[
+  \ip{s_p}{e_p} = 
+  \ip{s_c}{e_c} = 
+  1
+\]
+since these mixed strategies are probability distributions on strategy space. Here $e_c$ and $e_p$ are the ``one'' functions\todo{Or vectors? Clarify setting.}. In addition the Nash equilibrium dictates
+\[
+  E_c s_p = \gamma_c e_c - w_c
+  ,\quad
+  E_p s_c = \gamma_p e_p - w_p
+\]
+$w_c$ and $w_p$ are non-negative ``slack variables'' that state that the payoff for the e.g. the consumer can be no greater than the expected payoff $\gamma_c$, but can be smaller for some fixed strategees. These non-optimal strategies, where the slack $w_c$ is positive, must then be chosen with probability 0, and as a consequence the complementarity condition
+\[
+  \ip{s_c}{w_c} =   \ip{s_p}{w_p} = 0 
+\]
+holds. Assume for convenience that all elements in $E_c$ and $E_p$ are negative; this can always be obtained without changing the Nash equilibria by substracting a constant from $E_c$ and $E_p$. Consequenty, also the payoffs $\gamma_c$ and $\gamma_p$ are negative and thus the vector $z = (s_c,s_p,-\gamma_c,-\gamma_p)$ satisfies the Linear Complementarity Problem (LCP)
+\[
+  z \geq 0,
+  w \geq 0 ,
+  H
+  z
+  +
+  \left(
+    \begin{array}{c}
+      0 \\
+      0 \\
+      -1 \\
+      -1
+    \end{array}
+  \right)
+  =
+  w
+  ,
+  \quad
+  \ip{z}{w} = 0
+  .
+\]
+where
+\[
+  H =
+  \left[
+    \begin{array}{cccc}
+      0 & -E_c & -e_c & 0 \\ -E_p & 0 & 0 & -e_p \\
+      e_c & 0 & 0 & 0 \\
+      0 & e_p & 0 & 0 
+    \end{array}
+  \right]
+\]
+Conversely, assume that $z=(s_c,s_p,\gamma_c,\gamma_p)$ and $w$ solve the Linear Complementarity Problem, then it is straightforward to see that the mixed strategies $(s_c,s_p)$ form a Nash equilibrium with values $(\gamma_c,\gamma_p)$. The assumption that $E_c$ and $E_p$ have negative elements imply that the matrix $H$ is copositive plus (meaning, for all $z\geq0$ with $z\neq0$ it holds that $\ip z{Hz}>0$) which is a requirement for some algorithms for solving LCP's, in particular Lemke's algorithm.
+
+
+Therefore our approach provides an avenue to reduce the intractable problem of finding a Nash equilibrium of a multiplayer game in continuous space to solving an optimization problem.
 When solving the linear complementarity problem, the first step is to introduce the total payoff matrix:
 \begin{align*}
 	R_{init} = \begin{bmatrix} 0 & E_c \\ E_p & 0 \end{bmatrix}
@@ -179,3 +233,8 @@ Following \citep{yodzis1991}, we parametrize the clearance and loss rates in a m
   Irrationality & $\sigma$ & 14 $m^2$ \\
   Diffusion rate & k & 500 m$^{2}$ year$^{-1}$
 \end{tabular}
+
+%%% Local Variables:
+%%% mode: latex
+%%% TeX-master: "main"
+%%% End:

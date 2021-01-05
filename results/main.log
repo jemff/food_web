@@ -1,11 +1,10 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.20 (TeX Live 2019/Debian) (preloaded format=pdflatex 2020.11.26)  17 DEC 2020 11:04
+This is pdfTeX, Version 3.14159265-2.6-1.40.20 (TeX Live 2019/Debian) (preloaded format=pdflatex 2020.11.26)  18 DEC 2020 17:37
 entering extended mode
  restricted \write18 enabled.
+ file:line:error style messages enabled.
  %&-line parsing enabled.
-**main.tex
-(./main.tex
-LaTeX2e <2020-02-02> patch level 2
-L3 programming layer <2020-02-14>
+**\input main.tex
+ (./main.tex
 (/usr/share/texlive/texmf-dist/tex/latex/base/article.cls
 Document Class: article 2019/12/20 v1.4l Standard LaTeX document class
 (/usr/share/texlive/texmf-dist/tex/latex/base/size10.clo
@@ -586,10 +585,127 @@ LaTeX Info: Redefining \cite on input line 694.
 Package: mathrsfs 1996/01/01 Math RSFS package v1.0 (jk)
 \symrsfs=\mathgroup6
 )
-(/usr/share/texlive/texmf-dist/tex/latex/todo/todo.sty
-Package: todo 2010/03/31 v2.4142 To-do list (Federico Garcia)
-\@todotoks=\toks36
-\c@todo=\count283
+(/usr/share/texlive/texmf-dist/tex/latex/todonotes/todonotes.sty
+Package: todonotes 2019/01/24 v1.1.2 Todonotes source and documentation.
+Package: todonotes 2018/11/22
+
+(/usr/share/texlive/texmf-dist/tex/latex/xkeyval/xkeyval.sty
+Package: xkeyval 2014/12/03 v2.7a package option processing (HA)
+
+(/usr/share/texlive/texmf-dist/tex/generic/xkeyval/xkeyval.tex
+(/usr/share/texlive/texmf-dist/tex/generic/xkeyval/xkvutils.tex
+\XKV@toks=\toks36
+\XKV@tempa@toks=\toks37
+)
+\XKV@depth=\count283
+File: xkeyval.tex 2014/12/03 v2.7a key=value parser (HA)
+))
+(/usr/share/texlive/texmf-dist/tex/latex/pgf/frontendlayer/tikz.sty
+(/usr/share/texlive/texmf-dist/tex/latex/pgf/utilities/pgffor.sty
+(/usr/share/texlive/texmf-dist/tex/latex/pgf/utilities/pgfkeys.sty
+Package srcltx Info: Expanded filename `pgfkeys.code.tex' to `pgfkeys.code.tex'
+ on input line 10.
+
+:<+ pgfkeys.code.tex
+(/usr/share/texlive/texmf-dist/tex/generic/pgf/utilities/pgfkeys.code.tex)
+:<-
+) (/usr/share/texlive/texmf-dist/tex/latex/pgf/math/pgfmath.sty
+Package srcltx Info: Expanded filename `pgfmath.code.tex' to `pgfmath.code.tex'
+ on input line 11.
+
+:<+ pgfmath.code.tex
+(/usr/share/texlive/texmf-dist/tex/generic/pgf/math/pgfmath.code.tex)
+:<-
+)
+Package srcltx Info: Expanded filename `pgffor.code.tex' to `pgffor.code.tex' o
+n input line 14.
+
+:<+ pgffor.code.tex
+(/usr/share/texlive/texmf-dist/tex/generic/pgf/utilities/pgffor.code.tex
+Package: pgffor 2020/01/08 v3.1.5b (3.1.5b)
+
+(/usr/share/texlive/texmf-dist/tex/generic/pgf/math/pgfmath.code.tex)
+\pgffor@iter=\dimen198
+\pgffor@skip=\dimen199
+\pgffor@stack=\toks38
+\pgffor@toks=\toks39
+)
+:<-
+)
+Package srcltx Info: Expanded filename `tikz.code.tex' to `tikz.code.tex' on in
+put line 13.
+
+:<+ tikz.code.tex
+
+(/usr/share/texlive/texmf-dist/tex/generic/pgf/frontendlayer/tikz/tikz.code.tex
+Package: tikz 2020/01/08 v3.1.5b (3.1.5b)
+
+(/usr/share/texlive/texmf-dist/tex/generic/pgf/libraries/pgflibraryplothandlers
+.code.tex
+File: pgflibraryplothandlers.code.tex 2020/01/08 v3.1.5b (3.1.5b)
+\pgf@plot@mark@count=\count284
+\pgfplotmarksize=\dimen256
+)
+\tikz@lastx=\dimen257
+\tikz@lasty=\dimen258
+\tikz@lastxsaved=\dimen259
+\tikz@lastysaved=\dimen260
+\tikz@lastmovetox=\dimen261
+\tikz@lastmovetoy=\dimen262
+\tikzleveldistance=\dimen263
+\tikzsiblingdistance=\dimen264
+\tikz@figbox=\box56
+\tikz@figbox@bg=\box57
+\tikz@tempbox=\box58
+\tikz@tempbox@bg=\box59
+\tikztreelevel=\count285
+\tikznumberofchildren=\count286
+\tikznumberofcurrentchild=\count287
+\tikz@fig@count=\count288
+
+(/usr/share/texlive/texmf-dist/tex/generic/pgf/modules/pgfmodulematrix.code.tex
+File: pgfmodulematrix.code.tex 2020/01/08 v3.1.5b (3.1.5b)
+\pgfmatrixcurrentrow=\count289
+\pgfmatrixcurrentcolumn=\count290
+\pgf@matrix@numberofcolumns=\count291
+)
+\tikz@expandcount=\count292
+
+(/usr/share/texlive/texmf-dist/tex/generic/pgf/frontendlayer/tikz/libraries/tik
+zlibrarytopaths.code.tex
+File: tikzlibrarytopaths.code.tex 2020/01/08 v3.1.5b (3.1.5b)
+))
+:<-
+)
+(/usr/share/texlive/texmf-dist/tex/generic/pgf/frontendlayer/tikz/libraries/tik
+zlibrarypositioning.code.tex
+File: tikzlibrarypositioning.code.tex 2020/01/08 v3.1.5b (3.1.5b)
+)
+(/usr/share/texlive/texmf-dist/tex/generic/pgf/frontendlayer/tikz/libraries/tik
+zlibraryshadows.code.tex
+File: tikzlibraryshadows.code.tex 2020/01/08 v3.1.5b (3.1.5b)
+
+(/usr/share/texlive/texmf-dist/tex/generic/pgf/frontendlayer/tikz/libraries/tik
+zlibraryfadings.code.tex
+File: tikzlibraryfadings.code.tex 2020/01/08 v3.1.5b (3.1.5b)
+
+(/usr/share/texlive/texmf-dist/tex/generic/pgf/libraries/pgflibraryfadings.code
+.tex
+File: pgflibraryfadings.code.tex 2020/01/08 v3.1.5b (3.1.5b)
+))) (/usr/share/texlive/texmf-dist/tex/latex/tools/calc.sty
+Package: calc 2017/05/25 v4.3 Infix arithmetic (KKT,FJ)
+\calc@Acount=\count293
+\calc@Bcount=\count294
+\calc@Adimen=\dimen265
+\calc@Bdimen=\dimen266
+\calc@Askip=\skip64
+\calc@Bskip=\skip65
+LaTeX Info: Redefining \setlength on input line 80.
+LaTeX Info: Redefining \addtolength on input line 81.
+\calc@Ccount=\count295
+\calc@Cskip=\skip66
+)
+\c@@todonotes@numberoftodonotes=\count296
 )
 (/usr/share/texlive/texmf-dist/tex/generic/xypic/xy.sty
 (/usr/share/texlive/texmf-dist/tex/generic/xypic/xy.tex Bootstrap'ing:
@@ -601,51 +717,51 @@ catcodes, docmode, (/usr/share/texlive/texmf-dist/tex/generic/xypic/xyrecat.tex
  Xy-pic is free software: see the User's Guide for details.
 
 Loading kernel: messages; fonts; allocations: state,
-\X@c=\dimen198
-\Y@c=\dimen199
-\U@c=\dimen256
-\D@c=\dimen257
-\L@c=\dimen258
-\R@c=\dimen259
-\Edge@c=\toks37
-\X@p=\dimen260
-\Y@p=\dimen261
-\U@p=\dimen262
-\D@p=\dimen263
-\L@p=\dimen264
-\R@p=\dimen265
-\Edge@p=\toks38
-\X@origin=\dimen266
-\Y@origin=\dimen267
-\X@xbase=\dimen268
-\Y@xbase=\dimen269
-\X@ybase=\dimen270
-\Y@ybase=\dimen271
-\X@min=\dimen272
-\Y@min=\dimen273
-\X@max=\dimen274
-\Y@max=\dimen275
-\lastobjectbox@=\box56
-\zerodotbox@=\box57
-\almostz@=\dimen276
+\X@c=\dimen267
+\Y@c=\dimen268
+\U@c=\dimen269
+\D@c=\dimen270
+\L@c=\dimen271
+\R@c=\dimen272
+\Edge@c=\toks40
+\X@p=\dimen273
+\Y@p=\dimen274
+\U@p=\dimen275
+\D@p=\dimen276
+\L@p=\dimen277
+\R@p=\dimen278
+\Edge@p=\toks41
+\X@origin=\dimen279
+\Y@origin=\dimen280
+\X@xbase=\dimen281
+\Y@xbase=\dimen282
+\X@ybase=\dimen283
+\Y@ybase=\dimen284
+\X@min=\dimen285
+\Y@min=\dimen286
+\X@max=\dimen287
+\Y@max=\dimen288
+\lastobjectbox@=\box60
+\zerodotbox@=\box61
+\almostz@=\dimen289
  direction,
-\d@X=\dimen277
-\d@Y=\dimen278
-\K@=\count284
-\KK@=\count285
-\Direction=\count286
-\K@dXdY=\dimen279
-\K@dYdX=\dimen280
+\d@X=\dimen290
+\d@Y=\dimen291
+\K@=\count297
+\KK@=\count298
+\Direction=\count299
+\K@dXdY=\dimen292
+\K@dYdX=\dimen293
 \xyread@=\read3
 \xywrite@=\write5
-\csp@=\count287
-\quotPTK@=\dimen281
+\csp@=\count300
+\quotPTK@=\dimen294
 
 utility macros; pictures: \xy, positions,
-\swaptoks@@=\toks39
-\connectobjectbox@@=\box58
+\swaptoks@@=\toks42
+\connectobjectbox@@=\box62
  objects,
-\styletoks@=\toks40
+\styletoks@=\toks43
  decorations;
 kernel objects: directionals, circles, text; options; algorithms: directions,
 edges, connections;  Xy-pic loaded)
@@ -658,15 +774,15 @@ Package: xy 2013/10/06 Xy-pic version 3.8.9
  Xy-pic option: All features v.3.8
 (/usr/share/texlive/texmf-dist/tex/generic/xypic/xycurve.tex
  Xy-pic option: Curve and Spline extension v.3.12 curve,
-\crv@cnt@=\count288
-\crvpts@=\toks41
-\splinebox@=\box59
-\splineval@=\dimen282
-\splinedepth@=\dimen283
-\splinetol@=\dimen284
-\splinelength@=\dimen285
+\crv@cnt@=\count301
+\crvpts@=\toks44
+\splinebox@=\box63
+\splineval@=\dimen295
+\splinedepth@=\dimen296
+\splinetol@=\dimen297
+\splinelength@=\dimen298
  circles,
-\L@=\dimen286
+\L@=\dimen299
  loaded)
 (/usr/share/texlive/texmf-dist/tex/generic/xypic/xyframe.tex
  Xy-pic option: Frame and Bracket extension v.3.14 loaded)
@@ -676,7 +792,7 @@ Package: xy 2013/10/06 Xy-pic version 3.8.9
  Xy-pic option: More Tips extension v.3.11 loaded) loaded)
 (/usr/share/texlive/texmf-dist/tex/generic/xypic/xyline.tex
  Xy-pic option: Line styles extension v.3.10
-\xylinethick@=\dimen287
+\xylinethick@=\dimen300
  loaded)
 (/usr/share/texlive/texmf-dist/tex/generic/xypic/xyrotate.tex
  Xy-pic option: Rotate and Scale extension v.3.8 loaded)
@@ -684,13 +800,13 @@ Package: xy 2013/10/06 Xy-pic version 3.8.9
  Xy-pic option: Colour extension v.3.11 loaded)
 (/usr/share/texlive/texmf-dist/tex/generic/xypic/xymatrix.tex
  Xy-pic option: Matrix feature v.3.14
-\Row=\count289
-\Col=\count290
-\queue@=\toks42
-\queue@@=\toks43
-\qcount@=\count291
-\qcount@@=\count292
-\matrixsize@=\count293
+\Row=\count302
+\Col=\count303
+\queue@=\toks45
+\queue@@=\toks46
+\qcount@=\count304
+\qcount@@=\count305
+\matrixsize@=\count306
  loaded)
 (/usr/share/texlive/texmf-dist/tex/generic/xypic/xyarrow.tex
  Xy-pic option: Arrow and Path feature v.3.9 path, \ar, loaded)
@@ -709,8 +825,8 @@ Xy-pic pdf driver: `rotate' extension support
 (/usr/share/texlive/texmf-dist/tex/generic/xypic/xypdf-ro.tex loaded) loaded))
 (/usr/share/texlive/texmf-dist/tex/latex/l3backend/l3backend-pdfmode.def
 File: l3backend-pdfmode.def 2020-02-03 L3 backend support: PDF mode
-\l__kernel_color_stack_int=\count294
-\l__pdf_internal_box=\box60
+\l__kernel_color_stack_int=\count307
+\l__pdf_internal_box=\box64
 )
 (./main.aux)
 \openout1 = `main.aux'.
@@ -734,17 +850,17 @@ LaTeX Font Info:    ... okay on input line 128.
  ABD: EveryShipout initializing macros
 (/usr/share/texlive/texmf-dist/tex/context/base/mkii/supp-pdf.mkii
 [Loading MPS to PDF converter (version 2006.09.02).]
-\scratchcounter=\count295
-\scratchdimen=\dimen288
-\scratchbox=\box61
-\nofMPsegments=\count296
-\nofMParguments=\count297
-\everyMPshowfont=\toks44
-\MPscratchCnt=\count298
-\MPscratchDim=\dimen289
-\MPnumerator=\count299
-\makeMPintoPDFobject=\count300
-\everyMPtoPDFconversion=\toks45
+\scratchcounter=\count308
+\scratchdimen=\dimen301
+\scratchbox=\box65
+\nofMPsegments=\count309
+\nofMParguments=\count310
+\everyMPshowfont=\toks47
+\MPscratchCnt=\count311
+\MPscratchDim=\dimen302
+\MPnumerator=\count312
+\makeMPintoPDFobject=\count313
+\everyMPtoPDFconversion=\toks48
 ) (/usr/share/texlive/texmf-dist/tex/latex/epstopdf-pkg/epstopdf-base.sty
 Package: epstopdf-base 2020-01-24 v2.11 Base part for package epstopdf
 
@@ -766,7 +882,7 @@ Package caption Info: Begin \AtBeginDocument code.
 Package caption Info: float package is loaded.
 Package caption Info: hyperref package is loaded.
 Package caption Info: End \AtBeginDocument code.
-\AtBeginShipoutBox=\box62
+\AtBeginShipoutBox=\box66
 Package hyperref Info: Link coloring OFF on input line 128.
 
 (/usr/share/texlive/texmf-dist/tex/latex/hyperref/nameref.sty
@@ -778,7 +894,7 @@ Package: refcount 2019/12/15 v3.6 Data extraction from label references (HO)
 (/usr/share/texlive/texmf-dist/tex/generic/gettitlestring/gettitlestring.sty
 Package: gettitlestring 2019/12/15 v1.6 Cleanup title references (HO)
 )
-\c@section@level=\count301
+\c@section@level=\count314
 )
 LaTeX Info: Redefining \ref on input line 128.
 LaTeX Info: Redefining \pageref on input line 128.
@@ -815,30 +931,27 @@ Package srcltx Info: Expanded filename `introduction.tex' to `introduction.tex'
 
 :<+ introduction.tex
 (./introduction.tex
+Package hyperref Info: bookmark level for unknown todo defaults to 0 on input l
+ine 8.
+
 
 Package natbib Warning: Citation `ducklow2001upper' on page 1 undefined on inpu
-t line 9.
-
-
-Overfull \hbox (9.91388pt too wide) in paragraph at lines 8--10
-[]\T1/cmr/m/n/10 The diel ver-ti-cal mi-gra-tion (DVM) is a defin-ing struc-tur
-e of oceanic life, [[]].
- []
+t line 12.
 
 [1
 
 {/var/lib/texmf/fonts/map/pdftex/updmap/pdftex.map}]
 
 Package natbib Warning: Citation `Krivan1998' on page 2 undefined on input line
- 21.
+ 24.
 
 
 Package natbib Warning: Citation `genkai2007macrophyte' on page 2 undefined on 
-input line 21.
+input line 24.
 
 
 Package natbib Warning: Citation `pinti2019trophic' on page 2 undefined on inpu
-t line 21.
+t line 24.
 
 [2])
 :<-
@@ -846,7 +959,7 @@ Package srcltx Info: Expanded filename `model.tex' to `model.tex' on input line
  133.
 :<+ model.tex
 (./model.tex
-<plots/sketch_for_article.pdf, id=64, 433.62pt x 289.08pt>
+<plots/sketch_for_article.pdf, id=89, 433.62pt x 289.08pt>
 File: plots/sketch_for_article.pdf Graphic file (type pdf)
 <use plots/sketch_for_article.pdf>
 Package pdftex.def Info: plots/sketch_for_article.pdf  used on input line 8.
@@ -866,24 +979,20 @@ Overfull \hbox (17.66469pt too wide) detected at line 57
 LaTeX Warning: Reference `eq:density_PDEs' on page 1 undefined on input line 92
 .
 
-[5] [6]
-
-LaTeX Warning: Reference `todolbl:1' on page 7 undefined on input line 132.
-
-
-Overfull \hbox (14.70847pt too wide) in paragraph at lines 155--156
+[5] [6] [7]
+Overfull \hbox (14.70847pt too wide) in paragraph at lines 209--210
 \T1/cmr/m/n/10 point method as im-ple-mented in IPOPT, [[]], called via. the au
 to-differentation
  []
 
-[7]
+[8]
 
-Package natbib Warning: Citation `yodzis1991' on page 8 undefined on input line
- 162.
+Package natbib Warning: Citation `yodzis1991' on page 9 undefined on input line
+ 216.
 
 
-Package natbib Warning: Citation `kleiber' on page 8 undefined on input line 16
-2.
+Package natbib Warning: Citation `kleiber' on page 9 undefined on input line 21
+6.
 
 )
 :<-
@@ -891,14 +1000,14 @@ Package srcltx Info: Expanded filename `results.tex' to `results.tex' on input
 line 134.
 :<+ results.tex
 (./results.tex
-<plots/specific_dists_rational.pdf, id=149, 341.43306pt x 170.71654pt>
+<plots/specific_dists_rational.pdf, id=183, 341.43306pt x 170.71654pt>
 File: plots/specific_dists_rational.pdf Graphic file (type pdf)
 <use plots/specific_dists_rational.pdf>
 Package pdftex.def Info: plots/specific_dists_rational.pdf  used on input line 
 3.
 (pdftex.def)             Requested size: 341.4322pt x 170.71611pt.
- [8]
-<plots/specific_dists_semi_rational.pdf, id=166, 341.43306pt x 170.71654pt>
+ [9]
+<plots/specific_dists_semi_rational.pdf, id=197, 341.43306pt x 170.71654pt>
 File: plots/specific_dists_semi_rational.pdf Graphic file (type pdf)
 <use plots/specific_dists_semi_rational.pdf>
 Package pdftex.def Info: plots/specific_dists_semi_rational.pdf  used on input 
@@ -917,13 +1026,13 @@ LaTeX Warning: Reference `fig:specific_dists_irrational' on page 1 undefined on
 LaTeX Warning: Reference `fig:specific_dists_irrational' on page 1 undefined on
  input line 16.
 
-[9 <./plots/specific_dists_rational.pdf> <./plots/specific_dists_semi_rational.
-pdf
+[10 <./plots/specific_dists_rational.pdf> <./plots/specific_dists_semi_rational
+.pdf
 
 pdfTeX warning: pdflatex (file ./plots/specific_dists_semi_rational.pdf): PDF i
 nclusion: multiple pdfs with page group included in a single page
 >]
-<plots/heatmapsday90_nonrandom.pdf, id=187, 346.955pt x 170.524pt>
+<plots/heatmapsday90_nonrandom.pdf, id=217, 346.955pt x 170.524pt>
 File: plots/heatmapsday90_nonrandom.pdf Graphic file (type pdf)
 <use plots/heatmapsday90_nonrandom.pdf>
 Package pdftex.def Info: plots/heatmapsday90_nonrandom.pdf  used on input line 
@@ -934,7 +1043,7 @@ Overfull \hbox (1.95415pt too wide) in paragraph at lines 19--20
 [][][] 
  []
 
-<plots/heatmapsday180_nonrandom.pdf, id=190, 346.955pt x 170.524pt>
+<plots/heatmapsday180_nonrandom.pdf, id=220, 346.955pt x 170.524pt>
 File: plots/heatmapsday180_nonrandom.pdf Graphic file (type pdf)
 <use plots/heatmapsday180_nonrandom.pdf>
 Package pdftex.def Info: plots/heatmapsday180_nonrandom.pdf  used on input line
@@ -945,34 +1054,34 @@ Overfull \hbox (1.95415pt too wide) in paragraph at lines 26--27
 [][][] 
  []
 
-[10 <./plots/heatmapsday90_nonrandom.pdf>]
+[11 <./plots/heatmapsday90_nonrandom.pdf>]
 
-Package natbib Warning: Citation `klevjer2016large' on page 11 undefined on inp
+Package natbib Warning: Citation `klevjer2016large' on page 12 undefined on inp
 ut line 30.
 
-<plots/growth_short_rational.pdf, id=226, 341.43306pt x 170.71654pt>
+<plots/growth_short_rational.pdf, id=256, 341.43306pt x 170.71654pt>
 File: plots/growth_short_rational.pdf Graphic file (type pdf)
 <use plots/growth_short_rational.pdf>
 Package pdftex.def Info: plots/growth_short_rational.pdf  used on input line 33
 .
 (pdftex.def)             Requested size: 341.4322pt x 170.71611pt.
-<plots/pop_dyn_comp_full_semi_none.pdf, id=231, 341.43306pt x 170.71654pt>
+<plots/pop_dyn_comp_full_semi_none.pdf, id=261, 341.43306pt x 170.71654pt>
 File: plots/pop_dyn_comp_full_semi_none.pdf Graphic file (type pdf)
 <use plots/pop_dyn_comp_full_semi_none.pdf>
 Package pdftex.def Info: plots/pop_dyn_comp_full_semi_none.pdf  used on input l
 ine 40.
 (pdftex.def)             Requested size: 341.4322pt x 170.71611pt.
-[11 <./plots/heatmapsday180_nonrandom.pdf> <./plots/growth_short_rational.pdf
+[12 <./plots/heatmapsday180_nonrandom.pdf> <./plots/growth_short_rational.pdf
 
 pdfTeX warning: pdflatex (file ./plots/growth_short_rational.pdf): PDF inclusio
 n: multiple pdfs with page group included in a single page
 >]
-<plots/populations.pdf, id=275, 341.43306pt x 170.71654pt>
+<plots/populations.pdf, id=305, 341.43306pt x 170.71654pt>
 File: plots/populations.pdf Graphic file (type pdf)
 <use plots/populations.pdf>
 Package pdftex.def Info: plots/populations.pdf  used on input line 48.
 (pdftex.def)             Requested size: 341.4322pt x 170.71611pt.
- [12 <./plots/pop_dyn_comp_full_semi_none.pdf> <./plots/populations.pdf
+ [13 <./plots/pop_dyn_comp_full_semi_none.pdf> <./plots/populations.pdf
 
 pdfTeX warning: pdflatex (file ./plots/populations.pdf): PDF inclusion: multipl
 e pdfs with page group included in a single page
@@ -983,23 +1092,20 @@ input line 135.
 :<+ discussion.tex
 (./discussion.tex
 
-Package natbib Warning: Citation `thomasetal' on page 13 undefined on input lin
+Package natbib Warning: Citation `thomasetal' on page 14 undefined on input lin
 e 10.
 
 
-Package natbib Warning: Citation `uhth' on page 13 undefined on input line 10.
+Package natbib Warning: Citation `uhth' on page 14 undefined on input line 10.
 
 
-Package natbib Warning: Citation `...' on page 13 undefined on input line 13.
+Package natbib Warning: Citation `...' on page 14 undefined on input line 13.
 
 
-Package natbib Warning: Citation `...' on page 13 undefined on input line 13.
+Package natbib Warning: Citation `...' on page 14 undefined on input line 13.
 
 
-Package natbib Warning: Citation `...' on page 13 undefined on input line 13.
-
-
-LaTeX Warning: Reference `fig' on page 1 undefined on input line 13.
+Package natbib Warning: Citation `...' on page 14 undefined on input line 13.
 
 
 LaTeX Warning: Reference `fig' on page 1 undefined on input line 13.
@@ -1007,7 +1113,10 @@ LaTeX Warning: Reference `fig' on page 1 undefined on input line 13.
 
 LaTeX Warning: Reference `fig' on page 1 undefined on input line 13.
 
-[13]
+
+LaTeX Warning: Reference `fig' on page 1 undefined on input line 13.
+
+[14]
 Overfull \hbox (20.12994pt too wide) in paragraph at lines 44--46
 \T1/cmr/m/n/10 the self-interaction is me-di-ated by the other player. Our game
  has polymorphic-
@@ -1019,14 +1128,14 @@ Overfull \hbox (2.44907pt too wide) in paragraph at lines 48--50
 g more species.
  []
 
-[14])
+[15])
 :<-
 :<+ main.bbl
-(./main.bbl [15])
+(./main.bbl [16])
 :<-
 
 AED: lastpage setting LastPage
-[16]
+[17]
 
 Package natbib Warning: There were undefined citations.
 
@@ -1041,19 +1150,20 @@ Package rerunfilecheck Info: File `main.out' has not changed.
 
 LaTeX Warning: There were undefined references.
 
+
+LaTeX Warning: Label(s) may have changed. Rerun to get cross-references right.
+
 Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 142.
  ) 
 Here is how much of TeX's memory you used:
- 20854 strings out of 483183
- 362214 string characters out of 5966291
- 635846 words of memory out of 5000000
- 35324 multiletter control sequences out of 15000+600000
- 549510 words of font info for 76 fonts, out of 8000000 for 9000
+ 23997 strings out of 483183
+ 436042 string characters out of 5966291
+ 704944 words of memory out of 5000000
+ 38402 multiletter control sequences out of 15000+600000
+ 547961 words of font info for 74 fonts, out of 8000000 for 9000
  14 hyphenation exceptions out of 8191
- 52i,14n,56p,3215b,450s stack positions out of 5000i,500n,10000p,200000b,80000s
- </home/uhth/.texlive2019/texmf-var/fonts/pk/ljfour/jknappen/ec/ecrm0700.600p
-k> </home/uhth/.texlive2019/texmf-var/fonts/pk/ljfour/jknappen/ec/ecbx0700.600p
-k> </home/uhth/.texlive2019/texmf-var/fonts/pk/ljfour/jknappen/ec/ecti1000.600p
+ 52i,14n,84p,3222b,968s stack positions out of 5000i,500n,10000p,200000b,80000s
+ </home/uhth/.texlive2019/texmf-var/fonts/pk/ljfour/jknappen/ec/ecti1000.600p
 k> </home/uhth/.texlive2019/texmf-var/fonts/pk/ljfour/jknappen/ec/ecbx1000.600p
 k> </home/uhth/.texlive2019/texmf-var/fonts/pk/ljfour/jknappen/ec/ecrm1000.600p
 k> </home/uhth/.texlive2019/texmf-var/fonts/pk/ljfour/jknappen/ec/ecbx1440.600p
@@ -1072,10 +1182,10 @@ ic/amsfonts/cm/cmsy10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/ams
 fonts/cm/cmsy7.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/s
 ymbols/msbm10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/sy
 mbols/msbm7.pfb>
-Output written on main.pdf (16 pages, 416739 bytes).
+Output written on main.pdf (17 pages, 424012 bytes).
 PDF statistics:
- 715 PDF objects out of 1000 (max. 8388607)
- 382 compressed objects within 4 object streams
- 86 named destinations out of 1000 (max. 500000)
- 85 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 738 PDF objects out of 1000 (max. 8388607)
+ 389 compressed objects within 4 object streams
+ 90 named destinations out of 1000 (max. 500000)
+ 181 words of extra memory for PDF output out of 10000 (max. 10000000)
 
