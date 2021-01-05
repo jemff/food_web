@@ -1,6 +1,6 @@
 import matplotlib.pyplot as plt
-depth = 45   #Previously 5 has worked well.
-layers = 60 #5 works well.
+depth = 150   #Previously 5 has worked well.
+layers = 150 #5 works well.
 segments = 1
 lam = 2
 simulate = False
@@ -14,7 +14,7 @@ import scipy.special as special
 
 
 
-mass_vector = np.array([0.05, 20, 400, 8000]) #np.array([1, 30, 300, 400, 800, 16000])
+mass_vector = np.array([0.05, 20, 400, 8000, 10**5]) #np.array([1, 30, 300, 400, 800, 16000])
 
 
 from scipy import stats
@@ -47,12 +47,12 @@ params.handling_times = np.zeros(len(mass_vector))
 params.clearance_rate = params.clearance_rate/(24*365)
 params.layered_attack = new_layer_attack(params, 1, k = 0.2, beta_0 = 10**(-3))
 eco = ecosystem_optimization(mass_vector, layers, params, obj, water_start, l2 = l2, movement_cost=0)
-eco.population_setter(np.array([10, 1, 0.1, 0.01]) )
-#eco.heat_kernel_creator(1, k = 1)
+eco.population_setter(np.array([10, 1, 0.1, 0.01, 10**(-5)]))
+eco.heat_kernel_creator(1, k = 1)
 print(params.who_eats_who)
 print(params.forager_or_not)
 print(eco.heat_kernels[0].shape)
-eco.dirac_delta_creator()
+#eco.dirac_delta_creator()
 # Start the stopwatch / counter
 
 
@@ -60,25 +60,34 @@ eco.dirac_delta_creator()
 #SOL1 = lemke_optimizer(eco, payoff_matrix=total_payoff_matrix_builder(eco))
 #t1_stop = perf_counter()
 
+po_m = total_payoff_matrix_builder_sparse(eco)
+#po_m = po_m/(np.max(po_m)-np.min(po_m))
+
 t2_start = perf_counter()
-SOL2 = lemke_optimizer(eco, payoff_matrix=total_payoff_matrix_builder_sparse(eco))
+SOL2 = lemke_optimizer(eco, payoff_matrix= po_m, return_all = False)
 t2_stop = perf_counter()
 
-#t3_start = perf_counter()
-#SOL3 = quadratic_optimizer(eco, payoff_matrix=total_payoff_matrix_builder_sparse(eco))
-#t3_stop = perf_counter()
+t3_start = perf_counter()
+SOL3 = quadratic_optimizer(eco, payoff_matrix=po_m)
+t3_stop = perf_counter()
 
 #t4_start = perf_counter()
 #SOL4 = quadratic_optimizer(eco, payoff_matrix=total_payoff_matrix_builder(eco))
 #t4_stop = perf_counter()
 
-#print(t1_stop-t1_start, t2_stop-t2_start, t3_stop-t3_start, t4_stop-t4_start)
+print(t2_stop-t2_start, t3_stop-t3_start) #, t4_stop-t4_start) t1_stop-t1_start,
 
 #for i in range(mass_vector.shape[0]):
 #    plt.plot(obj.x, SOL[i*layers:(i+1)*layers]@eco.heat_kernels[0])
 #plt.show()
 
 for i in range(mass_vector.shape[0]):
-    plt.plot(obj.x, SOL2[i*layers:(i+1)*layers]@eco.heat_kernels[0])
+    plt.plot(obj.x, SOL3[i*layers:(i+1)*layers]@eco.heat_kernels[0])
 plt.show()
+
+#for i in range(mass_vector.shape[0]):
+#    plt.plot(obj.x, SOL2[i*layers:(i+1)*layers]@eco.heat_kernels[0])
+#plt.show()
 #simulator_new(eco, "4_species", end_date='2014-04-02', population_dynamics=False, k=0.3, sparse=True, lemke=True)
+
+array[array<0] = 0

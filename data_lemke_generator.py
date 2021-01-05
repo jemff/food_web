@@ -1,5 +1,7 @@
-from utility_functions import *
-
+#from utility_functions import *
+import numpy as np
+from food_web_core.utility_functions import *
+from food_web_core.size_based_ecosystem import *
 depth = 45
 layers = 60
 segments = 1
