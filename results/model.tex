@@ -131,24 +131,24 @@ By discretizing space, we have reduced an uncountable strategy set to a more man
 \end{align*}
 Our discretization has reduced the problem to a bimatrix game, where finding the Nash equilibrium is more tractable.
 
-\todo[inline]{Jeg synes vi skal fjerne den efterfølgende sætning, da den ikke bidrager til klarhed. Polymatrixspil kan evt. nævnes som en mulig generalisering i diskussionen: A bimatrix game is a special case of a polymatrix game, where $n$ players play against each other in pairwise games and the total payoff is given by the sum of the payoffs across the pairwise interactions.}
+%\todo[inline]{Jeg synes vi skal fjerne den efterfølgende sætning, da den ikke bidrager til klarhed. Polymatrixspil kan evt. nævnes som en mulig generalisering i diskussionen: A bimatrix game is a special case of a polymatrix game, where $n$ players play against each other in pairwise games and the total payoff is given by the sum of the payoffs across the pairwise interactions.}
 
-It does not appear to have diffused through the literature, but a Nash equilibrium of a bimatrix game can be found by solving a linear complementarity problem \citep{miller1991copositive}. We repeat the argument from \citep{miller1991copositive}, specialized to the case of two-player games: Assume that $(s_c,s_p)$ constitute a Nash equilibrium in mixed strategies with values $\gamma_c = \ip{s_c}{E_c s_p}$ and   $\gamma_p = \ip{s_p}{E_p s_c}$ to the consumer and predator, respectively. Then
+It does not appear to have diffused through the literature, but a Nash equilibrium of a polymatrix game can be found by solving a linear complementarity problem \citep{miller1991copositive}. We repeat the argument from \citep{miller1991copositive}, specialized to the case of two-player (bimatrix) games: Assume that $(s^*_c,s^*_p)$ constitute a Nash equilibrium in mixed strategies with values $\gamma_c = \ip{s^*_c}{E_c s^*_p}$ and   $\gamma_p = \ip{s^*_p}{E_p s^*_c}$ to the consumer and predator, respectively. Then
 \todo[inline]{Jeg har vist indført lidt inkonsistent notationen her ...}
 \[
-  \ip{s_p}{e_p} = 
-  \ip{s_c}{e_c} = 
+  \ip{s^*_p}{1_n} =
+  \ip{s^*_c}{1_n} =
   1
 \]
-since these mixed strategies are probability distributions on strategy space. Here $e_c$ and $e_p$ are the ``one'' functions\todo{Or vectors? Clarify setting.}. In addition the Nash equilibrium dictates
+since these mixed strategies are probability distributions on strategy space. Here $1_n$ is a vector of ones. In addition the Nash equilibrium dictates
 \[
-  E_c s_p = \gamma_c e_c - w_c
+  \ip{s_c}{E_c s^*_p} = \gamma_c - \ip{s_c}{w_c}
   ,\quad
-  E_p s_c = \gamma_p e_p - w_p
+  \ip{s_p}{E_p s^*_c} = \gamma_p -\ip{s_p}{w_p}
 \]
-$w_c$ and $w_p$ are non-negative ``slack variables'' that state that the payoff for the e.g. the consumer can be no greater than the expected payoff $\gamma_c$, but can be smaller for some fixed strategees. These non-optimal strategies, where the slack $w_c$ is positive, must then be chosen with probability 0, and as a consequence the complementarity condition
+$w_c$ and $w_p$ are non-negative ``slack variables'' that state that the payoff for e.g. the consumer can be no greater than the expected payoff $\gamma_c$, but can be smaller for some fixed strategies. These non-optimal strategies, where the slack $w_c$ is positive, must then be chosen with probability 0, and as a consequence the complementarity condition
 \[
-  \ip{s_c}{w_c} =   \ip{s_p}{w_p} = 0 
+  \ip{s^*_c}{w_c} =   \ip{s^*_p}{w_p} = 0
 \]
 holds. Assume for convenience that all elements in $E_c$ and $E_p$ are negative; this can always be obtained without changing the Nash equilibria by substracting a constant from $E_c$ and $E_p$. Consequenty, also the payoffs $\gamma_c$ and $\gamma_p$ are negative and thus the vector $z = (s_c,s_p,-\gamma_c,-\gamma_p)$ satisfies the Linear Complementarity Problem (LCP)
 \[
@@ -177,13 +177,13 @@ where
   H =
   \left[
     \begin{array}{cccc}
-      0 & -E_c & -e_c & 0 \\ -E_p & 0 & 0 & -e_p \\
-      e_c & 0 & 0 & 0 \\
-      0 & e_p & 0 & 0 
+      0 & -E_c & -1_n & 0 \\ -E_p & 0 & 0 & -1_n \\
+      1_n & 0 & 0 & 0 \\
+      0 & 1_n & 0 & 0
     \end{array}
   \right]
 \]
-Conversely, assume that $z=(s_c,s_p,\gamma_c,\gamma_p)$ and $w$ solve the Linear Complementarity Problem, then it is straightforward to see that the mixed strategies $(s_c,s_p)$ form a Nash equilibrium with values $(\gamma_c,\gamma_p)$. The assumption that $E_c$ and $E_p$ have negative elements imply that the matrix $H$ is copositive plus (meaning, for all $z\geq0$ with $z\neq0$ it holds that $\ip z{Hz}>0$) which is a requirement for some algorithms for solving LCP's, in particular Lemke's algorithm.
+Conversely, assume that $z=(s_c,s_p,\gamma_c,\gamma_p)$ and $w$ solve the Linear Complementarity Problem, then it is straightforward to see that the mixed strategies $(s_c,s_p)$ form a Nash equilibrium with values $(\gamma_c,\gamma_p)$. The assumption that $E_c$ and $E_p$ have negative elements imply that the matrix $H$ is copositive plus (meaning, for all $z\geq0$ with $z\neq0$ it holds that $\ip z{Hz}>0$) which assures that the LCP to has a solution, in particular through Lemke's algorithm.
 
 
 Therefore our approach provides an avenue to reduce the intractable problem of finding a Nash equilibrium of a multiplayer game in continuous space to solving an optimization problem.
