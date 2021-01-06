@@ -576,7 +576,7 @@ def solar_input_calculator(latitude = 55.571831046, longitude = 12.822830042, tz
 
 def simulator_new(eco, filename, h_k = None, lemke = True, min_attack_rate = 10**(-4), start_date =  '2014-04-01',
                   end_date = '2014-10-01', day_interval = 96, latitude = 55.571831046, longitude = 12.822830042,
-                  optimal=True, diffusion = 5000, k = 4*0.05, sparse = True, population_dynamics = True):
+                  optimal=True, diffusion = 5000, k = 4*0.05, sparse = True, population_dynamics = True, physiological = False):
     population_list = []
     resource_list = []
     strategy_list = []
@@ -590,7 +590,10 @@ def simulator_new(eco, filename, h_k = None, lemke = True, min_attack_rate = 10*
     total_time_steps = len(solar_levels)
     time = 0
     for i in range(total_time_steps):
-        current_layered_attack = new_layer_attack(eco.parameters, solar_levels[i], beta_0=min_attack_rate, k = k)
+        if physiological is False:
+            current_layered_attack = new_layer_attack(eco.parameters, solar_levels[i], beta_0=min_attack_rate, k = k)
+        else:
+            current_layered_attack = layer_attack_physiological(eco.parameters, solar_levels[i], beta_0=min_attack_rate, k = k)
         pop_old = np.copy(eco.populations)
         population_list.append(pop_old)
         if optimal is True:

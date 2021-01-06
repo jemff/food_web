@@ -77,4 +77,4 @@ for i in range(len(mass_vector)):
     plt.plot(obj.x, SOL[i*layers:(i+1)*layers]@eco.heat_kernels[0])
 plt.show()
 
-#simulator_new(eco, "4_species", end_date='2014-04-02', population_dynamics=False, k=0.3, sparse=True, lemke=True)
+simulator_new(eco, "5_species", end_date='2014-04-02', population_dynamics=False, k=0.3, sparse=True, lemke=True, )
