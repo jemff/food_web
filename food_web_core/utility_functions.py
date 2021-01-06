@@ -207,7 +207,11 @@ def total_payoff_matrix_builder(eco, current_layered_attack = None, dirac_mode =
             #else:
 
             total_payoff_matrix[i * eco.layers:(i + 1) * eco.layers, j * eco.layers: (j + 1) * eco.layers] = i_vs_j
+        total_payoff_matrix[i * eco.layers:(i + 1) * eco.layers,:] = (total_payoff_matrix[i * eco.layers:(i + 1) * eco.layers,:]-np.min(total_payoff_matrix[i * eco.layers:(i + 1) * eco.layers,:]))/(np.max(total_payoff_matrix[i * eco.layers:(i + 1) * eco.layers,:]) - np.min(total_payoff_matrix[i * eco.layers:(i + 1) * eco.layers,:]))
 #    print("MAXIMM PAYDAY ORIGINAL",  np.max(total_payoff_matrix))
+
+
+
     total_payoff_matrix = total_payoff_matrix - np.max(total_payoff_matrix) #- 1 #Making sure everything is negative  #- 0.00001
     #total_payoff_matrix = total_payoff_matrix/np.max(-total_payoff_matrix)
     return total_payoff_matrix
@@ -456,6 +460,9 @@ def total_payoff_matrix_builder_sparse(eco, current_layered_attack = None, dirac
             #else:
 
             total_payoff_matrix[i * eco.layers:(i + 1) * eco.layers, j * eco.layers: (j + 1) * eco.layers] = i_vs_j
+
+        total_payoff_matrix[i * eco.layers:(i + 1) * eco.layers,:] = (total_payoff_matrix[i * eco.layers:(i + 1) * eco.layers,:]-np.min(total_payoff_matrix[i * eco.layers:(i + 1) * eco.layers,:]))/(np.max(total_payoff_matrix[i * eco.layers:(i + 1) * eco.layers,:]) - np.min(total_payoff_matrix[i * eco.layers:(i + 1) * eco.layers,:]))
+
 #    print("MAXIMM PAYDAY ORIGINAL",  np.max(total_payoff_matrix))
     total_payoff_matrix = total_payoff_matrix - depth_based_loss
     total_payoff_matrix[total_payoff_matrix != 0] = total_payoff_matrix[total_payoff_matrix != 0] - np.max(total_payoff_matrix) - 1 #Making sure everything is negative  #- 0.00001

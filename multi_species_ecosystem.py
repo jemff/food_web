@@ -18,7 +18,7 @@ import pickle as pkl
 
 
 
-mass_vector = np.array([0.05, 20, 400, 8000]) #np.array([1, 30, 300, 400, 800, 16000])
+mass_vector = np.array([0.05, 20, 400, 8000, 100000]) #np.array([1, 30, 300, 400, 800, 16000])
 
 
 from scipy import stats
@@ -64,7 +64,7 @@ print(params.clearance_rate)
 params.handling_times = np.zeros(len(mass_vector))
 params.layered_attack = layer_attack_physiological(params, np.max(solar_input_calculator(normalized=False)), k = 0.1, beta_0 = 10**(-2))
 eco = ecosystem_optimization(mass_vector, layers, params, obj, water_start, l2 = l2, movement_cost=0)
-eco.population_setter(np.array([10, 1, 1, 0.01]) )
+eco.population_setter(np.array([10, 1, 1, 0.01, 0.0001]) )
 eco.heat_kernel_creator(1, k = 1)
 print(params.who_eats_who)
 print(params.forager_or_not)
