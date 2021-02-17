@@ -1,5 +1,5 @@
 #from utility_functions import *
-import numpy as np
+#import numpy as np
 from food_web_core.utility_functions import *
 from food_web_core.size_based_ecosystem import *
 depth = 45

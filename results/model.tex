@@ -1,7 +1,14 @@
 
 \section{Model}
+\subsubsection*{General model framework}
+Hawk-DOve game, etc. kunne også dækkes,
+Det der foregår instant er habitatvalg
+Populationsdynamik indre rater givet ved et spil
+Løses som et bimatrix eller polymatrix spil
+Hvis det er tilfæjdet kan vi løse det
 
-\subsubsection*{Model introduction}
+
+\subsubsection*{Special case}
 We consider a food-chain in a water column, consisting of a resource $R$ with concentration, a consumer $C$, and a predator $P$. The resource is thought of as phytoplankton, the consumer as copepods and the predator as forage fish. The predators and consumers are each distributed in the water column according to probability distributions, $\phi_c,\phi_p$, and the resource is distributed according to $r(z,t)$. See \Cref{fig:model_sketch}
 \begin{figure}
  \begin{centering}
@@ -135,15 +142,15 @@ Our discretization has reduced the problem to a bimatrix game, where finding the
 
 It does not appear to have diffused through the literature, but a Nash equilibrium of a polymatrix game can be found by solving a linear complementarity problem \citep{miller1991copositive}. We repeat the argument from \citep{miller1991copositive}, specialized to the case of two-player (bimatrix) games: Assume that $(s^*_c,s^*_p)$ constitute a Nash equilibrium in mixed strategies with values $\gamma_c = \ip{s^*_c}{E_c s^*_p}$ and   $\gamma_p = \ip{s^*_p}{E_p s^*_c}$ to the consumer and predator, respectively. Then
 \[
-  \ip{s^*_p}{1_n} =
-  \ip{s^*_c}{1_n} =
+  \ip{s_p}{1_n} =
+  \ip{s_c}{1_n} =
   1
 \]
 since these mixed strategies are probability distributions on strategy space. Here $1_n$ is a vector of ones. In addition the Nash equilibrium dictates
 \[
-  \ip{s_c}{E_c s^*_p} = \gamma_c - \ip{s_c}{w_c}
+  E_c s_p = 1_n \gamma_c - w_c
   ,\quad
-  \ip{s_p}{E_p s^*_c} = \gamma_p -\ip{s_p}{w_p}
+  E_p s_c = 1_n \gamma_p  - w_p
 \]
 $w_c$ and $w_p$ are non-negative ``slack variables'' that state that the payoff for e.g. the consumer can be no greater than the expected payoff $\gamma_c$, but can be smaller for some fixed strategies. These non-optimal strategies, where the slack $w_c$ is positive, must then be chosen with probability 0, and as a consequence the complementarity condition
 \[
