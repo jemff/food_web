@@ -92,7 +92,7 @@ Consumers and predators maximize their fitness simultaneously, leading to a \emp
 Our model incorporates that fish are not necessarily perfectly rational, but have \textbf{bounded rationality} by letting the strategy depend on the rationality parameter $\sigma$, with $\sigma=0$ being completely rational and $\sigma = \infty$ completely irrational. Rather than choosing a precise location, an individual can choose where it diffuses around. As fish cannot swim out of the top of the ocean, nor through the bottom, we end with the partial differential equation:
 \begin{align}
   \label{eq:density_PDE}
-	&\partial_\sigma \phi_i = \partial_z^2 \phi_i \\
+	&\partial_\sigma \phi_i = \frac{1}{2}\partial_z^2 \phi_i \\
 	&\partial_z \phi_i \mid_{z=0} = 0 \\
   &\partial_z \phi_i \mid_{z = z_0} = 0
 \end{align}
