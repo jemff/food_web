@@ -1,11 +1,11 @@
 
 \section{Model}
 \subsubsection*{General model framework}
-Hawk-DOve game, etc. kunne også dækkes,
-Det der foregår instant er habitatvalg
-Populationsdynamik indre rater givet ved et spil
-Løses som et bimatrix eller polymatrix spil
-Hvis det er tilfæjdet kan vi løse det
+%Hawk-DOve game, etc. kunne også dækkes,
+%Det der foregår instant er habitatvalg
+%Populationsdynamik indre rater givet ved et spil
+%Løses som et bimatrix eller polymatrix spil
+%Hvis det er tilfæjdet kan vi løse det
 
 
 \subsubsection*{Special case}
@@ -37,20 +37,6 @@ The interactions between the consumer and resource are local, as are the interac
 
 \subsubsection*{Population dynamics}
 
-%Lotka-Volterra:
-%\begin{align}
-%  \label{eq:population_growth}
-%  \dot{r} &= r(z,t)\pa{1-\frac{r(z,t)}{r_{max}(z)}} - \beta_c(z,t)c(z,t) r(z,t) + k \partial_x^2 r(z,t) \\
-%  \dot{C} &=  \int_0^{z_0} \varepsilon \beta_c(z,t)c(z,t)r(z,t) dz- \int_0^{z_0} \beta_p(z,t) c(z,t) p(z,t) dz - C(t)\mu_C  %\\
-%  \dot{P} &=  \int_0^{z_0} \varepsilon \beta_p(z,t) c(z,t)p(z,t) dz - P(t)\mu_P
-%\end{align}
-%The concentration of consumers, respectively predators is naturally given by a product of a probability density  $\phi_i,~i\in \{c,p\}$, describing the location in the water column and the total amount of consumers, respectively predators.
-%\begin{align}
-%	c(z,t) &= C(t)\phi_c(t, z) \\
-%	p(z,t) &= P(t)\phi_p(t, z)
-%  \label{eq:prob_dens}
-%
-%\end{align}
 The resource cannot move actively, so its time dynamics are naturally specified locally. The growth of the resource is modeled with a logistic growth, with a loss from grazing by consumers and diffusion from the natural movement of the water. To simplify the model, we assume interactions can be described with a Type I functional response. %In natural environments, undersaturation of nutrients is the norm, \citep{}.
 
 
