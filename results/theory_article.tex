@@ -1,0 +1,135 @@
+
+
+
+
+\begin{definition}[N-player linear game] \label{def:lin_game}
+  Let $(X,\mu)$ be a probability space, assuming for simplicity that $\mu$ is either discrete or  continuous. Assume that we have $N$ players with utility functions $U_i$ and strategies $\phi_i$. We assume that $\phi_i$ is a probability distribution, as well as lying in $L^2(X,\mu)$. Denote the space of feasible $\phi_i$ as $K$. The pairwise interactions are defined by a family of bounded linear operators $A_{ij}: L^1(X)\to L^2(X)$, ie. the payoff of player $i$ playing strategy $\phi_i$ against player $j$ with strategy $\phi_j$ is $\gamma_{ij}=\ip{\phi_i}{A_{ij} \phi_j}$. The total expected payoff $U_i(\phi^{-i})$ of player $i$ is given by
+  \begin{equation}
+    \ip{\phi_i}{\sum_{k=1}^N A_ij \phi_j}
+  \end{equation}
+\end{definition}
+\begin{remark}
+  Setting $X$ to be a finite set of points equipped with the normalized counting measure in \Cref{def:lin_game}, we recover the notion of a polymatrix game.
+\end{remark}
+\begin{lemma}
+  The space $K\subset L^2(X)$ of feasible $\phi$ is closed and convex.
+\end{lemma}
+\begin{proof}
+  Consider the functional $f$ given by $f(\phi)=\ip{1}{\phi}$, and let $L^2(X)_+$ be the subspace of a.e. positive square-integrable functions. Then $K$ can be written as $f^{-1}(\{1\}) \cap L^2(X)_+$, an intersection of two closed and convex sets, showing the desired.
+\end{proof}
+
+\begin{definition}
+  Let $X$ be a measure space. Leting $A_{ij}$ be a finite collection of bounded operators $A_{ij}: L^1(X) \to L^2(X)$. Define the total payoff operator $M:K^N \to K^N$ as:
+  \begin{equation}
+    M =
+    \begin{bmatrix}
+        0 & A_{1,2} & A_{1,3} &\dots & A_{1,N} \\
+        A_{2,1} & 0 & A_{2,3} &\dots & A_{2,N} \\
+        \vdots & \vdots & \vdots & \vdots & \vdots \\
+        A_{N,1} & A_{N,2} & \dots & \dots & 0
+    \end{bmatrix}
+  \end{equation}
+  The operator $M$ can be assumed negative on $K$ without loss of generality, by subtracting the maximal supremum of the $A_{ij}$ on $K$, which exists as they are bounded from $L^1(X)$.
+\end{definition}
+%\begin{remark}
+  %If we consider an finite amount of players, and require that the family be uniformly bounded, the construction goes through as well.
+%\end{remark}
+\begin{remark}
+  We can weaken the assumption of the $A_{ij}$ being bounded on $L^1(X)$ to $L^2(X)$ if we consider $K\cap B_n$, where $B_n$ is the unit ball in $L^2(X)$ of radius $n$.
+\end{remark}
+
+
+The requirements for a family $\Phi^*=(\phi_i^*)_{i=1}^N \in K^N$ to constitute a Nash equilibrium is: There is no other family $(\psi_i)_{i=1}^N$, such that
+\begin{equation}
+    \ip{\phi_i^*}{\sum_{k=1}^N A_ij \phi_j^*} < \ip{\psi_i}{\sum_{k=1}^N A_ij \phi_j^*}
+\end{equation}
+for all $i\in \{1,\dots,N\}$.
+By linearity, this is equivalent to the condition that there is no point $\Phi \in K^n$ such that
+\begin{equation}
+  \ip{\Phi^*-\Phi}{M \Phi^*} < 0
+\end{equation}
+For $\Phi, \Phi^* \in K^n$, define the slack variable $d = \Phi - \Phi^*$.  If $\phi_i^* = 0$ a.s., then $d_i \geq 0$ a.s., and $\int d_i d\mu(x) \geq 0$. Thus a vector $\Phi^* \in K^n$ is an equilibrium if and only if there is no $d \in L^2(X)^N$ such that
+\begin{equation}
+  &\ip{-d}{R \Phi} < 0 \\
+  -\int d_i \mu(x) \leq 0 \\
+  \phi_i = 0 \Rightarrow -d_i \leq 0
+\end{equation}
+The generalized version of Farkas Theorem states: Given locally convex spaces $X$ and $Y$ and a strongly continuous linear map $A$, if $A(S)$ is strongly closed the following conditions are equivalent:
+\begin{align}
+  Ax = b \text{ has a solution } x\in S
+  A^* y^* \in S^* \Rightarrow \ip{y^*}{b}
+\end{align}
+This allows us to formulate our problem in the terms of a complementarity problem:
+\begin{equation}
+  &Mz+q=w \\
+  &\ip{w}{z} = 0
+  z \in K, w\in K
+  \label{eq:complementarity_problem}
+\end{equation}
+
+
+\begin{theorem}
+  We can state the existence of a Nash equilibrium in two cases:
+  \begin{enumerate}
+    \item
+    If $A_{ij}:L^1(X) \to L^2(X)$, then for $K = L^2(X)_+$, \Cref{eq:complementarity_problem} has a solution, giving a Nash equilibrium of \Cref{def:lin_game} if all $A_{ij}$ satisfy: (Insert criteria from theorem 3)
+    \item
+      If we consider the weakly compact convex set given by $L^2(X)_+ \cap B_n$, the game in \Cref{def:lin_game} has a Nash equilibrium, and it is given by \Cref{eq:complementarity_problem}
+  \end{enumerate}
+\end{theorem}
+\begin{example}
+
+\end{example}
+
+
+%Assume without loss of generality that $\ip{\phi_i}{A_{ij} \phi_j}$ is negative for any probability measures $\phi_i,\phi_j$, reversing the inequality.
+%\begin{equation}
+  %\label{eq:inequality}
+  %  \ip{\phi_i^*}{\sum_{k=1}^N A_ij \phi_j^*} \leq \ip{\psi}{\sum_{j=1}^N A_ij \phi_j^*}
+%\end{equation}
+%For a fixed family of strategies, define $v_i = \ip{\phi_i^*}{\sum_{j=1}^N A_ij \phi_j^*} $. For any measurable subset $C$ of non-zero measure define a probability measure $\psi_c = c 1_C$. Since \Cref{eq:inequality} holds for all $\psi_c$, we can conclude that we have the inequality
+%\begin{align}
+%  \sum_{i=1}^N A_{ij} \phi^*_j \geq v_i 1_X \text{ a.s.}
+%\end{align}
+%This implies that
+%\begin{equation}
+%  \ip{\phi_i^*}{\sum_{j=1}^N A_ij\phi_j^* - v_i 1_X } = 0
+%\end{equation}
+
+@article{craven1977generalizations,
+  title={Generalizations of Farkas’ theorem},
+  author={Craven, Bruce Desmond and Koliha, Jaromir Joseph},
+  journal={SIAM Journal on Mathematical Analysis},
+  volume={8},
+  number={6},
+  pages={983--997},
+  year={1977},
+  publisher={SIAM}
+}
+(5)
+@article{glicksberg1952further,
+  title={A further generalization of the Kakutani fixed point theorem, with application to Nash equilibrium points},
+  author={Glicksberg, Irving L},
+  journal={Proceedings of the American Mathematical Society},
+  volume={3},
+  number={1},
+  pages={170--174},
+  year={1952},
+  publisher={JSTOR}
+}
+(2)
+
+
+@article{goeleven1993solvability,
+  title={On the solvability of noncoercive linear variational inequalities in separable Hilbert spaces},
+  author={Goeleven, D},
+  journal={Journal of Optimization Theory and Applications},
+  volume={79},
+  number={3},
+  pages={493--511},
+  year={1993},
+  publisher={Springer}
+}
+Theorem 3.3 and Remark 3.2 and Prop 3.1
+
+ScriptvWlient for inspiration details missing

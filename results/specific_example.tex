@@ -1,0 +1,94 @@
+
+\subsubsection*{Special case}
+To illustrate the general model framewor, we apply it to a well-understood case, where the Nash Equilibrium is known to be unique.
+We consider a food-chain in a water column, consisting of a resource $R$ with concentration, a consumer $C$, and a predator $P$. The resource is thought of as phytoplankton, the consumer as copepods and the predator as forage fish. The predators and consumers are each distributed in the water column according to probability distributions, $\phi_c,\phi_p$, and the resource is distributed according to $r(z,t)$. See \Cref{fig:model_sketch}
+\begin{figure}
+ \begin{centering}
+   \includegraphics{plots/sketch_for_article.pdf}
+ \end{centering}
+ \label{fig:model_sketch}
+ \caption{Sketch of model ecosystem, showing example distribution of resources, $(r(z,t)/R(t)$ \emph{(yellow)}, consumers ,$\phi_c$ \emph{(blue)} and predators, $\phi_p$ \emph{(red)}}
+\end{figure}
+
+Forage fish are visual predators, so their predation success is heavily light dependent. The available light decreases with depth in the water column, and varies with the time of day.
+The light intensity $I$ at depth $z$ is approximately $I(z) = I_0\exp(-kz)$, and the light-dependent clearance rate of a predator is $\beta_{p,0}$.  However, even when there is no light available there is still a chance of catching a consumer if it is directly encountered,  so the clearance rate, $\beta_p(z,t)$, of forage fish never goes to 0 even at the middle of the night or at the deepest depths.
+\begin{align*}
+  \beta_p(z,t) = \beta_{p,0} \frac{I(z,t)}{1+I(z,t)} + \beta_{p,min}
+\end{align*}
+
+
+We model the light-levels at the surface via. the python package pvlib, using a simple Clear Sky model in Oresund between Denmark and Sweden. The light levels are given by the direct horizontal light intensity at the sea-surface, neglecting more complicated optic effects. The model takes the precitibale water $w_a$, and aerosol optical depth, $aod$. We model light decay throughout the water column as $\exp(-kz)$.
+
+
+In contrast to forage fish, copepods are olfactory predators, and their clearance rate, $\beta_c$, is essentially independent of depth and light levels.
+\begin{align*}
+	\beta_c(z,t) &=  \beta_{c,0}
+\end{align*}
+
+The interactions between the consumer and resource are local, as are the interactions between a predator and a consumer. The local encounter rate between consumers and resources is given by $\beta_c(z,t)c(z,t)r(z,t)$, and the local encounter rate between predators and consumers is $\beta_p(z,t)c(z,t)p(z,t)$.
+
+\subsubsection*{Population dynamics}
+
+The resource cannot move actively, so its time dynamics are naturally specified locally. The growth of the resource is modeled with a logistic growth, with a loss from grazing by consumers and diffusion from the natural movement of the water. To simplify the model, we assume interactions can be described with a Type I functional response. %In natural environments, undersaturation of nutrients is the norm, \citep{}.
+
+
+The total population growth of the consumer population is found by integrating the local grazing rate over the entire water column multiplied by a conversion efficiency $\epsilon$, subtracting the loss from predation. The growth of the predators is given by the predation rate integrated over the water column:
+%Incorporating \Cref{eq:prob_dens} in \Cref{eq:population_growth}, we arrive at equations for the population dynamics governed by probability densities:
+\begin{align}
+	\dot{r} &= r(z,t)\pa{1-\frac{r(z,t)}{r_{max}(z)}} - \beta_c(z,t)\phi_c(z,t)C(t) r(z,t)  + k \partial_z^2 r(z,t)\\
+	\dot{C} &= C(t)\left ( \int_0^{z_0} \varepsilon \beta_c(z,t)\phi_c(z,t)r(z,t) dz- P(t)\int_0^{z_0} \beta_p(z,t) \phi_c(z,t) \phi_p(z,t) dz - \mu_C \right ) \\
+	\dot{P} &= P(t) \left ( C(t )\int_0^{z_0} \varepsilon \beta_p(z,t) \phi_c(z,t)\phi_p(z,t) dz - \mu_P \right )
+  \label{eq:population_growth_prob_dens}
+\end{align}
+
+
+\subsubsection*{Fitness proxies and optimal strategies}
+
+The instantaneous fitness pr. capita of a forage fish $(F_p)$ or copepod $(F_c)$ is given by the total growth divided by the biomass. We arrive at the fitness by dividing the population growth rate \Cref{eq:population_growth_prob_dens} by the total populations, eliminating the terms $C(t), P(t)$ outside the parantheses in \Cref{eq:population_growth_prob_dens}.
+
+\begin{align}
+	F_c(\phi_c, \phi_p) &= \int_0^{z_0} \varepsilon \beta_c(z,t)\phi_c(z,t)r(z,t) dz\\ &- P(t)\int_0^{z_0} \beta_p(z,t) \phi_c(z,t) \phi_p(z,t)dz \\
+	F_p(\phi_c, \phi_p) &=  C(t) \int_0^{z_0} \varepsilon \beta_p(z,t)\phi_c(z,t)\phi_p(z,t) dz
+  \label{eq:fitness}
+\end{align}
+
+At any instant, an organism seeks to find the strategy that maximizes its fitness. A strategy in our case is a probability distribution in the water column. The optimal strategy $\phi_c^*$ of a consumer depends on the strategy of the predators, and likewise for $\phi_p^*$ for the predators. Denoting the space of probability distributions on $[0,z_0]$ by $\mathbb{P}(0,z_0)$, this can be expressed as:
+\begin{align*}
+	\phi_c^*(z,t)(\phi_p) &= \argmax_{\phi_c \in \mathbb{P}(0,z_0)}  \int_0^{z_0} \varepsilon \beta_c(z,t)\phi_c(z,t)r(z,t) dz \\ &- P(t)\int_0^{z_0} \beta_p(z,t) \phi_c(z,t) \phi_p(z,t)dz  \\
+	\phi_p^*(z,t)(\phi_c) &= \argmax_{\phi_p \in \mathbb{P}(0,z_0)}C(t) \int_0^{z_0} \varepsilon \beta_p(z,t)\phi_c(z,t)\phi_p(z,t) dz
+\end{align*}
+The Nash equilibrium of the instantaneous game is:
+\begin{align}
+  \label{eq:nash_equilibria}
+	\phi_c^{*,NE} &=  \argmax_{\phi_c \in P(0,z_0)}  \int_0^{z_0} \varepsilon \beta_c(z,t)\phi_c(z,t)r(z,t) dz \\ &- P(t)\int_0^{z_0} \beta_p(z,t) \phi_c(z,t) \phi_p^{*,NE}(z,t) dz \\
+	\phi_p^{*,NE} &=  \argmax_{\phi_p \in P(0,z_0)}C(t) \int_0^{z_0} \varepsilon \beta_p(z,t)\phi_c^{*,NE} \phi_p(z,t) dz
+\end{align}
+
+With a fast algorithm for finding the Nash Equilibrium in hand, we are able to solve the time-dynamics for the predator-prey system by a Euler-scheme. The dynamics of the resource are more complicated due to the diffusion term, \Cref{eq:population_growth_prob_dens}. We solve the partial differential equation for the resource using the method of exponential time-differencing with a first-order approximation of the integral. Using exponential time-differencing guarantees a stable solution, though the system may be stiff, \cite{hochbruck2010exponential}
+
+\subsubsection*{Model parametrization}
+Following \citep{yodzis1991}, we parametrize the clearance and loss rates in a metabolically scaled manner following Kleibers law, \citep{kleiber}, using scaling constants from \citep{kha_2019}. We use the default parameters in the clear-sky model, modelling a sequence of moonless nights. This is a bit of a simplification, but it should not have a great effect on our results. The North Sea is modeled with a rather high attenueation coefficient.
+
+
+\begin{tabular}{l | l | l}
+  Precipitable water & $w_a$ & 1 g $\cdot$ m$^{-3}$\\
+  Aeorosol optical depth & $aod$ & 0.1 \\
+  Light decay & $k$ & 0.1 m$^{-1}$\\
+  Ocean depth & $z_0$ & 90 m \\
+  Consumer mass & $m_c$ & 0.05 $g$ \\
+  Predator mass & $m_p$ & 20 $g$ \\
+  Consumer clearance rate & $\beta_c$ & 32 m$^{3}$ year$^{-1}$ \\
+  Predator clearance rate & $\beta_p$ & 2800 m$^3$ year$^{-1}$ \\
+  Consumer metabolic rate & $\mu_c$ & 0.24 g$^{3}$ year$^{-1}$ \\
+  Predator metabolic rate & $\mu_p$ & 21 g$^3$ year$^{-1}$ \\
+  Minimal attack rate & $\beta_0$ & $5 \cdot 10^{-3} \beta_p$ \\
+  Phytoplankton growth & $\lambda$ & 100 year$^{-1}$ \\
+  Phytoplankton max & $r_{max}$ & $10\mathcal{N}(0,6)$ g$\cdot$m$^{-1}$ \\
+  Irrationality & $\sigma$ & 14 $m^2$ \\
+  Diffusion rate & k & 500 m$^{2}$ year$^{-1}$
+\end{tabular}
+
+%%% Local Variables:
+%%% mode: latex
+%%% TeX-master: "main"
+%%% End:

@@ -1,35 +1,22 @@
-\section{General model}
+\section{Method}
+\subsection*{General model framework}
+We propose a novel method of solving multiplayer games in continuous space, applying a relatively unknown result to finding Nash equilibria of polymatrix games and discretizations of the continuous game. An additional strength of our approach is that it naturally allows for the notion of noisy strategies. Our approach can naturally be applied to studying population dynamics, where the growth rates are given by an inner game. As an example, the Hawk-Dove game could be used to model the growth rates of two populations where their hawkishness depends on the abundances of resources or the season. The usual setting where the approach of using games to find rates is that of predator-prey games with a refuge. Due to algorithmic and computational restrictions the approach has previously only been used in finite games with two players.
 
-\section{Model}
-\subsubsection*{General model framework}
-%Hawk-DOve game, etc. kunne også dækkes,
-%Det der foregår instant er habitatvalg
-%Populationsdynamik indre rater givet ved et spil
-%Løses som et bimatrix eller polymatrix spil
-%Hvis det er tilfæjdet kan vi løse det
-We propose a new method of solving multiplayer games in continuous space, providing at the same time a generalization of the notion of a polymatrix game, applying a relatively unknown result to finding Nash equilibria of polymatrix games and discretizations of the continuous game. An additional strength of our approach is that it naturally allows for the notion of noisy strategies.
+By allowing fast resolution of polymatrix games in continuous space, we drastically expand the scope of problems that can be studied. In a polymatrix population game, there is polymorphic-monomorphic equivalence \citep{cressmannbook}, so an individual of type $j$ cannot distinguish whether an opposing population playing a mixed strategy $\phi$ is a mixture of individuals playing pure strategies, or all individuals play a single mixed strategy. As such, our approach entails each individual in a species or population making optimal choices, and the other groups reacting to the total choice.
 
-The general case we consider is that of $N$ players, eg. species, interacting, with common strategy spaces $X$. The strategy of a player $i$ is a square-integrable probability distribution $\phi_i$ on $X$. All players interact in a pairwise fashion, with pairwise payoffs given by linear operators $A_{ij}: X\to X$, ie. the payoff of player $i$ playing strategy $\phi_i$ against player $j$ with strategy $\phi_j$ is $\gamma_{ij}=\ip{\phi_i}{A_{ij} \phi_j}$. In the case where $X$ is finite, we recover the notion of a polymatrix game.
+The basic structure in the games we study is a system of $N$ players, with strategies given by probability distributions $\phi_i$ on a space $X$, henceforth an interval $[0,z_0]$. The payoffs $U_i$ of the players are given by matrices, or, in the continuous setting, linear operators $A_ij$ as
+\begin{equation}
+  \label{eq:utility}
+  U_i(\phi^{-i}) = \sum_{j=1}^N \int \phi_i A_{ij} \phi_j dx
+\end{equation}
+We can see that this generalizes the notion of a polymatrix game, if the integral is replaced by a sum and the probability distributions are replaced by strategy vectors. The population dynamical systems that can be modelled via. games like this are where the population dynamics of species $i$ can be modelled as
+\begin{equation}
+  \dot{N_i} = N_i U_i
+\end{equation}
+The Nash equilibrium of such a system consists of a family of probability distributions $(\phi_i^{*,NE})_{i=1}^N$ where no player can increase their utility by unilaterally deviating from their strategy.
 
-
-\begin{definition}
-  Let $X$ be a measure space. Leting $A_{ij}$ be a finite collection of bounded operators on $K = L^2(X) \cap P(X)$, such that $\ip{\phi_i}{A_{ij}\phi_j} \geq 0$.Define the total payoff operator $M:K^N \to K^N$ as:
-  \begin{equation}
-    M =
-    \begin{bmatrix}
-        0 & A_{1,2} & A_{1,3} &\dots & A_{1,N} \\
-        A_{2,1} & 0 & A_{2,3} &\dots & A_{2,N} \\
-        \vdots & \vdots & \vdots & \vdots & \vdots \\
-        A_{N,1} & A_{N,2} & \dots & \dots & 0
-    \end{bmatrix}
-  \end{equation}
-\end{definition}
-%Remark that we require non-degenerate Nash Equilibria...
-%Avoid circular reasoning!
-
-
-\subsubsection*{Noisy strategies} %	Y \sim \mathcal{N}(0, \sigma^2) \\
-Our model incorporates that fish are not necessarily perfectly rational, but have \textbf{bounded rationality} by letting the strategy depend on the rationality parameter $\sigma$, with $\sigma=0$ being completely rational and $\sigma = \infty$ completely irrational. Rather than choosing a precise location, an individual can choose where it diffuses around. As fish cannot swim out of the top of the ocean, nor through the bottom, we end with the partial differential equation:
+\subsubsection*{Noisy strategies}
+Our model incorporates that players are not necessarily perfectly rational, but have \textbf{bounded rationality} by letting the strategy depend on the rationality parameter $\sigma$, with $\sigma=0$ being completely rational and $\sigma = \infty$ completely irrational. Rather than choosing a precise probability distribution, a player can choose where it diffuses around. As the players must play within the interval, we arrive at the following differential equation for the player strategy:
 \begin{align}
   \label{eq:density_PDE}
 	&\partial_\sigma \phi_i = \frac{1}{2}\partial_z^2 \phi_i \\
@@ -39,29 +26,26 @@ Our model incorporates that fish are not necessarily perfectly rational, but hav
 The equation \Cref{eq:density_PDE} has the fundamental solution $f_Y(\sigma)$, determined by the method of images. Instead of choosing a distribution $\phi$, an individual chooses a distribution $f_X$, which we use as initial condition in \Cref{eq:density_PDE}. An individual with strategy $f_X$ will actually be distributed according to $\phi(\sigma,z)$, which becomes increasingly uniform as $\sigma$ increases. The way we concretely solve \Cref{eq:density_PDEs} with initial condition $f_X$ is through a Greens function approach, ie. performing a convolution of $f_X$ and $f_Y$. We refer to the solution $\phi$ of \Cref{eq:density_PDE} as the realized distribution.
 
 We expect that an individual will still attempt to maximize its own fitness, even though the location cannot be chosen exactly. Instead, the optimization will go towards finding the strategy $f_X$ that maximizes the fitness when noise is taken into account.
-Having introduced noise to the strategies of consumers and predators, we can find the Nash equilibrium of their optimal distributions without noise. We find the Nash pair by inserting the fundamental solution in \Cref{eq:nash_equilibria} and optimizing over $f_{X_i},~i\in \{c, p\}$.
+Having introduced noise to the strategies of the players, we can find the Nash equilibrium of their optimal distributions without noise. We find the Nash pair by inserting the fundamental solution in \Cref{eq:nash_equilibria} and optimizing over $f_{X_i},$.
 \begin{align*}
-	f_{X_c}^{*,NE} &=  \argmax_{f_{X_c} \in \mathbb{P}(0,z_0)}  \int_0^{z_0} \varepsilon \beta_c(z,t)(f_{X_c} * f_Y) r(z,t) dz \\ & -  P(t)\int_0^{z_0} \beta_p(z,t) (f_{X_c} * f_Y)(f_{X_p}^{*,NE} * f_Y) dz \\
-	f_{X_p}^{*,NE} &=  \argmax_{f_{X_p} \in \mathbb{P}(0,z_0)}C(t) \int_0^{z_0} \varepsilon \beta_p(z,t)(f_{X_c}^{*,NE}  * f_Y)(f_{X_p}* f_Y) dz
+	f_{X_i}^{*,NE} &=  \argmax_{f_{X_i}}  \int_0^{z_0} U_i(f_{X_i}*f_Y, \phi^{-i}) dz
 \end{align*}
-
 The realized distributions are found by convolution with $f_Y$ as
 \begin{align*}
-  \phi_c^{*,NE} &= f_{X_c}^{*,NE} * f_Y \\
-  \phi_p^{*,NE} &= f_{X_p}^{*,NE} * f_Y
+  \phi_i^{*,NE} &= f_{X_i}^{*,NE} * f_Y \\
 \end{align*}
 
 \subsubsection*{Spatial discretization}
-We discretize the interval $[0,z_0]$ with a spectral scheme based on Legendre polynomials, \citep{kopriva2009implementing}, which allows precise integration and differentation with only relatively few points.
+In order to calculate the Nash Equilibrium efficiently, and perform numerical integration precisely we discretize the interval $[0,z_0]$ with a spectral scheme based on Legendre polynomials, \citep{kopriva2009implementing}. This allows precise integration and differentation with only relatively few points.
 We approximate pure strategy of being in a point $z_i$  by a normalized hat-function $e_i$, zero everywhere apart from $z_i$.
 \begin{align*}
 	& \int_{z_i}^{z_{i+1}} e_i dz = 1 \\
 	&e_i(z_{i-1}) = 0,~ e_i(z_{i+1}) = 0
 \end{align*}
-Working on a grid with $N$ points, a strategy chosen by a consumer or predator then becomes a linear combination of hat-functions,
+Working on a grid with $M$ points, a strategy then becomes a linear combination of hat-functions,
 \begin{align*}
-  &\phi_{i} = \sum_{j<N} a_{j,i} e_j, \quad i\in \{c,p\} \\
-  &\sum_{j<N} a_{j,i} = 1 \quad i\in \{c,p\}todo
+  &\phi_{i} = \sum_{j<M} a_{j,i} e_j, \quad i\in \{1,\dots, N\} \\
+  &\sum_{j<N} a_{j,i} = 1 \quad i\in \{1,\dots, N\}
 \end{align*}
 The strategy of a player is fully determined by the $a_i$'s.
 
@@ -71,16 +55,9 @@ When considering non-optimal actors, we need to implement the convolution with $
 \subsubsection*{Finding the Nash Equilibrium and time-stepping}
 Finding the Nash Equilibrium in a game in continuous space is usually a hard task, requiring the development of bespoke methods, \citep{verticalmigration}, or very long runtimes, \citep{jerome}. The method we have use circumvents these problems, by combining a little-known result in mathematical optimization with a spectral scheme.
 
-By discretizing space, we have reduced an uncountable strategy set to a more manageable finite amount, with pure strategies $e_i$. The gain of a consumer playing strategy $e_i$ against a predator playing strategy $e_j$ can be determined as $F_c(e_i,e_j)$, \Cref{eq:fitness}, and similarly for a predator. Both payoff functions are bi-linear in the strategies, which allows us to write up payoff matrices $E_c, E_p$, with entry $(i,j)$ determined through $F_k(e_i,e_j), k \in \{c, p\}$. If a predator plays strategy $s_p$, given by a vector $(a_1,\dots,a_N)$ and a consumer plays strategy $s_c$ given by $(b_1,\dots,b_N)$, the consumer and predator payoffs can be determined through $E_c,E_p$ as:
-\begin{align*}
-  F_c(s_c,s_p)&=\ip{s_c}{E_c s_p} \\
-  F_p(s_c,s_p)&=\ip{s_p}{E_p s_c}
-\end{align*}
+By discretizing space, we have reduced an uncountable strategy set to a more manageable finite amount, with pure strategies $e_k$. The gain of a player playing strategy $e_k$ against player $j$ playing strategy $e_l$ can be determined as $A_{ij}(e_k,e_l)$, \Cref{eq:utility}. The discretization allows us to write up payoffs for a finite approximation version of the continuous game,  with entry $(k,l)$ determined through $\ip{e_k}{A_{ij}e_l}, k,l \in \{1,\dots M\}$.
 Our discretization has reduced the problem to a bimatrix game, where finding the Nash equilibrium is more tractable.
-
-%\todo[inline]{Jeg synes vi skal fjerne den efterfølgende sætning, da den ikke bidrager til klarhed. Polymatrixspil kan evt. nævnes som en mulig generalisering i diskussionen: A bimatrix game is a special case of a polymatrix game, where $n$ players play against each other in pairwise games and the total payoff is given by the sum of the payoffs across the pairwise interactions.}
-
-It does not appear to have diffused through the literature, but a Nash equilibrium of a polymatrix game can be found by solving a linear complementarity problem \citep{miller1991copositive}. We repeat the argument from \citep{miller1991copositive}, specialized to the case of two-player (bimatrix) games: Assume that $(s^*_c,s^*_p)$ constitute a Nash equilibrium in mixed strategies with values $\gamma_c = \ip{s^*_c}{E_c s^*_p}$ and   $\gamma_p = \ip{s^*_p}{E_p s^*_c}$ to the consumer and predator, respectively. Then
+It does not appear to have diffused through the literature, but a Nash equilibrium of a polymatrix game can be found by solving a linear complementarity problem \citep{miller1991copositive}. Using a modification of the argument from \citep{miller1991copositive}, specialized to the case of two-player (bimatrix) games: Assume that $(s^*_c,s^*_p)$ constitute a Nash equilibrium in mixed strategies with values $\gamma_c = \ip{s^*_c}{E_c s^*_p}$ and   $\gamma_p = \ip{s^*_p}{E_p s^*_c}$ to the consumer and predator, respectively. Then
 \[
   \ip{s_p}{1_n} =
   \ip{s_c}{1_n} =
@@ -98,6 +75,7 @@ $w_c$ and $w_p$ are non-negative ``slack variables'' that state that the payoff 
 \]
 holds. Assume for convenience that all elements in $E_c$ and $E_p$ are negative; this can always be obtained without changing the Nash equilibria by substracting a constant from $E_c$ and $E_p$. Consequenty, also the payoffs $\gamma_c$ and $\gamma_p$ are negative and thus the vector $z = (s_c,s_p,-\gamma_c,-\gamma_p)$ satisfies the Linear Complementarity Problem (LCP)
 \[
+\label{eq:lcp}
   z \geq 0,
   w \geq 0 ,
   H
@@ -131,30 +109,8 @@ where
 \]
 Conversely, assume that $z=(s_c,s_p,\gamma_c,\gamma_p)$ and $w$ solve the Linear Complementarity Problem, then it is straightforward to see that the mixed strategies $(s_c,s_p)$ form a Nash equilibrium with values $(\gamma_c,\gamma_p)$. The assumption that $E_c$ and $E_p$ have negative elements imply that the matrix $H$ is copositive plus (meaning, for all $z\geq0$ with $z\neq0$ it holds that $\ip z{Hz}>0$) which assures that the LCP to has a solution, in particular through Lemke's algorithm.
 
-
-Therefore our approach provides an avenue to reduce the intractable problem of finding a Nash equilibrium of a multiplayer game in continuous space to solving an optimization problem.
-When solving the linear complementarity problem, the first step is to introduce the total payoff matrix:
-\begin{align*}
-	R_{init} = \begin{bmatrix} 0 & E_c \\ E_p & 0 \end{bmatrix}
-\end{align*}
-As all entries in $R_{init}$ do not have the same sign, $R_{init}$ is not copositive. We fix this by defining $R=R_{init}(R_{init \neq 0})-max(R_{init})-\epsilon$.
-Applying the results of \citep{miller1991copositive}, to find the Nash equilibrium we need to solve the problem:
-\begin{align}
-	(Hz+q) = w & \\
-	\ip{z}{w} = 0 & \\
-	z\geq 0, w\geq 0
-  \label{eq:lcp}
-\end{align}
-where
-\begin{align*}
-  H &= \begin{bmatrix} -R & -A^T \\ A & 0 \end{bmatrix} \\
-	A &= \begin{bmatrix} -1 & \dots & -1 & 0 & \dots & 0 \\ 0 & \dots & 0 & -1 & \dots & -1 \end{bmatrix} \\
-	q &= \begin{pmatrix} 0 & \dots & 0 & -1 & \dots & -1 \end{pmatrix}
-\end{align*}
-
 Solving \Cref{eq:lcp} was done through two different methods. The interior-point method as implemented in IPOPT, \citep{wachter2006implementation}, called via. the auto-differentation software CasADi \citep{Andersson2019}, and Lemkes Algorithm implemented in the Numerics package in Siconos, \citep{acary2019introduction}. Experience showed that Lemkes algorithm was the fastest, but there is probably a situation where the problem has a sparsity structure favorable to IPOPT.
-
-With a fast algorithm for finding the Nash Equilibrium in hand, we are able to solve the time-dynamics for the predator-prey system by a Euler-scheme. The dynamics of the resource are more complicated due to the diffusion term, \Cref{eq:population_growth_prob_dens}. We solve the partial differential equation for the resource using the method of exponential time-differencing with a first-order approximation of the integral. Using exponential time-differencing guarantees a stable solution, though the system may be stiff, \cite{hochbruck2010exponential}. %\subsubsection*{Time evolution}
+ %\subsubsection*{Time evolution}
 
 %We solve the time-evolution of the predator and prey populations using a semi-implicit euler scheme. At each step we find the Nash equilibrium based on the last state, and evolve the populations accordingly. The time-evolution of the resource is solved by the method of exponential time differencing, using a first-order difference, \citep{hochbruck2010exponential}, ie. a mixture of a first-order method and an exact Greens function approach.
 
