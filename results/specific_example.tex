@@ -66,7 +66,7 @@ The Nash equilibrium of the instantaneous game is:
 Since the fitness, \Cref{eq:fitness}, is a lilnear function of the strategies for the predator and prey we can apply the method \Cref{eq:lcp} to find the Nash equilibrium. Using this, we are able to solve the time-dynamics for the predator-prey system by a Euler-scheme. The dynamics of the resource are more complicated due to the diffusion term, \Cref{eq:population_growth_prob_dens}. We solve the partial differential equation for the resource using the method of exponential time-differencing with a first-order approximation of the integral. Using exponential time-differencing guarantees a stable solution, though the system may be stiff, \cite{hochbruck2010exponential}
 
 \subsubsection*{Model parametrization}
-Following \citep{yodzis1991}, we parametrize the clearance and loss rates in a metabolically scaled manner following Kleibers law, \citep{kleiber}, using scaling constants from \citep{kha_2019}. We use the default parameters in the clear-sky model, modelling a sequence of moonless nights. This is a bit of a simplification, but it should not have a great effect on our results. The North Sea is modeled with a rather high attenueation coefficient.
+Following \citep{yodzis1992body}, we parametrize the clearance and loss rates in a metabolically scaled manner following Kleibers law, \citep{kleiber}, using scaling constants from \citep{kha_2019}. We use the default parameters in the clear-sky model, modelling a sequence of moonless nights. This is a bit of a simplification, but it should not have a great effect on our results. The North Sea is modeled with a rather high attenueation coefficient.
 
 
 \begin{tabular}{l | l | l}
