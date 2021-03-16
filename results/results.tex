@@ -1,4 +1,7 @@
 \section{Results}
+
+\todo[inline]{Måske understrege struktur v.h.a. underoverskrifter: Først adfærd, derefter emergent populationsdynamik?}
+
 \begin{figure}[H]
 \includegraphics{plots/specific_dists_rational.pdf}
 \caption{Daily distribution of consumers \emph{blue} and predators \emph{red} at noon \emph{(1)}, dusk \emph{(2)} and at midnight, \emph{(3)} with full rationality on the 1st of October}
@@ -13,7 +16,9 @@ At midnight \Cref{fig:specific_dists_rational}(3) the consumers are concentrated
 \caption{Daily distribution of consumers \emph{blue} and predators \emph{red} at midnight \emph{(1)}, noon \emph{(2)} and at 18:45, \emph{(3)} with bounded rationality}
 \label{fig:specific_dists_semi_rational}
 \end{figure}
-Examining snapshots of the migration in the ecosystem with bounded rationalty, \Cref{fig:specific_dists_irrational}, we see roughly the same picture as in \Cref{fig:specific_dists_rational}. The greatest difference is at midnight and dusk, \Cref{fig:specific_dists_irrational}(1,3), where the bounded rationality leads to a smooth shape for the distrbution of consumers. At noon, the distributions in the system with bounded rationality \Cref{fig:specific_dists_irrational}(2) and \Cref{fig:specific_dists_rational}(2) are almost entirely equal. The shapes of the distributions at both day and night seem to agree better with observations in the model with bounded rationality, \citep{visser2001observations, hay1991zooplankton}, lending credence to the idea that copepods are not perfectly rational.
+\todo[inline]{Måske kombinere figur 2 og 3, så sammenligningen på tværs af rationalitet bliver tydeligere? Overvej tidspunkterne. Er ``dusk'' i figur 2 det samme som 18:45? i figur 3}
+
+Examining snapshots of the migration in the ecosystem with bounded rationalty, \Cref{fig:specific_dists_irrational}, we see roughly the same picture as in \Cref{fig:specific_dists_rational}. The greatest difference is at midnight and dusk, \Cref{fig:specific_dists_irrational}(1,3), where the bounded rationality leads to a smooth shape for the distrbution of consumers. At noon, the distributions in the system with bounded rationality \Cref{fig:specific_dists_irrational}(2) and \Cref{fig:specific_dists_rational}(2) are almost entirely equal. The shapes of the distributions at both day and night seem to agree better with observations in the model with bounded rationality, \citep{visser2001observations, hay1991zooplankton}, lending credence to the idea that copepods are not perfectly rational.\todo{I nogle områder er de også udsat for turbulens, der gør det umuligt at opretholde en perfekt position.}
 
 \begin{figure}[H]
 \includegraphics{plots/heatmapsday90_nonrandom.pdf}
@@ -33,6 +38,8 @@ Moving the hands on the clock forward to October, we again see a clearly defined
 \includegraphics{plots/growth_short_rational.pdf}
 \caption{Seasonal comparison of consumer \emph{(blue)} and predator, \emph{(red)} feeding patterns on 1st of May \emph{(1)}, 1st of July \emph{(2)} and 1st of October \emph{(3)}}
 \label{fig:growth_short_rational}
+\todo[inline]{Overvej tidspunkterne. Jeg ville måske foretrække forårsjævndøgn, solhverv, og efterårsjævndøgn, så forskellen mellem det første  og det sidste tidspunkt udelukkes skyldes at abundanserne har ændret sig.}
+
 \end{figure}
 At all three points in time, consumers have a constant feeding level throughout the night \Cref{fig:growth_short_rational}. The main feeding time for predators is at dawn and dusk, with a slight peak during the day as well, \Cref{fig:growth_short_rational}. The length of predator feeding duration increases with the length of the night,  \Cref{fig:growth_short_rational}(2,3). Peak predator feeding activity decreases by a factor of 3/4 throughout the seasons, \Cref{fig:growth_short_rational}, reflecting lower maximal light levels.
 \begin{figure}[H]
@@ -48,6 +55,10 @@ Looking at short-term population growth in the model with full rationality and b
 \includegraphics{plots/populations.pdf}
 \caption{Total populations of consumers \emph{(blue)}, predators, \emph{(red)} and resources \emph{(purple)} from 1st of april to 1st of october. We vary the rationality, from total rationality \emph{(1)}, bounded rationality ($\sigma = 10$), \emph{(2)} and fully irrational, $\sigma = \infty$, \emph{(3)}.}
 \label{fig:long_term_populations}
+\todo[inline]{Er fully irrational interessant? Det giver vel en ligefordeling, som er ret urealistisk?
+
+Denne figur skal måske indsættes tidligere; det er svært at forstå de tidligere figurer uden denne i baghovedet.}
+
 \end{figure}
 The difference in population dynamics between a system with no behavioral optimization and full rationality \Cref{fig:long_term_populations}(1,3) is stark, where the system with bounded rationality has approximately the same dynamics as the one . The resources reach a stable level quickly in all three cases, but the populations of consumers and predators differ markedly. The difference in populations between the system with bounded rationality \Cref{fig:long_term_populations}(2) and the fully rational system appears to be negligible, \Cref{fig:long_term_populations}(1). The main driver of the change in population dynamics seems to be the ability to retreat to a refuge, and not the exact shape of the distributions when interacting.
 %Large differences between irrational and the rational possibilities
@@ -55,3 +66,8 @@ The difference in population dynamics between a system with no behavioral optimi
 %Compare to behavior visser2001observations, hay1991zooplankton
 
 %Compare to wang2014seasonal, klevjer2016large, olivar2017mesopelagic, beaugrand2001geographical, colebrook1979continuous
+
+%%% Local Variables:
+%%% mode: latex
+%%% TeX-master: "main"
+%%% End:
