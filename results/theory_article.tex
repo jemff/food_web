@@ -1,6 +1,6 @@
 
 The following theorem is an adaption of \citep[Theorem 3.3]{} to our setting, whereby we show that the requirement of lower semicontinuity can be replace by the condition that the convex set is instead a convex cone. We largely follow their notational conventions.
-\begin{theorem}
+\begin{theorem}[Variational inequality formulation]
 \label{thm:lcp_hilbert}
 Let $K$ be a non-empty closed convex cone in a real separable Hilbert space H. Let $T:H \to H$ be a bounded linear operator, and $q\in H$. Assume:
 \begin{enumerate}
@@ -48,9 +48,21 @@ Splitting up, we arrive at
 	\lim_{n} \ip{x-u_n}{q} + \lim_{n} \ip{x}{Tu_n} \geq \limsup_{n} \ip{u_n}{T u_n} \geq \ip{u^*}{Tu^*}
 	\ip{x-u^*}{q} + \ip{x}{Tu_n^*} \geq \ip{u^*}{Tu^*}
 \end{align*}
-showing that $\ip{x-u^*}{q}+\ip{x}{Tu^*}-\ip{u_n}{Tu^*} \geq 0$, thus there exists a solution to the problem.
+showing that $\ip{x-u^*}{q}+\ip{x}{Tu^*}-\ip{u_n}{Tu^*} \geq 0$, thus there exists a solution to the problem. The solution set is bounded by an analogous argument to the boundedness of $u_n$,, and clearly closed, hence weakly compact.
 \end{proof}
-
+\begin{corollary}[Linear complementarity problem]
+  \label{cor:lcp_formulation}
+  Let $H$ be a separable real Hilbert space, and define the closed convex cone $K=H^+$ consisting of positive elements. Assume $T$ satisfies the assumptions of \Cref{thm:lcp_hilbert}. Then the linear complementarity problem
+  \begin{align*}
+    &\ip{x}{Tx+q} = 0
+    &Tx+q \in K, ~x \in K
+  \end{align*}
+  has a solution for $q \in H$ s.t. $\ip{q}{x} > 0$ where $x\in \ker(T+T^*) \cap K - T(K)$ .
+\end{corollary}
+\begin{proof}
+  Set $v=0$ in \Cref{thm:lcp_hilbert}, then $\ip{\overline{x}}{T\overline{x} + q} \geq 0$. Inserting $v=2\overline{x}$, we arrive at
+  $\ip{\overline{x}}{T\overline{x}+q}\leq 0$, so $\ip{x}{T\overline{x}+q} = 0$.
+\end{proof}
 
 \begin{definition}[N-player linear game] \label{def:lin_game}
   Let $(X,\mu)$ be a probability space, assuming for simplicity that $\mu$ is either discrete or  continuous. Assume that we have $N$ players with utility functions $U_i$ and strategies $\phi_i$. We assume that $\phi_i$ is a probability distribution, as well as lying in $L^2(X,\mu)$. Denote the space of feasible $\phi_i$ as $K$. The pairwise interactions are defined by a family of bounded linear operators $A_{ij}: L^2(X)\to L^2(X)$, ie. the payoff of player $i$ playing strategy $\phi_i$ against player $j$ with strategy $\phi_j$ is $\gamma_{ij}=\ip{\phi_i}{A_{ij} \phi_j}$. The total expected payoff $U_i(\phi^{-i})$ of player $i$ is given by
@@ -69,6 +81,7 @@ showing that $\ip{x-u^*}{q}+\ip{x}{Tu^*}-\ip{u_n}{Tu^*} \geq 0$, thus there exis
 \end{proof}
 
 \begin{definition}
+  \label{def:total_payoff}
   Let $(X,\mu)$ be a probability space, $K$ a convex subset of $L^2(X)$, and $A_{ij}$ a finite collection of bounded operators $A_{ij}: K \to L^2(X)$. Define the total payoff operator $M:K^N \to K^N$ as:
   \begin{equation}
     M =
@@ -84,8 +97,15 @@ showing that $\ip{x-u^*}{q}+\ip{x}{Tu^*}-\ip{u_n}{Tu^*} \geq 0$, thus there exis
 \begin{remark}
   We can weaken the assumption of the $A_{ij}$ being bounded on $L^1(X)$ to $L^2(X)$ if we consider $K\cap B_n$, where $B_n$ is the unit ball in $L^2(X)$ of radius $n$.
 \end{remark}
-
-
+We recall the generalized version of Farkas Lemma for future use:
+\begin{lemma}
+  \label{lem:farkas_lemma}
+Given locally convex spaces $X$ and $Y$ and a strongly continuous linear map $A:X\to Y$, if $A(S)$ is strongly closed the following conditions are equivalent:
+  \begin{align}
+    Ax = b \text{ has a solution } x\in S
+    A^* y^* \in S^* \Rightarrow \ip{y^*}{b} \geq 0
+  \end{align}
+\end{lemma}
 
 \begin{theorem} \label{thm:nash_eq}
   Let $(X,\mu)$ be a probability space, and assume that we have an $N$-player game in the sense of \Cref{def:lin_game}. Then the Nash equilibrium of \Cref{def:lin_game} can be found by solving the complementarity problem
@@ -98,12 +118,7 @@ showing that $\ip{x-u^*}{q}+\ip{x}{Tu^*}-\ip{u_n}{Tu^*} \geq 0$, thus there exis
   for two different possibilities of $K$.
   \begin{enumerate}
     \item
-      If all the operators $A_{ij}$ satisfy:
-      \begin{enumerate}
-        \item They a
-        \item gasdf
-        \item fasdf
-      \end{enumerate}
+      If all the operators $-A_{ij}$ satisfy the assumption \Cref{thm:lcp_formulation}
       Then the problem of finding a Nash equilibrium on $K = L^2(X)_+$ can be written as \Cref{eq:complementarity_problem}, giving a Nash equilibrium of \Cref{def:lin_game}.
     \item
       If we consider the weakly compact convex set given by $L^2(X)_+ \cap B_n$, the game in \Cref{def:lin_game} has a Nash equilibrium, and it is given by \Cref{eq:complementarity_problem}
@@ -112,6 +127,7 @@ showing that $\ip{x-u^*}{q}+\ip{x}{Tu^*}-\ip{u_n}{Tu^*} \geq 0$, thus there exis
 \begin{proof}
   \begin{enumerate}
     \item
+    In case the $A_{ij}$ are compact, consider $A_{ij}-\lambda$ instead. This does not change the Nash equilibrium of the game, since all payoffs are changed by the same amount. In this way, we are guaranteed that all $-A_{ij}$ are semi-coercive.
     The requirements for a family $\Phi^*=(\phi_i^*)_{i=1}^N \in K^N$ to constitute a Nash equilibrium is: There is no other family $(\psi_i)_{i=1}^N$, such that
     \begin{equation}
         \ip{\phi_i^*}{\sum_{k=1}^N A_ij \phi_j^*} < \ip{\psi_i}{\sum_{k=1}^N A_ij \phi_j^*}
@@ -121,25 +137,48 @@ showing that $\ip{x-u^*}{q}+\ip{x}{Tu^*}-\ip{u_n}{Tu^*} \geq 0$, thus there exis
     \begin{equation}
       \ip{\Phi^*-\Phi}{M \Phi^*} < 0
     \end{equation}
-    For $\Phi, \Phi^* \in K^n$, define the slack variable $d = \Phi - \Phi^*$.  If $\phi_i^* = 0$ a.s., then $d_i \geq 0$ a.s., and $\int d_i d\mu(x) \geq 0$. Thus a vector $\Phi^* \in K^n$ is an equilibrium if and only if there is no $d \in L^2(X)^N$ such that
+    Define the total payoff operator as $R$ from \Cref{def:total_payoff}. Since $-R$ is assumed positive-plus, we can slack the requirement that $\int \phi_i d\mu(x)=1$ to $\int \phi_i d\mu(x) \geq 1$, as a greater variation decreases the payoff.
+
+    For $\Phi, \Phi^* \in K^n$, define the slack variable $d = \Phi - \Phi^*$. If $\phi_i^* = 0$ a.s., then $d_i \geq 0$ a.s., and $\int d_i d\mu(x) \geq 0$.
+
+    Thus a vector $\Phi^* \in K^n$ is an equilibrium if and only if there is no $d \in L^2(X)^N$ such that
     \begin{equation}
-      &\ip{-d}{R \Phi} < 0 \\
-      -\int d_i \mu(x) \leq 0 \\
-      \phi_i = 0 \Rightarrow -d_i \leq 0
+      &\ip{-d}{M \Phi} < 0 \\
+      \ip{\phi_i}{1} = 1 \Rightarrow -\int d_i \mu(x) \leq 0 \\
+      \phi_i = 0 a.s. \text{ on } A\subset X \Rightarrow -d_i \leq 0  \text{ on } A\subset X
     \end{equation}
-    The generalized version of Farkas Theorem states: Given locally convex spaces $X$ and $Y$ and a strongly continuous linear map $A$, if $A(S)$ is strongly closed the following conditions are equivalent:
+    Defining the operator $C:\osum_{i=1}^N \ip{1}{\cdot}: H^n \to \R^n$.
+    Writing this with block-matrix operators, the existence of a Nash equilibrium is predicated on \Cref{eq:alternative_eq} having no solution
+    \begin{equation}
+      \label{eq:alternative_eq}
+        \ip{-d}{R\Phi^*}<0 \\
+        \begin{pmatrix}
+          A & -\ip{1}{\dot} - \ip{\dot}{A\Phi} \\
+          -I_H^n & \ip{\dot}{\Phi^*}
+        \end{pmatrix}
+        \begin{pmatrix}
+          d \\
+          L
+        \end{pmatrix}
+        \leq 0
+    \end{equation}
+    We can introduce the block-matrix operators:
     \begin{align}
-      Ax = b \text{ has a solution } x\in S
-      A^* y^* \in S^* \Rightarrow \ip{y^*}{b}
+        B = \begin{bmatrix} A & -\ip{1}{\dot} \\ -I^n_H & \Phi^* \end{bmatrix}
+        b = \begin{pmatrix} M\Phi^* \\ 0 \end{pmatrix}
     \end{align}
+    By semi-coercitivity, the sets $A_{ij}(K)$ is closed so by \Cref{lem:farkas_lemma}, we see that \Cref{eq:alternative_eq} has no solution if and only if the system:
+    \begin{equation}
+      \ip{B^*}{w} = b, \quad w \in L^2_+
+    \end{equation}
+    has a solution.
     This allows us to formulate our problem in the terms of a complementarity problem:
     \begin{equation}
       &Mz+q=w \\
       &\ip{w}{z} = 0
       z \in K, w\in K
     \end{equation}
-    which has a solution by \citep[Theorem 3]{goeleven1993solvability}.
-    \item
+    which has a solution by \Cref{cor:lcp_formulation}, giving the Nash equilibrium.
   \end{enumerate}
 \end{proof}
 \begin{corollary}
