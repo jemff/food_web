@@ -2,21 +2,36 @@
 The following theorem is an adaption of \citep[Theorem 3.3]{} to our setting.
 
 %whereby we show that the requirement of lower semicontinuity can be replace by the condition that the convex set is instead a convex cone. We largely follow their notational conventions.
+\begin{lemma}\label{lem:technical}
+	Let $K$ be the closed convex cone of a.e. positive functions in the real separable Hilbert space H=$L^2(X)^n$. Let $T:H \to H$ be a bounded linear operator such that $T(K) \subset K$, and assume that $T$ is coercive on $K$. If a sequence $w_n$ converges weakly to $w^*$, and $w_n - w^* \in K$ for all $n$, then $\liminf_{n} \ip{w_n}{T w_n} \geq \ip{w^*}{Tw^*}$.
+\end{lemma}
+\begin{proof}
+	Defining the quadratic form $a(u,v)=\ip{u}{Tv}$, we can write:
+	\begin{align*}
+		\ip{(w_n-w^*)}{T(w_n-w^*)} \geq \alpha \norm{w_n-w^*} \geq 0
+		\ip{w_n}{Tw_n}-\ip{w_n}{Tw^*}+\ip{w^*}{Tw_n} - \ip{w^*}{Tw^*} \geq 0
+		\ip{w_n}{Tw_n} \geq \ip{w_n}{Tw^*}-\ip{w^*}{Tw_n} +\ip{w^*}{Tw^*}
+	\end{align*}
+	Then, taking $\liminf$ and using the weak continuity of $T$, we arrive at the desired.
+\end{proof}
+\begin{lemma
+
+
+
 \begin{theorem}[Variational inequality formulation]
 \label{thm:lcp_hilbert}
-Let $K$ be a non-empty closed convex cone in a real separable Hilbert space H. Let $T:H \to H$ be a bounded linear operator, and $q\in H$. Assume:
-\begin{enumerate}
-	\item For all $x \in K$, $\ip{x}{Tx} \geq 0$, and $\ip{x}{Tx} = 0$ implies that $\ip{x}{(T+T^*)x} = 0$.
- 	\item $T$ satisfies: For $(x_n)$ a sequence in $K$ of unit norm, such that $\liminf \ip{x_n}{T x_n} = 0$, there is a subsequence $x_{n_k}$ converging to $x^*$ different from 0.
-  \item The map $x\mapsto \ip{x}{Tx}$ is sequentially lower semi-continuous on $K$.
-\end{enumerate}
-Then for every $q$ in $W = \int(\{w \in X : \ip{w}{x} \geq 0\, \quad x  \in \int(ker(T+T^*) \cap K})$, the problem
+Let $C$ be the closed convex cone of a.e. positive functions in the real separable Hilbert space $H=L^2(X)^n$.
+
+Let $S:H \to H$ be a bounded linear operator such that $S(C) \subset C$, and assume that $S$ is coercive on $K$. In addition, assume that $A:H \to R^n$ is weakly continous, positive, and coercive on $C$ and define the operator
+\begin{align*}
+	T = \begin{bmatrix} S & -A^* \\ A & 0 \end{bmatrix}
+\end{align*}
+Defining $K = C \osum \R_+^n$, for every $q$ in $W = \int(\{w \in X : \ip{w}{x} \geq 0\, \quad x  \in \int(ker(T+T^*) \cap K})$, the problem
 \begin{equation}
 	\ip{v-\overline{x}}{T\overline{x} + q} \geq 0, \quad \text{ for all } v\in K
 \end{equation}
 has a solution $\overline{x} \in K$.
 \end{theorem}
-\begin{comment}
 \begin{proof}
 	Assume $q \in W - T(K)$, then there exists $x_0$ such that
 	\begin{equation}
@@ -26,12 +41,27 @@ has a solution $\overline{x} \in K$.
 	Let $(\psi_n)_{n\in \N}$ be a sequence which is dense in $K$, with $\psi_0 = x_0$ and and define $X_n$ as the closure of the space spanned by the first $n$ elements, with corresponding projection $p_n: X \to X_n$, converging strongly to the identity on $X_{\infty} = \bigcup_{n \in \N} X_n$. Definining $K_n = X_n \cap K$, we have a natural system of inclusions of $K_n$ in $K_{n+1}$, defining $K^\infty = \bigcup_{\N} K_n \subset X_\infty$, we have $K^\infty = K$, and $p_n \to 1_K$ strongly. We can apply this system of projections to attain a system of finite-dimensional solutions to \Cref{eq:var_ineq}, by considering
 \begin{equation}
 	\ip{p_n y}{q+(p_nTp_n) x_0} \geq 0
-\end{equation}
-by \Cref{thm:goeleven2}, each of the variational inequalities has a solution $u_n$. It remains to show that the sequence $u_n$ is uniformly bounded. Assume for contradiction that $u_n$ is unbounded, and consider the quantities $x_n = u_n/\norm{u_n}$ and $q_n = q / \norm{u_n}$. The sequence $x_n$ is clearly bounded, and since $u_n \in K_n$ for each $n$ and $K$ is assumed to be a (convex) cone, then $x_n \in K_n$ for each $n$ as well, therefore the weak limit of a subsequence $x_{n_k}$, $x^*$, is in $K^\infty$ and different from 0. Fix $v_0 \in K$, then there is an $n$ such that $v_0 \in K_n,\quad n \geq m$. For every $n \geq m$ we have the inequality
+\end{equation} 
+by \Cref{thm:goeleven2}, each of the variational inequalities has a solution $u_n$. It remains to show that the sequence $u_n$ is uniformly bounded. Assume for contradiction that $u_n$ is unbounded, and consider the quantities $x_n = u_n/\norm{u_n}$ and $q_n = q / \norm{u_n}$. The sequence $x_n$ is clearly bounded, and since $u_n \in K_n$ for each $n$ and $K$ is assumed to be a convex cone, then $x_n \in K_n$ for each $n$ as well, therefore the weak limit of a subsequence $x_{n_k}$, $x^*$, is in $K$.  Considering the sequence $c_n = \ip{x_n}{x^*}$, this sequence has a monotone subsequence, corresponding to a subsequence of $x_n$ with the same weak limit. We briefly drop to considering only the part of the sequence which lies in $L^2(X)$, keeping the same notation for this part to ease the notational burden. T
+Define the indicator function $1_{x^*}$ on the essential support of $x^*$. Since $X$ is a probability space, both $1_{x^*}$ and $1_{x^*}$ lie in $L^2(X)$.
+Passing to this subsequence, consider the sequence $\ip{x-x_n}{1-1_{x^*}}$. As $x_n$ converges weakly to $x^*$, the sequence $\epsilon_n=(1-1_{x^*})x_n$ converges to 0. Defining $\tilde{x}_n =1_{x^*} x_n$, we can write $x_n = \tilde{x}_n + \epsilon_n$. Note that by construction $x^*-\tilde{x}_n \in C$. We now return to considering the full sequence.
+
+Fix $v_0 \in K$, then there is an $n$ such that $v_0 \in K_n,\quad n \geq m$. For every $n \geq m$ we have the inequality
 \begin{equation}
 	\ip{-v_0/\norm{u_n}+x_n}{Tx_n+q_n} \leq 0
 \end{equation}
-By taking the weak limit $x_n \to x^* \in K^\infty$, we arrive at $\ip{x^*}{Tx^*} \leq 0$, which implies that $\ip{x^*}{Tx^*}=0$, so $T^*x^* = - Tx^*$. Thus by assumption (2) we see that we can choose a subsequence such that the limit $x^*$ is different from 0.  By assumption 2 in goeleven *not included here* (Check where we use this, I think it is immediate, it is about the non-empty interior of $K^+(T) =\{h\in H : \ip{h}{y} \geq 0 : \forall y \in ker(T+T^*) \cap K\} $), for every $q$ in $K$ there exists an $x_0$ such that
+Rewriting with $\tilde{x}_n, \epsilon_n$, we arrive at:
+\begin{equation}
+	\ip{-v_0/\norm{u_n}+\tilde{x}_n+\epsilon_n}{T(\tilde{x}_n+\epsilon_n)+q_n} \leq 0 \\
+	\ip{-v_0/\norm{u_n}+\tilde{x}_n}{T\tilde{x}_n+q_n}+\ip{\epsilon_n}{T(\tilde{x}_n+\epsilon_n)+q_n}+\ip{-v_0/\norm{u_n}+\tilde{x}_n}{T\epsilon_n}
+\end{equation}
+Gathering all terms with $\epsilon_n$ in the sequence $k_n$, we can write:
+\begin{equation}
+	\ip{-v_0/\norm{u_n}+\tilde{x}_n}{T\tilde{x}_n+q_n}+k_n \leq 0
+\end{equation}
+
+
+By taking $\liminf$ and using \Cref{lem:technical} we arrive at $\ip{x^*}{Tx^*} \leq 0$, which implies that $\ip{x^*}{Tx^*}=0$, so $T^*x^* = - Tx^*$. By coercitivity of $S$ and $A$ we can choose a subsequence such that the limit $x^*$ is different from 0. For every $q$ in $K$ there exists an $x_0$ such that
 \begin{align*}
 	\ip{Tx_0+q}{v} > 0, \quad \forall v \in ker(T+T^*)\cap K
 \end{align*}
@@ -40,7 +70,7 @@ In addition, by positivity of $T$, we can write up the inequality
 	\ip{x_0}{Tx_n + q} - \ip{x_n}{q} \geq 0
 \end{align*}
 So $\ip{x_0}{Tx_n+q} \geq \ip{x_n}{q}$, taking limits gives $\ip{x_0}{Tx^*+q} \geq \ip{x^*}{q}$
-Which is a contradiction to the previous inequality. Therefore the sequence $u_n$ must be uniformly bounded, and we can without loss of generality assume that $u_n$ is weakly convergent to $u^*$, else we could pass to a subsequence.
+Which is a contradiction to the previous inequality. Therefore the sequence $u_n$ must be uniformly bounded, and we can without loss of generality assume that $u_n$ is weakly convergent in an increasing fashion to $u^*$ as before.
 Going back to the finite-dimensional case, we have the sequence of inequalities for any $x \in K$
 \begin{equation}
 	\ip{x - u_n}{q+Tu_n} \geq 0
@@ -49,13 +79,11 @@ Splitting up, we arrive at
 \begin{align*}
 	\ip{x-u_n}{q}+\ip{x}{Tu_n}-\ip{u_n}{Tu_n} \geq 0
 	\limsup_{n}(\ip{x-u_n}{q}+\ip{x}{Tu_n}) \geq \limsup_{n}\ip{u_n}{Tu_n} \geq 0
-	\lim_{n} \ip{x-u_n}{q} + \lim_{n} \ip{x}{Tu_n} \geq \limsup_{n} \ip{u_n}{T u_n} \geq \ip{u^*}{Tu^*}
+	\lim_{n} \ip{x-u_n}{q} + \lim_{n} \ip{x}{Tu_n} \geq \liminf{n} \ip{u_n}{T u_n} \geq \ip{u^*}{Tu^*}
 	\ip{x-u^*}{q} + \ip{x}{Tu_n^*} \geq \ip{u^*}{Tu^*}
 \end{align*}
 showing that $\ip{x-u^*}{q}+\ip{x}{Tu^*}-\ip{u_n}{Tu^*} \geq 0$, thus there exists a solution to the problem. The solution set is bounded by an analogous argument to the boundedness of $u_n$,, and clearly closed, hence weakly compact.
-\end{proof}
-\end{comment}
-\begin{corollary}[Linear complementarity problem]
+\end{proof}\begin{corollary}[Linear complementarity problem]
   \label{cor:lcp_formulation}
   Let $H$ be a separable real Hilbert space, and define the closed convex cone $K=H^+$ consisting of positive elements. Assume $T$ satisfies the assumptions of \Cref{thm:lcp_hilbert}. Then the linear complementarity problem
   \begin{align*}
@@ -68,50 +96,28 @@ showing that $\ip{x-u^*}{q}+\ip{x}{Tu^*}-\ip{u_n}{Tu^*} \geq 0$, thus there exis
   Set $v=0$ in \Cref{thm:lcp_hilbert}, then $\ip{\overline{x}}{T\overline{x} + q} \geq 0$. Inserting $v=2\overline{x}$, we arrive at
   $\ip{\overline{x}}{T\overline{x}+q}\leq 0$, so $\ip{x}{T\overline{x}+q} = 0$.
 \end{proof}
-\begin{lemma}
-	If $T$ satisfies either of the following on $K$, then $T$ is weakly lower semicontinuous:
-	\begin{enumerate}
-		\item $T$ is concave, eg. monotone ( $\ip{(x-y)}{T(x-y)}\geq 0$) %This can potentially be lowered to pseudomontone 
-		\item $T$ is compact
-		\item $T$ can be written as a finite sum of weakly lower semicontinuous operators
-	\end{enumerate}
-\end{lemma}
-\begin{proof}
-	asf
-\end{proof}
 \begin{definition}[N-player linear game] \label{def:lin_game}
-  Let $(X,\mu)$ be a probability space, assuming for simplicity that $\mu$ is either discrete or  continuous. Assume that we have $N$ players with utility functions $U_i$ and strategies $\phi_i$. We assume that $\phi_i$ is a probability distribution, as well as lying in $L^2(X,\mu)$. Denote the space of feasible $\phi_i$ as $K$. The pairwise interactions are defined by a family of bounded linear operators $A_{ij}: L^2(X)\to L^2(X)$, ie. the payoff of player $i$ playing strategy $\phi_i$ against player $j$ with strategy $\phi_j$ is $\gamma_{ij}=\ip{\phi_i}{A_{ij} \phi_j}$. The total expected payoff $U_i(\phi^{-i})$ of player $i$ is given by
+  Let $(X,\mu)$ be a probability space, assuming for simplicity that $\mu$ is either discrete or  continuous. Assume that we have $N$ players with utility functions $U_i$ and strategies $\phi_i$. We assume that $\phi_i$ is a probability distribution, as well as lying in $L^2(X,\mu)$. Denote the space of feasible $\phi_i$ as $K$. The pairwise interactions are defined by a family of bounded linear operators $U_{ij}: L^2(X)\to L^2(X)$, ie. the payoff of player $i$ playing strategy $\phi_i$ against player $j$ with strategy $\phi_j$ is $\gammU_{ij}=\ip{\phi_i}{U_{ij} \phi_j}$. The total expected payoff $U_i(\phi^{-i})$ of player $i$ is given by
   \begin{equation}
-    \ip{\phi_i}{\sum_{k=1}^N A_ij \phi_j}
+    \ip{\phi_i}{\sum_{k=1}^N U_{ij} \phi_j}
   \end{equation}
 \end{definition}
 \begin{remark}
   Setting $X$ to be a finite set of points equipped with the normalized counting measure in \Cref{def:lin_game}, we recover the notion of a polymatrix game.
 \end{remark}
-\begin{lemma}
-  The space $K\subset L^2(X)$ of feasible $\phi$ is closed and convex.
-\end{lemma}
-\begin{proof}
-  Consider the functional $f$ given by $f(\phi)=\ip{1}{\phi}$, and let $L^2(X)_+$ be the subspace of a.e. positive square-integrable functions. Then $K$ can be written as $f^{-1}(\{1\}) \cap L^2(X)_+$, an intersection of two closed and convex sets, showing the desired.
-\end{proof}
-
 \begin{definition}
   \label{def:total_payoff}
-  Let $(X,\mu)$ be a probability space, $K$ a convex subset of $L^2(X)$, and $A_{ij}$ a finite collection of bounded operators $A_{ij}: K \to L^2(X)$. Define the total payoff operator $M:K^N \to K^N$ as:
+  Let $(X,\mu)$ be a probability space, $K$ a convex subset of $L^2(X)$, and $U_{ij}$ a finite collection of bounded operators $U_{ij}: K \to L^2(X)$. Define the total payoff operator $U:K^N \to K^N$ as:
   \begin{equation}
-    M =
+    U =
     \begin{bmatrix}
-        0 & A_{1,2} & A_{1,3} &\dots & A_{1,N} \\
-        A_{2,1} & 0 & A_{2,3} &\dots & A_{2,N} \\
+        0 & U_{1,2} & U_{1,3} &\dots & U_{1,N} \\
+        U_{2,1} & 0 & U_{2,3} &\dots & U_{2,N} \\
         \vdots & \vdots & \vdots & \vdots & \vdots \\
-        A_{N,1} & A_{N,2} & \dots & \dots & 0
+        U_{N,1} & U_{N,2} & \dots & \dots & 0
     \end{bmatrix}
   \end{equation}
-  %The operator $M$ can be assumed negative on $K$ without loss of generality, by subtracting the maximal supremum of the $A_{ij}$ on $K$, which exists as they are bounded from $L^1(X)$.
 \end{definition}
-\begin{remark}
-  We can weaken the assumption of the $A_{ij}$ being bounded on $L^1(X)$ to $L^2(X)$ if we consider $K\cap B_n$, where $B_n$ is the unit ball in $L^2(X)$ of radius $n$.
-\end{remark}
 We recall the generalized version of Farkas Lemma for future use:
 \begin{lemma}
   \label{lem:farkas_lemma}
@@ -120,118 +126,106 @@ Given locally convex spaces $X$ and $Y$ and a strongly continuous linear map $A:
     Ax = b \text{ has a solution } x\in S
     A^* y^* \in cl(A(S^))* \Rightarrow \ip{y^*}{b} \geq 0
   \end{align}
+	where $cl$ denotes the closure.
 \end{lemma}
-
+\begin{lemma}\label{lem:equiv_game}
+	Given an $N$-player linear game $G = (U_{ij}, \phi_i, H)$ in the sense of \Cref{def:lin_game}, there exists an equivalent formulation of the game where all operators $U_{ij}$ are strictly positive on $H^{+}$.
+\end{lemma}
+\begin{proof}
+	For any $\epsilon>0$, define the constant $c=\max_{ij} \norm{U_{ij}}+\epsilon$. Define the operators $\tilde{A}_{ij}$ through the bilinear forms $\ip{\cdot}{U_{ij}\cdot} + c\ip{\cdot}{1}\ip{1}{\cdot}$. Consider the game $\tilde{G}$ defined by this family. The payoff for any strategy pair $\phi_{i},~\phi_{j}$ has been changed by a constant. Therefore the set of Nash equilibria of $G$ and $\tilde{G}$ agree.
+	For $x,y\in H^+$:
+	\begin{align}
+		-\norm{U_{ij}}\norm{x}\norm{y} &\leq \ip{x}{\tilde{A}y} \\
+		\ip{x}{\tilde{A}_{ij}y} &= \ip{x}{U_{ij}y} + c\norm{x}_1\norm{y}_1
+	\end{align}
+	where $\norm{x}_1\norm{y}_1 \geq \norm{x}_2\norm{y}_2$, and by assumption $c+\norm{A} > 0$. Therefore
+	\begin{equation}
+		\ip{x}{U_{ij}y} + c\norm{x}_1\norm{y}_1 >0
+	\end{equation}
+\end{proof}
+Our proof largely follows that of \citep{millerzucker}, adapted to a general setting and containing their result as a special case.
 \begin{theorem} \label{thm:nash_eq}
-  Let $(X,\mu)$ be a probability space, and assume that we have an $N$-player game in the sense of \Cref{def:lin_game}. Then the Nash equilibrium of \Cref{def:lin_game} can be found by solving the complementarity problem
+  Let $(X,\mu)$ be a probability space, and assume that we have an $N$-player game in the sense of \Cref{def:lin_game}. Then the Nash equilibrium of \Cref{def:lin_game} can be found by solving a complementarity problem
   \begin{equation}
     &Mz+q=w \\
     &\ip{w}{z} = 0
     z \in K, w\in K
     \label{eq:complementarity_problem}
   \end{equation}
-  for two different possibilities of $K$.
-  \begin{enumerate}
-    \item
-      If all the operators $-A_{ij}$ satisfy the assumption \Cref{thm:lcp_formulation}
-      Then the problem of finding a Nash equilibrium on $K = L^2(X)_+$ can be written as \Cref{eq:complementarity_problem}, giving a Nash equilibrium of \Cref{def:lin_game}.
-    \item
-      If we consider the weakly compact convex set given by $L^2(X)_+ \cap B_n$, the game in \Cref{def:lin_game} has a Nash equilibrium, and it is given by \Cref{eq:complementarity_problem}
-  \end{enumerate}
 \end{theorem}
 \begin{proof}
-  \begin{enumerate}
-    \item
-%    In case the $A_{ij}$ are compact, consider $A_{ij}-\lambda$ instead. This does not change the Nash equilibrium of the game, since all payoffs are changed by the same amount. In this way, we are guaranteed that all $-A_{ij}$ are semi-coercive.
+		We start by considering an equivalent game, where all payoffs are guaranteed strictly negative as in \Cref{lem:equiv_game}. To ease the notation, we still denote the payoff operators as $U_{ij}$, and the total payff operator as $U$.
     The requirements for a family $\Phi^*=(\phi_i^*)_{i=1}^N \in K^N$ to constitute a Nash equilibrium is: There is no other family $(\psi_i)_{i=1}^N$, such that
     \begin{equation}
-        \ip{\phi_i^*}{\sum_{k=1}^N A_ij \phi_j^*} < \ip{\psi_i}{\sum_{k=1}^N A_ij \phi_j^*}
+        \ip{\phi_i^*}{\sum_{k=1}^N U_{ij} \phi_j^*} < \ip{\psi_i}{\sum_{k=1}^N U_{ij} \phi_j^*}
     \end{equation}
     for all $i\in \{1,\dots,N\}$.
     By linearity, this is equivalent to the condition that there is no point $\Phi \in K^n$ such that
     \begin{equation}
-      \ip{\Phi^*-\Phi}{M \Phi^*} < 0
+      \ip{\Phi^*-\Phi}{U \Phi^*} < 0
     \end{equation}
-    Define the total payoff operator as $R$ from \Cref{def:total_payoff}. Since $-R$ is assumed positive-plus, we can slack the requirement that $\int \phi_i d\mu(x)=1$ to $\int \phi_i d\mu(x) \geq 1$, as a greater variation decreases the payoff.
+		Since $U$ is assumed strictly negative, we can slack the requirement that $\int \phi_i d\mu(x)=1$ to $\int \phi_i d\mu(x) \geq 1$, as a greater variation decreases the payoff. By defining the operator $A=-\osum_{i=1}^N \ip{1}{\cdot}$, and $q = (-1)^N$, we can express this requirement as
+		\begin{equation}
+			\label{eq:constraint}
+			A \Phi \leq q, p \in K
+		\end{equation}
 
     For $\Phi, \Phi^* \in K^n$, define the slack variable $d = \Phi - \Phi^*$. If $\phi_i^* = 0$ a.s., then $d_i \geq 0$ a.s., and $\int d_i d\mu(x) \geq 0$.
 
-    Thus a vector $\Phi^* \in K^n$ is an equilibrium if and only if there is no $d \in L^2(X)^N$ such that
+    Thus a vector $\Phi^* \in K^n$ is an equilibrium if and only if it satisfies \Cref{eq:constraint} and there is no $d \in L^2(X)^N$ such that
     \begin{equation}
-      &\ip{-d}{M \Phi} < 0 \\
+      &\ip{-d}{U \Phi^*} < 0 \\
       \ip{\phi_i}{1} = 1 \Rightarrow -\int d_i \mu(x) \leq 0 \\
       \phi_i = 0 a.s. \text{ on } A\subset X \Rightarrow -d_i \leq 0  \text{ on } A\subset X
-    \end{equation}
-    Defining the operator $C:\osum_{i=1}^N \ip{1}{\cdot}: H^n \to \R^n$.
-    Writing this with block-matrix operators, the existence of a Nash equilibrium is predicated on \Cref{eq:alternative_eq} having no solution
+    \end{equation}s
+    By applying \Cref{lem:farkas_lemma} to each condition in \Cref{eq:alternative_eq}, we see that \Cref{eq:alternative_eq} has no solution if and only if the system:
     \begin{equation}
-      \label{eq:alternative_eq}
-        \ip{-d}{R\Phi^*}<0 \\
-        \begin{pmatrix}
-          A & -\ip{1}{\dot} - \ip{\dot}{A\Phi} \\
-          -I_H^n & \ip{\dot}{\Phi^*}
-        \end{pmatrix}
-        \begin{pmatrix}
-          d \\
-          L
-        \end{pmatrix}
-        \leq 0
-    \end{equation}
-    We can introduce the block-matrix operators:
-    \begin{align}
-        B = \begin{bmatrix} A & -\ip{1}{\dot} \\ -I^n_H & \Phi^* \end{bmatrix}
-        b = \begin{pmatrix} M\Phi^* \\ 0 \end{pmatrix}
-    \end{align}
-    %By semi-coercitivity, the sets $A_{ij}(K)$ is closed so 
-    By \Cref{lem:farkas_lemma}, we see that \Cref{eq:alternative_eq} has no solution if and only if the system:
-    \begin{equation}
-      \ip{B^*}{w} = b, \quad w \in L^2_+
+      \begin{bmatrix} A^* & I_{N} \end{bmatrix}\begin{pmatrix} y \\ u \end{pmatrix}  = Up, y,u \in K
+				\phi_i \geq 0 \text{ a.e on A } \Rightarrow u_i = 0 \text{ a.e on A }
+				-\int \phi_i d\mu(x) < -1 \Rightarrow y_i=0
     \end{equation}
     has a solution.
-    This allows us to formulate our problem in the terms of a complementarity problem:
+		Defining the slack vector $v = q - Ap$, defining $z=p\osum u, w = y\osum v$, and
+		\begin{align}
+			M =\begin{bmatrix}
+				R & -A^* \\
+				A & 0
+			\end{bmatrix}
+		\end{align}
+    We can formulate the problem of a finding a Nash equilibrium in the terms of a complementarity problem:
     \begin{equation}
       &Mz+q=w \\
       &\ip{w}{z} = 0
       z \in K, w\in K
     \end{equation}
-    which has a solution by \Cref{cor:lcp_formulation}, giving the Nash equilibrium.
+    which has a solution by \Cref{cor:lcp_formulation}, giving existence of a Nash equilibrium.
   \end{enumerate}
 \end{proof}
+Having determined the existence of a Nash equilibrium in a general bilinear game in Hilbert space, we are left with one complication. The theorem we have just shown requires calculating the operator norm to find the Nash equilibrium, and this is a highly nontrivial task, so if we wish to solve the problem numerically we are left with a problem. However, the existence of a Nash equilibrium allows us to give a simpler statement, based on the KKT-conditions.
 \begin{corollary}
-  If a problem is formulated in terms of \Cref{def:lin_game} and has a unique Nash equilibrium, this can be determined by considering case (2) in \Cref{thm:nash_eq} and increasing $n$ monotonically.
+	\label{cor:gen_nash_eq}
+	Given a linear game \Cref{def:lin_game} and defining $U$ as in \Cref{def:total_payoff}, and defining
+	\begin{equation}
+	M=
+		\begin{bmatrix}
+			U & -A^* \\
+			A & 0
+		\end{bmatrix}
+	\end{equation}
+  A Nash equilibrium of \def{lin_game} can be determined by solving the problem:
+	\begin{equation}
+		&Mz+q=w \\
+		&\ip{w}{z} = 0
+		z \in K, w\in K
+	\end{equation}
 \end{corollary}
-\begin{proposition}
-  If the operators in case(1) of \Cref{thm:nash_eq} are bounded viewed as operators from $L^2(X)$ to $L^\infty(X)$, then we can dispense with the requirement of copositivity plus,% alternatively, bounded from below on $L^2(X)_+$. 
-\end{proposition}
 \begin{proof}
-	If the operators $(A_{ij})$ are bounded from below by a common value $c$, we may instead consider $A_{ij} + c\ip{\cdot}{1}\ip{1}{\cdot}$, without changing the Nash equilibrium.
-	If the operators $A_{ij}$ go to $L^\infty(X)$, this implies that the essential supremum of $A_{ij}(x)$ is finite for all $x \in K$, and thus the operators are bounded from below, giving the desired. 
+	By \Cref{thm:nash_eq}, the game defined in \Cref{def:lin_game} has a Nash equilibrium, so the system $(U_1(\Phi), \dots, U_{N})$ has a stationary point where $\phi \geq 0, \int \phi d\mu(x)= 1$, with slack variables $\psi_i$ satisfying $\ip{\psi_i}{\phi_i} = 0$ and $L(\Phi, \Psi) = 0$ where $L$ is the Lagrangian of the system by \citep[p. 286]{handbookofglobaloptimization}.
+	The derivatives of the constraints are contained in the matrix $A$, and  $\nabla_i U_i = \sum_{j=1}^N U_{ij}\phi_j$, showing the desired.
 \end{proof}
+The two competing formulations of the Nash equilibrium have their own benefits. The formulation in \Cref{thm:nash_eq} lends itself directly to discretization, as by discretizing we immediately arrive in a setting where Lemkes algorithm applies since our matrix is copositive by construction. On the other hand, the problem as formulated in \Cref{cor:gen_nash_eq} allows for investigation of uniquness of Nash equilibria via. the methods of of variational inequalities, and can be used for abstract understanding of the equilibrium structure.
 
-\begin{corollary}
-	Semi-coercive operators satisfy the limit cnodition in Theroem 3.3,
-\end{corollary}
-\begin{example}
-asdf
-\end{example}
-
-
-\end{document}
-
-%Assume without loss of generality that $\ip{\phi_i}{A_{ij} \phi_j}$ is negative for any probability measures $\phi_i,\phi_j$, reversing the inequality.
-%\begin{equation}
-  %\label{eq:inequality}
-  %  \ip{\phi_i^*}{\sum_{k=1}^N A_ij \phi_j^*} \leq \ip{\psi}{\sum_{j=1}^N A_ij \phi_j^*}
-%\end{equation}
-%For a fixed family of strategies, define $v_i = \ip{\phi_i^*}{\sum_{j=1}^N A_ij \phi_j^*} $. For any measurable subset $C$ of non-zero measure define a probability measure $\psi_c = c 1_C$. Since \Cref{eq:inequality} holds for all $\psi_c$, we can conclude that we have the inequality
-%\begin{align}
-%  \sum_{i=1}^N A_{ij} \phi^*_j \geq v_i 1_X \text{ a.s.}
-%\end{align}
-%This implies that
-%\begin{equation}
-%  \ip{\phi_i^*}{\sum_{j=1}^N A_ij\phi_j^* - v_i 1_X } = 0
-%\end{equation}
-
+\begin{comment}
 @article{craven1977generalizations,
   title={Generalizations of Farkas’ theorem},
   author={Craven, Bruce Desmond and Koliha, Jaromir Joseph},
@@ -266,6 +260,4 @@ asdf
   year={1993},
   publisher={Springer}
 }
-Theorem 3.3 and Remark 3.2 and Prop 3.1
-
-ScriptvWlient for inspiration details missing
+\end{comment}
