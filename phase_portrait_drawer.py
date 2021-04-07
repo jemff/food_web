@@ -6,10 +6,10 @@ l2 = False
 layers = 60
 segments = 1
 depth = 45
-pop_max = 100
+pop_max = 50
 pop_min = 0
-carrying_capacity = 50
-fidelity = 50
+carrying_capacity = 1/50
+fidelity = 10
 ppop_max = 5
 pop_varc = np.linspace(pop_min, pop_max, fidelity)
 pop_varp = np.linspace(pop_min, ppop_max, fidelity)
@@ -32,19 +32,20 @@ params.handling_times = np.zeros(2)
 
 eco = ecosystem_optimization(mass_vector, layers * segments, params, obj, water_start, l2=l2, movement_cost=0)
 eco.population_setter(np.array([1, 1]))
-eco.parameters.layered_foraging[:,0] = 100*np.tanh(obj.x[::-1])
+eco.parameters.layered_foraging[:,0] = np.tanh(obj.x[::-1])+1 #Remark this is now a proxy for layered carrying capacty
 
-eco.parameters.layered_attack = new_layer_attack(eco.parameters, 1, beta_0=0.001, k = 10**(-3))
+eco.parameters.layered_attack = new_layer_attack(eco.parameters, 1, beta_0=5*10**(-3),  k = 4*0.05)
 eco.dirac_delta_creator()
 
 def lotka_volterra_forager(populations, eco, carrying_capacity=1):
     foraging_gain = np.zeros((eco.populations.size * eco.layers, eco.populations.size * eco.layers))
 
-    foraging_gain_t = eco.parameters.clearance_rate[0] * (np.ones(eco.layers) @ eco.heat_kernels[0] * eco.parameters.layered_foraging[:, 0])*(1-populations[0]/carrying_capacity)
-
-    foraging_gain[0:eco.layers,1 * eco.layers: (1 + 1) * eco.layers] = foraging_gain_t
+    foraging_gain_t = eco.parameters.clearance_rate[0] * (np.ones(eco.layers) @ eco.heat_kernels[0])*(1-populations[0]*eco.parameters.layered_foraging[:, 0]*carrying_capacity)
+#    print(foraging_gain_t, populations[0], populations[1])
+    foraging_gain[0:eco.layers, eco.layers: 2 * eco.layers] = foraging_gain_t
 
     return foraging_gain
+
 
 test1 = np.zeros(60)
 test2 = np.zeros(60)
@@ -77,13 +78,14 @@ for i in range(fidelity):
         payoff_matrix = total_payoff_matrix_builder_memory_improved(eco, np.array([pop_varc[i], pop_varp[j]]), total_reward_matrix, total_loss_matrix, foraging_gain)
 
         z = lemke_optimizer(eco, payoff_matrix)[0:-2]
-        g1 = pop_varc[i] * z  @ foraging_gain @ z - pop_varc[i]*pop_varp[j]*z @ total_loss_matrix @ z - pop_varc[i]*eco.parameters.loss_term[0]
-        print(z @ total_loss_matrix @ z, g1, pop_varc[i] * z  @ foraging_gain @ z, pop_varc[i]*pop_varp[j])
+        g1 = pop_varc[i] * z  @ foraging_gain @ z - pop_varc[i]*pop_varp[j]* z @ total_loss_matrix @ z - pop_varc[i]*eco.parameters.loss_term[0]
 
         g2 = eco.parameters.efficiency * pop_varc[i]*pop_varp[j]*z @ total_reward_matrix @ z - pop_varp[j]*eco.parameters.loss_term[1]
         vectors[i,j] = g1, g2
 
+        print(g1,g2,pop_varc[i], pop_varp[j])
 
 plt.quiver(gridx, gridy, vectors[:,:,0], vectors[:,:,1], angles = 'xy')
 
+print(vectors[fidelity-1,-1,0])
 plt.show()
