@@ -8,7 +8,7 @@
 \usepackage{url}
 \usepackage{srcltx}
 \usepackage{hyperref}
-\usepackage{amsmath,amsfonts ,amssymb,fancyhdr,setspace,lastpage,comment,graphics, cleveref,natbib}
+\usepackage{amsmath,amsthm,amsfonts ,amssymb,fancyhdr,setspace,lastpage,comment,graphics, cleveref,natbib}
 \usepackage{mathrsfs}
 \usepackage{todonotes}
 \usepackage[all]{xy}
@@ -49,7 +49,17 @@
 \DeclareMathOperator{\spn}{span}
 \DeclareMathOperator{\ind}{Ind}
 
-
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{remark}[theorem]{Remark}
+\newtheorem{corollary}[theorem]{Corollary}
+\newtheorem{lemma}[theorem]{Lemma}
+%\newtheorem{theorem}[theorem]{Theorem}
+\newtheorem{example}[theorem]{Example}
+%\newtheorem{definition}{Definition}%[section]
+\newtheorem{definition}[theorem]{Definition}
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{assumption}[theorem]{Assumption}
+\newtheorem{conjecture}[theorem]{Conjecture}
 
 %i\DeclareMathOperator{\exp}{exp}
 \newcommand{\sta}[1]{\text{#1}^{\text{\sout{o}}}}

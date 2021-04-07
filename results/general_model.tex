@@ -1,13 +1,9 @@
 \section{Method}
 \subsection*{General model framework}
-We propose a novel method of solving multiplayer games in continuous space, applying a relatively unknown result to finding Nash equilibria of polymatrix games and discretizations of the continuous game. An additional strength of our approach is that it naturally allows for the notion of noisy strategies. Our approach can naturally be applied to studying population dynamics, where the growth rates are given by an inner game. As an example, the Hawk-Dove game could be used to model the growth rates of two populations where their hawkishness depends on the abundances of resources or the season. The usual setting where the approach of using games to find rates is that of predator-prey games with a refuge. Due to algorithmic and computational restrictions the approach has previously only been used in finite games with two players.
-
-By allowing fast resolution of polymatrix games in continuous space, we drastically expand the scope of problems that can be studied. In a polymatrix population game, there is polymorphic-monomorphic equivalence \citep{cressmannbook}, so an individual of type $j$ cannot distinguish whether an opposing population playing a mixed strategy $\phi$ is a mixture of individuals playing pure strategies, or all individuals play a single mixed strategy. As such, our approach entails each individual in a species or population making optimal choices, and the other groups reacting to the total choice.
-
-The basic structure in the games we study is a system of $N$ players, with strategies given by probability distributions $\phi_i$ on a space $X$, henceforth an interval $[0,z_0]$. The payoffs $U_i$ of the players are given by matrices, or, in the continuous setting, linear operators $A_ij$ as
+The basic structure in the games we study is a system of $N$ players, with strategies given by probability distributions $\phi_i$ on a space $X$, henceforth an interval $[0,z_0]$. The payoffs $U_i$ of the players are given by matrices, or, in the continuous setting, linear operators $U_ij$ as
 \begin{equation}
   \label{eq:utility}
-  U_i(\phi^{-i}) = \sum_{j=1}^N \int \phi_i A_{ij} \phi_j dx
+  U_i = \sum_{j=1}^N \int n_{ij}\phi_i U_{ij} \phi_j dx, ~i\neq j~n_{ij}=1,~i=j~n_{ij} = \frac{1}{2}
 \end{equation}
 We can see that this generalizes the notion of a polymatrix game, if the integral is replaced by a sum and the probability distributions are replaced by strategy vectors. The population dynamical systems that can be modelled via. games like this are where the population dynamics of species $i$ can be modelled as
 \begin{equation}
@@ -57,23 +53,23 @@ Finding the Nash Equilibrium in a game in continuous space is usually a hard tas
 
 By discretizing space, we have reduced an uncountable strategy set to a more manageable finite amount, with pure strategies $e_k$. The gain of a player playing strategy $e_k$ against player $j$ playing strategy $e_l$ can be determined as $A_{ij}(e_k,e_l)$, \Cref{eq:utility}. The discretization allows us to write up payoffs for a finite approximation version of the continuous game,  with entry $(k,l)$ determined through $\ip{e_k}{A_{ij}e_l}, k,l \in \{1,\dots M\}$.
 Our discretization has reduced the problem to a bimatrix game, where finding the Nash equilibrium is more tractable.
-It does not appear to have diffused through the literature, but a Nash equilibrium of a polymatrix game can be found by solving a linear complementarity problem \citep{miller1991copositive}. Using a modification of the argument from \citep{miller1991copositive}, specialized to the case of two-player (bimatrix) games: Assume that $(s^*_c,s^*_p)$ constitute a Nash equilibrium in mixed strategies with values $\gamma_c = \ip{s^*_c}{E_c s^*_p}$ and   $\gamma_p = \ip{s^*_p}{E_p s^*_c}$ to the consumer and predator, respectively. Then
+It does not appear to have diffused through the literature, but a Nash equilibrium of a polymatrix game can be found by solving a linear complementarity problem \citep{miller1991copositive}. Using a modification of the argument from \citep{miller1991copositive}, specialized to the case of two-player (bimatrix) games but easily generalizable to the general $n$-player case. Assume that $(s^*_1,s^*_2)$ constitute a Nash equilibrium in mixed strategies with values $\gamma_c = \ip{s^*_1}{E_1 s^*_2}$ and   $\gamma_2 = \ip{s^*_2}{E_2 s^*_1}$ to the consumer and predator, respectively. Then
 \[
-  \ip{s_p}{1_n} =
-  \ip{s_c}{1_n} =
+  \ip{s_1}{1_n} =
+  \ip{s_2}{1_n} =
   1
 \]
 since these mixed strategies are probability distributions on strategy space. Here $1_n$ is a vector of ones. In addition the Nash equilibrium dictates
 \[
-  E_c s_p = 1_n \gamma_c - w_c
+  E_1 s_2 = 1_n \gamma_1 - w_1
   ,\quad
-  E_p s_c = 1_n \gamma_p  - w_p
+  E_2 s_1 = 1_n \gamma_2  - w_2
 \]
-$w_c$ and $w_p$ are non-negative ``slack variables'' that state that the payoff for e.g. the consumer can be no greater than the expected payoff $\gamma_c$, but can be smaller for some fixed strategies. These non-optimal strategies, where the slack $w_c$ is positive, must then be chosen with probability 0, and as a consequence the complementarity condition
+$w_1$ and $w_2$ are non-negative ``slack variables'' that state that the payoff for the first player can be no greater than the expected payoff $\gamma_1$, but can be smaller for some fixed strategies. These non-optimal strategies, where the slack $w_c$ is positive, must then be chosen with probability 0, and as a consequence the complementarity condition
 \[
-  \ip{s^*_c}{w_c} =   \ip{s^*_p}{w_p} = 0
+  \ip{s^*_1}{w_1} =   \ip{s^*_2}{w_2} = 0
 \]
-holds. Assume for convenience that all elements in $E_c$ and $E_p$ are negative; this can always be obtained without changing the Nash equilibria by substracting a constant from $E_c$ and $E_p$. Consequenty, also the payoffs $\gamma_c$ and $\gamma_p$ are negative and thus the vector $z = (s_c,s_p,-\gamma_c,-\gamma_p)$ satisfies the Linear Complementarity Problem (LCP)
+holds. Assume for convenience that all elements in $E_1$ and $E_1$ are negative; this can always be obtained without changing the Nash equilibria by substracting a constant from $E_1$ and $E_2$. Consequenty, also the payoffs $\gamma_c$ and $\gamma_p$ are negative and thus the vector $z = (s_1,s_2,-\gamma_1,-\gamma_2)$ satisfies the Linear Complementarity Problem (LCP)
 \[
 \label{eq:lcp}
   z \geq 0,
@@ -107,7 +103,7 @@ where
     \end{array}
   \right]
 \]
-Conversely, assume that $z=(s_c,s_p,\gamma_c,\gamma_p)$ and $w$ solve the Linear Complementarity Problem, then it is straightforward to see that the mixed strategies $(s_c,s_p)$ form a Nash equilibrium with values $(\gamma_c,\gamma_p)$. The assumption that $E_c$ and $E_p$ have negative elements imply that the matrix $H$ is copositive plus (meaning, for all $z\geq0$ with $z\neq0$ it holds that $\ip z{Hz}>0$) which assures that the LCP to has a solution, in particular through Lemke's algorithm.
+Conversely, assume that $z=(s_1,s_2,\gamma_1,\gamma_2)$ and $w$ solve the Linear Complementarity Problem, then it is straightforward to see that the mixed strategies $(s_1,s_2)$ form a Nash equilibrium with values $(\gamma_c,\gamma_p)$. The assumption that $E_1$ and $E_2$ have negative elements imply that the matrix $H$ is copositive plus (meaning, for all $z\geq0$ with $z\neq0$ it holds that $\ip z{Hz}>0$) which assures that the LCP to has a solution, in particular through Lemke's algorithm.
 
 Solving \Cref{eq:lcp} was done through two different methods. The interior-point method as implemented in IPOPT, \citep{wachter2006implementation}, called via. the auto-differentation software CasADi \citep{Andersson2019}, and Lemkes Algorithm implemented in the Numerics package in Siconos, \citep{acary2019introduction}. Experience showed that Lemkes algorithm was the fastest, but there is probably a situation where the problem has a sparsity structure favorable to IPOPT.
  %\subsubsection*{Time evolution}
