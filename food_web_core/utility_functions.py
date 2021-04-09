@@ -574,7 +574,7 @@ def solar_input_calculator(latitude = 55.571831046, longitude = 12.822830042, tz
     else:
         return solis.dhi.values
 
-def simulator_new(eco, filename, h_k = None, lemke = True, min_attack_rate = 10**(-4), start_date =  '2014-04-01',
+def simulator_new(eco, filename, h_k = None, lemke = True, min_attack_rate = 10**(-4), start_date =  '2014-03-01',
                   end_date = '2014-10-01', day_interval = 96, latitude = 55.571831046, longitude = 12.822830042,
                   optimal=True, diffusion = 5000, k = 4*0.05, sparse = True, population_dynamics = True, physiological = False):
     population_list = []
@@ -626,16 +626,16 @@ def simulator_new(eco, filename, h_k = None, lemke = True, min_attack_rate = 10*
         print(error, eco.populations, np.sum(eco.water.res_counts), time_step, new_pop - pop_old, solar_levels[i])
         time += time_step
 
-    with open('data/' + filename + 'eco' +'.pkl', 'wb') as f:
+    with open('data/' + filename + '_eco' +'.pkl', 'wb') as f:
         pkl.dump(eco, f, pkl.HIGHEST_PROTOCOL)
 
-    with open('data/' + filename  + 'strategies' + filename + '.pkl', 'wb') as f:
+    with open('data/' + filename  + '_strategies' + '.pkl', 'wb') as f:
         pkl.dump(strategy_list, f, pkl.HIGHEST_PROTOCOL)
 
-    with open('data/' + filename + 'population' + '.pkl', 'wb') as f:
+    with open('data/' + filename + '_population' + '.pkl', 'wb') as f:
         pkl.dump(population_list, f, pkl.HIGHEST_PROTOCOL)
 
-    with open('data/' + filename +  'resource' + '.pkl', 'wb') as f:
+    with open('data/' + filename +  '_resource' + '.pkl', 'wb') as f:
         pkl.dump(resource_list, f, pkl.HIGHEST_PROTOCOL)
 
 

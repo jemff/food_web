@@ -30,7 +30,7 @@ eco = ecosystem_optimization(mass_vector, layers * segments, params, obj, water_
 eco.population_setter(np.array([4, 0.04]))
 
 eco.dirac_delta_creator()
-simulator_new(eco, "non_random_oresund", k = 0.2, min_attack_rate=min_attack_rate, sparse = True)
+simulator_new(eco, "non_random_oresund", k = 0.2, min_attack_rate=min_attack_rate, sparse = True, start_date='2014-03-01')
 
 res_start = 8*norm_dist  # 0.1*(1-obj.x/depth)
 res_max = 10*norm_dist
@@ -48,7 +48,7 @@ eco.heat_kernels[1] = eco.heat_kernels[0]
 
 eco.population_setter(np.array([4, 0.04]))
 
-simulator_new(eco, "more_random_oresund", k = 0.2, sparse = True, min_attack_rate=min_attack_rate)
+simulator_new(eco, "more_random_oresund", k = 0.2, sparse = True, min_attack_rate=min_attack_rate, start_date='2014-03-01')
 
 res_start = 8*norm_dist  # 0.1*(1-obj.x/depth)
 res_max = 10*norm_dist
@@ -69,4 +69,4 @@ eco.heat_kernels[1] = eco.heat_kernels[0]
 
 eco.population_setter(np.array([4, 0.04]))
 
-simulator_new(eco, "completely_random_oresund", optimal = False, k = 0.2, min_attack_rate=min_attack_rate, sparse = True)
+simulator_new(eco, "completely_random_oresund", optimal = False, k = 0.2, min_attack_rate=min_attack_rate, sparse = True, start_date='2014-03-01')
