@@ -1,6 +1,10 @@
 \section{Method}
 \subsection*{General model framework}
+
+\todo[inline]{Husk habitat selection}
+
 The basic structure in the games we study is a system of $N$ players, with strategies given by probability distributions $\phi_i$ on a space $X$, henceforth an interval $[0,z_0]$. The payoffs $U_i$ of the players are given by matrices, or, in the continuous setting, linear operators $U_ij$ as
+
 \begin{equation}
   \label{eq:utility}
   U_i = \sum_{j=1}^N \int n_{ij}\phi_i U_{ij} \phi_j dx, ~i\neq j~n_{ij}=1,~i=j~n_{ij} = \frac{1}{2}
@@ -10,6 +14,7 @@ We can see that this generalizes the notion of a polymatrix game, if the integra
   \dot{N_i} = N_i U_i
 \end{equation}
 The Nash equilibrium of such a system consists of a family of probability distributions $(\phi_i^{*,NE})_{i=1}^N$ where no player can increase their utility by unilaterally deviating from their strategy.
+\todo[inline]{Indsæt reference til Krivan (2009), der viser at evolutionær stabilitet opnås ved at finde Nash-ligevægte for det indre spil.}
 
 \subsubsection*{Noisy strategies}
 Our model incorporates that players are not necessarily perfectly rational, but have \textbf{bounded rationality} by letting the strategy depend on the rationality parameter $\sigma$, with $\sigma=0$ being completely rational and $\sigma = \infty$ completely irrational. Rather than choosing a precise probability distribution, a player can choose where it diffuses around. As the players must play within the interval, we arrive at the following differential equation for the player strategy:
@@ -19,7 +24,9 @@ Our model incorporates that players are not necessarily perfectly rational, but 
 	&\partial_z \phi_i \mid_{z=0} = 0 \\
   &\partial_z \phi_i \mid_{z = z_0} = 0
 \end{align}
-The equation \Cref{eq:density_PDE} has the fundamental solution $f_Y(\sigma)$, determined by the method of images. Instead of choosing a distribution $\phi$, an individual chooses a distribution $f_X$, which we use as initial condition in \Cref{eq:density_PDE}. An individual with strategy $f_X$ will actually be distributed according to $\phi(\sigma,z)$, which becomes increasingly uniform as $\sigma$ increases. The way we concretely solve \Cref{eq:density_PDEs} with initial condition $f_X$ is through a Greens function approach, ie. performing a convolution of $f_X$ and $f_Y$. We refer to the solution $\phi$ of \Cref{eq:density_PDE} as the realized distribution.
+\todo[inline]{Jeg synes at dette afsnit er noget uklart. Blandt andet fordi $\sigma$ her er en pseudo-tid - altså, denne proces sker instantant. Jeg er ikke klar over hvad præcist $f_Y(\sigma)$ er. Kan det omformuleres?}
+  
+  The equation \Cref{eq:density_PDE} has the fundamental solution $f_Y(\sigma)$, determined by the method of images. Instead of choosing a distribution $\phi$, an individual chooses a distribution $f_X$, which we use as initial condition in \Cref{eq:density_PDE}. An individual with strategy $f_X$ will actually be distributed according to $\phi(\sigma,z)$, which becomes increasingly uniform as $\sigma$ increases. The way we concretely solve \Cref{eq:density_PDEs} with initial condition $f_X$ is through a Greens function approach, ie. performing a convolution of $f_X$ and $f_Y$. \todo{Løsningen findes ikke ved foldning, når der er reflekterende rand? Du implementerer det (vel) ved at løse et ligningssystem svarende til resolventen, ikke?} We refer to the solution $\phi$ of \Cref{eq:density_PDE} as the realized distribution.
 
 We expect that an individual will still attempt to maximize its own fitness, even though the location cannot be chosen exactly. Instead, the optimization will go towards finding the strategy $f_X$ that maximizes the fitness when noise is taken into account.
 Having introduced noise to the strategies of the players, we can find the Nash equilibrium of their optimal distributions without noise. We find the Nash pair by inserting the fundamental solution in \Cref{eq:nash_equilibria} and optimizing over $f_{X_i},$.
@@ -48,11 +55,12 @@ The strategy of a player is fully determined by the $a_i$'s.
 When considering non-optimal actors, we need to implement the convolution with $f_Y$, which also assures that the resulting distrbution is smooth. An added benefit of incorporating bounded rationality then becomes that our strategy profiles are guaranteed to be smooth, decreasing the number of points needed for exact evaluation of the integrals.
 
 
-\subsubsection*{Finding the Nash Equilibrium and time-stepping}
+\subsubsection*{Finding the Nash Equilibrium}
 Finding the Nash Equilibrium in a game in continuous space is usually a hard task, requiring the development of bespoke methods, \citep{verticalmigration}, or very long runtimes, \citep{jerome}. The method we have use circumvents these problems, by combining a little-known result in mathematical optimization with a spectral scheme.
 
 By discretizing space, we have reduced an uncountable strategy set to a more manageable finite amount, with pure strategies $e_k$. The gain of a player playing strategy $e_k$ against player $j$ playing strategy $e_l$ can be determined as $A_{ij}(e_k,e_l)$, \Cref{eq:utility}. The discretization allows us to write up payoffs for a finite approximation version of the continuous game,  with entry $(k,l)$ determined through $\ip{e_k}{A_{ij}e_l}, k,l \in \{1,\dots M\}$.
 Our discretization has reduced the problem to a bimatrix game, where finding the Nash equilibrium is more tractable.
+
 It does not appear to have diffused through the literature, but a Nash equilibrium of a polymatrix game can be found by solving a linear complementarity problem \citep{miller1991copositive}. Using a modification of the argument from \citep{miller1991copositive}, specialized to the case of two-player (bimatrix) games but easily generalizable to the general $n$-player case. Assume that $(s^*_1,s^*_2)$ constitute a Nash equilibrium in mixed strategies with values $\gamma_c = \ip{s^*_1}{E_1 s^*_2}$ and   $\gamma_2 = \ip{s^*_2}{E_2 s^*_1}$ to the consumer and predator, respectively. Then
 \[
   \ip{s_1}{1_n} =
