@@ -17,26 +17,30 @@ The Nash equilibrium of such a system consists of a family of probability distri
 \todo[inline]{Indsæt reference til Krivan (2009), der viser at evolutionær stabilitet opnås ved at finde Nash-ligevægte for det indre spil.}
 
 \subsubsection*{Noisy strategies}
-Our model incorporates that players are not necessarily perfectly rational, but have \textbf{bounded rationality} by letting the strategy depend on the rationality parameter $\sigma$, with $\sigma=0$ being completely rational and $\sigma = \infty$ completely irrational. Rather than choosing a precise probability distribution, a player can choose where it diffuses around. As the players must play within the interval, we arrive at the following differential equation for the player strategy:
+Our model incorporates that players are not necessarily perfectly rational: The player may not be a perfect decision-maker, due to imperfect information or limited capacity of information processing, but it can also model errors in our perception of the player's objectives, or inability to actuate a decision perfectly, for example due to turbulence in the water column. Our model of imperfect rationality is as follows: Say that the player aims to play the strategy $f_X(\cdot)$, which is a probability density function on $[0,z_0]$. Then our model posits that the player actually plays a strategy $\phi_i(\cdot ,\sigma)$, which is a smoothed version of $f_X(\cdot)$ obtained by solving the initial value problem
 \begin{align}
   \label{eq:density_PDE}
-	&\partial_\sigma \phi_i = \frac{1}{2}\partial_z^2 \phi_i \\
-	&\partial_z \phi_i \mid_{z=0} = 0 \\
-  &\partial_z \phi_i \mid_{z = z_0} = 0
+  &\partial_s \phi_i = \frac{1}{2}\partial_z^2 \phi_i \\
+  &\partial_z \phi_i \mid_{z=0} = 0 \\
+  &\partial_z \phi_i \mid_{z = z_0} = 0 \\
+  & \phi_i(z,0) = f_X(z) \quad . 
 \end{align}
-\todo[inline]{Jeg synes at dette afsnit er noget uklart. Blandt andet fordi $\sigma$ her er en pseudo-tid - altså, denne proces sker instantant. Jeg er ikke klar over hvad præcist $f_Y(\sigma)$ er. Kan det omformuleres?}
-  
-  The equation \Cref{eq:density_PDE} has the fundamental solution $f_Y(\sigma)$, determined by the method of images. Instead of choosing a distribution $\phi$, an individual chooses a distribution $f_X$, which we use as initial condition in \Cref{eq:density_PDE}. An individual with strategy $f_X$ will actually be distributed according to $\phi(\sigma,z)$, which becomes increasingly uniform as $\sigma$ increases. The way we concretely solve \Cref{eq:density_PDEs} with initial condition $f_X$ is through a Greens function approach, ie. performing a convolution of $f_X$ and $f_Y$. \todo{Løsningen findes ikke ved foldning, når der er reflekterende rand? Du implementerer det (vel) ved at løse et ligningssystem svarende til resolventen, ikke?} We refer to the solution $\phi$ of \Cref{eq:density_PDE} as the realized distribution.
+on the interval $[0,\sigma]$. Thus, the parameter $\sigma$ determines the degree of smoothing: With $\sigma=0$, the player is perfectly rational ($\phi_i(z,0)=f_X(z)$) while with $\sigma=\infty$, we have a completely random decisions where $\phi_i(z,\infty)$ is a constant function of $z$, corresponding to a uniform distribution on $[0,z_0]$. Note that $s$ or $\sigma$ are not connected to time; this smoothing takes place instantaneously at each point in time. 
 
-We expect that an individual will still attempt to maximize its own fitness, even though the location cannot be chosen exactly. Instead, the optimization will go towards finding the strategy $f_X$ that maximizes the fitness when noise is taken into account.
-Having introduced noise to the strategies of the players, we can find the Nash equilibrium of their optimal distributions without noise. We find the Nash pair by inserting the fundamental solution in \Cref{eq:nash_equilibria} and optimizing over $f_{X_i},$.
-\begin{align*}
-	f_{X_i}^{*,NE} &=  \argmax_{f_{X_i}}  \int_0^{z_0} U_i(f_{X_i}*f_Y, \phi^{-i}) dz
-\end{align*}
-The realized distributions are found by convolution with $f_Y$ as
-\begin{align*}
-  \phi_i^{*,NE} &= f_{X_i}^{*,NE} * f_Y \\
-\end{align*}
+Numerically, this smoothing is performed by first determining the fundamental solution to this initial value problem, ignoring boundaries, which is a Gaussian kernel. Next, the initial condition is convolved with this kernel, and finally the boundary conditions are taking into account using reflection, i.e. the method of images. 
+
+
+%   The equation \Cref{eq:density_PDE} has the fundamental solution $f_Y(\sigma)$, determined by the method of images. Instead of choosing a distribution $\phi$, an individual chooses a distribution $f_X$, which we use as initial condition in \Cref{eq:density_PDE}. An individual with strategy $f_X$ will actually be distributed according to $\phi(\sigma,z)$, which becomes increasingly uniform as $\sigma$ increases. The way we concretely solve \Cref{eq:density_PDEs} with initial condition $f_X$ is through a Greens function approach, ie. performing a convolution of $f_X$ and $f_Y$. 
+
+% We expect that an individual will still attempt to maximize its own fitness, even though the location cannot be chosen exactly. Instead, the optimization will go towards finding the strategy $f_X$ that maximizes the fitness when noise is taken into account.
+% Having introduced noise to the strategies of the players, we can find the Nash equilibrium of their optimal distributions without noise. We find the Nash pair by inserting the fundamental solution in \Cref{eq:nash_equilibria} and optimizing over $f_{X_i},$.
+% \begin{align*}
+% 	f_{X_i}^{*,NE} &=  \argmax_{f_{X_i}}  \int_0^{z_0} U_i(f_{X_i}*f_Y, \phi^{-i}) dz
+% \end{align*}
+% The realized distributions are found by convolution with $f_Y$ as
+% \begin{align*}
+%   \phi_i^{*,NE} &= f_{X_i}^{*,NE} * f_Y \\
+% \end{align*}
 
 \subsubsection*{Spatial discretization}
 In order to calculate the Nash Equilibrium efficiently, and perform numerical integration precisely we discretize the interval $[0,z_0]$ with a spectral scheme based on Legendre polynomials, \citep{kopriva2009implementing}. This allows precise integration and differentation with only relatively few points.
