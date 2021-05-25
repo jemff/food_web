@@ -1,20 +1,20 @@
 \section{Method}
 \subsection*{General model framework}
 
-\todo[inline]{Husk habitat selection}
-
 The basic structure in the games we study is a system of $N$ players, with strategies given by probability distributions $\phi_i$ on a space $X$, henceforth an interval $[0,z_0]$. The payoffs $U_i$ of the players are given by matrices, or, in the continuous setting, linear operators $U_ij$ as
 
 \begin{equation}
   \label{eq:utility}
-  U_i = \sum_{j=1}^N \int n_{ij}\phi_i U_{ij} \phi_j dx, ~i\neq j~n_{ij}=1,~i=j~n_{ij} = \frac{1}{2}
+  U_i = \sum_{j=1,j\neq i}^N \int n_{ij}\phi_i U_{ij} \phi_j dx%, ~i\neq j~n_{ij}=1,~i=j~n_{ij} = \frac{1}{2}
 \end{equation}
 We can see that this generalizes the notion of a polymatrix game, if the integral is replaced by a sum and the probability distributions are replaced by strategy vectors. The population dynamical systems that can be modelled via. games like this are where the population dynamics of species $i$ can be modelled as
 \begin{equation}
   \dot{N_i} = N_i U_i
 \end{equation}
-The Nash equilibrium of such a system consists of a family of probability distributions $(\phi_i^{*,NE})_{i=1}^N$ where no player can increase their utility by unilaterally deviating from their strategy.
-\todo[inline]{Indsæt reference til Krivan (2009), der viser at evolutionær stabilitet opnås ved at finde Nash-ligevægte for det indre spil.}
+
+In a polymatrix population game, there is polymorphic-monomorphic equivalence \citep{cressmannbook}, so an individual of type $j$ cannot distinguish whether an opposing population playing a mixed strategy $\phi$ is a mixture of individuals playing pure strategies, or all individuals play a single mixed strategy. As such, our approach entails each individual in a species or population making optimal choices, and the other groups reacting to the total choice.
+
+The Nash equilibrium of such a system consists of a family of probability distributions $(\phi_i^{*,NE})_{i=1}^N$ where no player can increase their utility by unilaterally deviating from their strategy. An example of such a game is a habitat selection game, where picking the strategy that maximizes the instantaneous growth gives rise to an ESS \citep{kvrivan2009}.
 
 \subsubsection*{Noisy strategies}
 Our model incorporates that players are not necessarily perfectly rational: The player may not be a perfect decision-maker, due to imperfect information or limited capacity of information processing, but it can also model errors in our perception of the player's objectives, or inability to actuate a decision perfectly, for example due to turbulence in the water column. Our model of imperfect rationality is as follows: Say that the player aims to play the strategy $f_X(\cdot)$, which is a probability density function on $[0,z_0]$. Then our model posits that the player actually plays a strategy $\phi_i(\cdot ,\sigma)$, which is a smoothed version of $f_X(\cdot)$ obtained by solving the initial value problem
@@ -23,24 +23,12 @@ Our model incorporates that players are not necessarily perfectly rational: The 
   &\partial_s \phi_i = \frac{1}{2}\partial_z^2 \phi_i \\
   &\partial_z \phi_i \mid_{z=0} = 0 \\
   &\partial_z \phi_i \mid_{z = z_0} = 0 \\
-  & \phi_i(z,0) = f_X(z) \quad . 
+  & \phi_i(z,0) = f_X(z) \quad .
 \end{align}
-on the interval $[0,\sigma]$. Thus, the parameter $\sigma$ determines the degree of smoothing: With $\sigma=0$, the player is perfectly rational ($\phi_i(z,0)=f_X(z)$) while with $\sigma=\infty$, we have a completely random decisions where $\phi_i(z,\infty)$ is a constant function of $z$, corresponding to a uniform distribution on $[0,z_0]$. Note that $s$ or $\sigma$ are not connected to time; this smoothing takes place instantaneously at each point in time. 
+on the interval $[0,\sigma]$. Thus, the parameter $\sigma$ determines the degree of smoothing: With $\sigma=0$, the player is perfectly rational ($\phi_i(z,0)=f_X(z)$) while with $\sigma=\infty$, we have a completely random decisions where $\phi_i(z,\infty)$ is a constant function of $z$, corresponding to a uniform distribution on $[0,z_0]$. Note that $s$ or $\sigma$ are not connected to time; this smoothing takes place instantaneously at each point in time.
 
-Numerically, this smoothing is performed by first determining the fundamental solution to this initial value problem, ignoring boundaries, which is a Gaussian kernel. Next, the initial condition is convolved with this kernel, and finally the boundary conditions are taking into account using reflection, i.e. the method of images. 
+Numerically, this smoothing is performed by first determining the fundamental solution to this initial value problem, ignoring boundaries, which is a Gaussian kernel. Then the boundary conditions are implemented using the method of images. Finally, the initial condition is convolved with this kernel.
 
-
-%   The equation \Cref{eq:density_PDE} has the fundamental solution $f_Y(\sigma)$, determined by the method of images. Instead of choosing a distribution $\phi$, an individual chooses a distribution $f_X$, which we use as initial condition in \Cref{eq:density_PDE}. An individual with strategy $f_X$ will actually be distributed according to $\phi(\sigma,z)$, which becomes increasingly uniform as $\sigma$ increases. The way we concretely solve \Cref{eq:density_PDEs} with initial condition $f_X$ is through a Greens function approach, ie. performing a convolution of $f_X$ and $f_Y$. 
-
-% We expect that an individual will still attempt to maximize its own fitness, even though the location cannot be chosen exactly. Instead, the optimization will go towards finding the strategy $f_X$ that maximizes the fitness when noise is taken into account.
-% Having introduced noise to the strategies of the players, we can find the Nash equilibrium of their optimal distributions without noise. We find the Nash pair by inserting the fundamental solution in \Cref{eq:nash_equilibria} and optimizing over $f_{X_i},$.
-% \begin{align*}
-% 	f_{X_i}^{*,NE} &=  \argmax_{f_{X_i}}  \int_0^{z_0} U_i(f_{X_i}*f_Y, \phi^{-i}) dz
-% \end{align*}
-% The realized distributions are found by convolution with $f_Y$ as
-% \begin{align*}
-%   \phi_i^{*,NE} &= f_{X_i}^{*,NE} * f_Y \\
-% \end{align*}
 
 \subsubsection*{Spatial discretization}
 In order to calculate the Nash Equilibrium efficiently, and perform numerical integration precisely we discretize the interval $[0,z_0]$ with a spectral scheme based on Legendre polynomials, \citep{kopriva2009implementing}. This allows precise integration and differentation with only relatively few points.
@@ -65,7 +53,7 @@ Finding the Nash Equilibrium in a game in continuous space is usually a hard tas
 By discretizing space, we have reduced an uncountable strategy set to a more manageable finite amount, with pure strategies $e_k$. The gain of a player playing strategy $e_k$ against player $j$ playing strategy $e_l$ can be determined as $A_{ij}(e_k,e_l)$, \Cref{eq:utility}. The discretization allows us to write up payoffs for a finite approximation version of the continuous game,  with entry $(k,l)$ determined through $\ip{e_k}{A_{ij}e_l}, k,l \in \{1,\dots M\}$.
 Our discretization has reduced the problem to a bimatrix game, where finding the Nash equilibrium is more tractable.
 
-It does not appear to have diffused through the literature, but a Nash equilibrium of a polymatrix game can be found by solving a linear complementarity problem \citep{miller1991copositive}. Using a modification of the argument from \citep{miller1991copositive}, specialized to the case of two-player (bimatrix) games but easily generalizable to the general $n$-player case. Assume that $(s^*_1,s^*_2)$ constitute a Nash equilibrium in mixed strategies with values $\gamma_c = \ip{s^*_1}{E_1 s^*_2}$ and   $\gamma_2 = \ip{s^*_2}{E_2 s^*_1}$ to the consumer and predator, respectively. Then
+It does not appear to have diffused through the literature, but a Nash equilibrium of a polymatrix game can be found by solving a linear complementarity problem \citep{miller1991copositive}. Using a modification of the argument from \citep{miller1991copositive}, specialized to the case of two-player (bimatrix) games but easily generalizable to the general $n$-player case. Assume that $(s^*_1,s^*_2)$ constitute a Nash equilibrium in mixed strategies with values $\gamma_1 = \ip{s^*_1}{E_1 s^*_2}$ and  $\gamma_2 = \ip{s^*_2}{E_2 s^*_1}$ to the consumer and predator, respectively. Then
 \[
   \ip{s_1}{1_n} =
   \ip{s_2}{1_n} =
@@ -81,7 +69,7 @@ $w_1$ and $w_2$ are non-negative ``slack variables'' that state that the payoff 
 \[
   \ip{s^*_1}{w_1} =   \ip{s^*_2}{w_2} = 0
 \]
-holds. Assume for convenience that all elements in $E_1$ and $E_1$ are negative; this can always be obtained without changing the Nash equilibria by substracting a constant from $E_1$ and $E_2$. Consequenty, also the payoffs $\gamma_c$ and $\gamma_p$ are negative and thus the vector $z = (s_1,s_2,-\gamma_1,-\gamma_2)$ satisfies the Linear Complementarity Problem (LCP)
+holds. Assume for convenience that all elements in $E_1$ and $E_1$ are negative; this can always be obtained without changing the Nash equilibria by substracting a constant from $E_1$ and $E_2$. Consequenty, also the payoffs $\gamma_1$ and $\gamma_2$ are negative and thus the vector $z = (s_1,s_2,-\gamma_1,-\gamma_2)$ satisfies the Linear Complementarity Problem (LCP)
 \[
 \label{eq:lcp}
   z \geq 0,
@@ -109,19 +97,15 @@ where
   H =
   \left[
     \begin{array}{cccc}
-      0 & -E_c & -1_n & 0 \\ -E_p & 0 & 0 & -1_n \\
+      0 & -E_1 & -1_n & 0 \\ -E_2 & 0 & 0 & -1_n \\
       1_n & 0 & 0 & 0 \\
       0 & 1_n & 0 & 0
     \end{array}
   \right]
 \]
-Conversely, assume that $z=(s_1,s_2,\gamma_1,\gamma_2)$ and $w$ solve the Linear Complementarity Problem, then it is straightforward to see that the mixed strategies $(s_1,s_2)$ form a Nash equilibrium with values $(\gamma_c,\gamma_p)$. The assumption that $E_1$ and $E_2$ have negative elements imply that the matrix $H$ is copositive plus (meaning, for all $z\geq0$ with $z\neq0$ it holds that $\ip z{Hz}>0$) which assures that the LCP to has a solution, in particular through Lemke's algorithm.
+Conversely, assume that $z=(s_1,s_2,\gamma_1,\gamma_2)$ and $w$ solve the Linear Complementarity Problem, then it is straightforward to see that the mixed strategies $(s_1,s_2)$ form a Nash equilibrium with values $(\gamma_1,\gamma_2)$. The assumption that $E_1$ and $E_2$ have negative elements imply that the matrix $H$ is copositive plus (meaning, for all $z\geq0$ with $z\neq0$ it holds that $\ip z{Hz}>0$) which assures that the LCP to has a solution, in particular through Lemke's algorithm.
 
-Solving \Cref{eq:lcp} was done through two different methods. The interior-point method as implemented in IPOPT, \citep{wachter2006implementation}, called via. the auto-differentation software CasADi \citep{Andersson2019}, and Lemkes Algorithm implemented in the Numerics package in Siconos, \citep{acary2019introduction}. Experience showed that Lemkes algorithm was the fastest, but there is probably a situation where the problem has a sparsity structure favorable to IPOPT.
- %\subsubsection*{Time evolution}
-
-%We solve the time-evolution of the predator and prey populations using a semi-implicit euler scheme. At each step we find the Nash equilibrium based on the last state, and evolve the populations accordingly. The time-evolution of the resource is solved by the method of exponential time differencing, using a first-order difference, \citep{hochbruck2010exponential}, ie. a mixture of a first-order method and an exact Greens function approach.
-
+Solving \Cref{eq:lcp} was done through two different methods. The interior-point method as implemented in IPOPT, \citep{wachter2006implementation}, called via. the auto-differentation software CasADi \citep{Andersson2019}, and Lemkes Algorithm implemented in the Numerics package in Siconos, \citep{acary2019introduction}. Experience showed that Lemkes algorithm was the fastest.
 
 %%% Local Variables:
 %%% mode: latex

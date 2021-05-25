@@ -30,7 +30,7 @@ eco = ecosystem_optimization(mass_vector, layers * segments, params, obj, water_
 eco.population_setter(np.array([4, 0.04]))
 
 eco.dirac_delta_creator()
-simulator_new(eco, "non_random_oresund", k = 0.2, min_attack_rate=min_attack_rate, sparse = True, start_date='2014-03-01')
+simulator_new(eco, "non_random_oresund", k = 0.2, min_attack_rate=min_attack_rate, sparse = False, start_date='2014-03-01', lemke=True)
 
 res_start = 8*norm_dist  # 0.1*(1-obj.x/depth)
 res_max = 10*norm_dist

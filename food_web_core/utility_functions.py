@@ -142,7 +142,7 @@ def quadratic_optimizer(eco, payoff_matrix = None, prior_sol=None):
             cont_conds.append(p[j*eco.spectral.n] - p[(j+1)*eco.spectral.n])
             cont_conds.append(u[j*eco.spectral.n] - u[(j+1)*eco.spectral.n])
 
-    print("Here")
+#    print("Here")
     z = ca.vertcat(*[p, y])
     w = ca.vertcat(*[u, v])
     #
@@ -151,7 +151,7 @@ def quadratic_optimizer(eco, payoff_matrix = None, prior_sol=None):
   #  w = H @ z + q
 
 #    print(H.shape)
-    print("Here")
+#    print("Here")
     f = w.T @ z #ca.norm_2()
     if eco.spectral.segments > 1:
         g = ca.vertcat(*[*cont_conds, w - H @ z - q])
@@ -159,28 +159,28 @@ def quadratic_optimizer(eco, payoff_matrix = None, prior_sol=None):
     else:
         g = w - H @ z - q #ca.norm_2() H @ z + q
 
-    print("Here")
+#    print("Here")
 
     x = ca.vertcat(z, w)
-    lbx = np.zeros(x.size())+10**(-8)
+    lbx = np.zeros(x.size())#+10**(-8)
     ubg = np.zeros(g.size()) #[ca.inf]*int(g.size()[0]) #np.zeros(g.size())
     lbg = np.zeros(g.size())
 
-    print("Just before optimizing")
-    s_opts = {'ipopt': {'print_level': 5, 'tol':1E-8}}
+#    print("Just before optimizing")
+    s_opts = {'ipopt': {'print_level': 1, 'linear_solver':'ma57'}}
     prob = {'x': x, 'f': f, 'g': g}
     solver = ca.nlpsol('solver', 'ipopt', prob, s_opts)
-    print("Solver decleared")
+#    print("Solver decleared")
     #prior_sol = False
     if prior_sol is None:
         sol = solver(lbx=lbx, lbg=lbg, ubg = ubg) #ubg=ubg
-        print("Solved")
+#        print("Solved")
 
     else:
         sol = solver(x0=prior_sol, lbx=lbx, lbg=lbg, ubg = ubg) #ubg=ubg,
 
 
-    print(sol['f'])
+    #print(sol['f'])
     x_out = np.array(sol['x']).flatten()
     #print(np.min(x_out), np.dot(x_out[0:eco.populations.size*(eco.layers+1)], x_out[eco.populations.size*(eco.layers+1):]))
     #print(x_out[0:eco.layers*eco.populations.size])
@@ -589,6 +589,7 @@ def simulator_new(eco, filename, h_k = None, lemke = True, min_attack_rate = 10*
 
     total_time_steps = len(solar_levels)
     time = 0
+    prior_sol = np.ones(2*(eco.layers*eco.populations.size+eco.populations.size))
     for i in range(total_time_steps):
         if physiological is False:
             current_layered_attack = new_layer_attack(eco.parameters, solar_levels[i], beta_0=min_attack_rate, k = k)
@@ -604,7 +605,7 @@ def simulator_new(eco, filename, h_k = None, lemke = True, min_attack_rate = 10*
             if lemke is True:
                 prior_sol = lemke_optimizer(eco, payoff_matrix=payoff_matrix)
             else:
-                prior_sol = quadratic_optimizer(eco, payoff_matrix=payoff_matrix)
+                prior_sol = quadratic_optimizer(eco, payoff_matrix=payoff_matrix, prior_sol = prior_sol)
         if optimal is False:
             prior_sol = np.copy(eco.strategy_matrix)
         x_res = (prior_sol[0:eco.populations.size * eco.layers]).reshape((eco.populations.size, -1))
@@ -623,7 +624,7 @@ def simulator_new(eco, filename, h_k = None, lemke = True, min_attack_rate = 10*
             eco.water.update_resources(consumed_resources=eco.consumed_resources(), time_step=time_step)
             eco.water.res_counts = eco.water.res_counts @ h_k
 
-        print(error, eco.populations, np.sum(eco.water.res_counts), time_step, new_pop - pop_old, solar_levels[i])
+        print(error, eco.populations, np.sum(eco.water.res_counts), i/total_time_steps, new_pop - pop_old, solar_levels[i])
         time += time_step
 
     with open('data/' + filename + '_eco' +'.pkl', 'wb') as f:
@@ -705,24 +706,25 @@ def jit_payoff_matrix_builder(resources, populations, i, j, current_layered_atta
 
             x_temp[1] = x_temp[1] @ heat_kernel  # Going smooth.
 
-            predator_hunger = clearance_rate[j] * populations[j] * np.dot(M, current_layered_attack[:, j, i] * x_temp[1]) * \
+
+            x = x_temp[0]#.reshape(-1, 1)
+
+            predator_hunger = clearance_rate[j] * populations[j] * np.dot(M, x*current_layered_attack[:, j, i] * x_temp[1]) * \
                               who_eats_who[j, i]
 
-            x = x_temp[0].reshape(-1, 1)
             interaction_term = who_eats_who[i, j] * populations[j] * clearance_rate[i]
-            lin_growth = interaction_term * (x_temp[1] * current_layered_attack[:, i, j].T) @ M @ x
+            lin_growth = np.sum( M @ (x * interaction_term * (x_temp[1] * current_layered_attack[:, i, j])))
 
-            foraging_term_self = (resources * forager_or_not[i] *
-                                  clearance_rate[i] * layered_foraging[:, i]).reshape(
-                (1, -1)) @ (M @ x)
+            foraging_term_self = np.sum(M @ (x * resources * forager_or_not[i] * clearance_rate[i] * layered_foraging[:, i]))
+
             foraging_term_self = foraging_term_self / (populations.size - 1)
 
-            actual_growth = efficiency * (lin_growth[0] + foraging_term_self[0])
+            actual_growth = efficiency * (lin_growth + foraging_term_self)
 
-            pred_loss = x.T @ predator_hunger
+            pred_loss = np.sum(predator_hunger)
             #print(pred_loss, actual_growth)
 
-            payoff_i[k, n] = actual_growth[0] - pred_loss[0]
+            payoff_i[k, n] = actual_growth - pred_loss
 
             #lin_growth_jit(resources, populations, i, j, strat_mat, current_layered_attack = current_layered_attack,
                    #heat_kernel = heat_kernel, clearance_rate = clearance_rate,
