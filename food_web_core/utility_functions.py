@@ -167,7 +167,7 @@ def quadratic_optimizer(eco, payoff_matrix = None, prior_sol=None):
     lbg = np.zeros(g.size())
 
 #    print("Just before optimizing")
-    s_opts = {'ipopt': {'print_level': 1, 'linear_solver':'ma57'}}
+    s_opts = {'ipopt': {'print_level': 1, 'linear_solver':'ma57', 'hessian_approximation': 'limited-memory'}}
     prob = {'x': x, 'f': f, 'g': g}
     solver = ca.nlpsol('solver', 'ipopt', prob, s_opts)
 #    print("Solver decleared")
@@ -184,6 +184,53 @@ def quadratic_optimizer(eco, payoff_matrix = None, prior_sol=None):
     x_out = np.array(sol['x']).flatten()
     #print(np.min(x_out), np.dot(x_out[0:eco.populations.size*(eco.layers+1)], x_out[eco.populations.size*(eco.layers+1):]))
     #print(x_out[0:eco.layers*eco.populations.size])
+    return x_out
+
+def quadratic_optimizer_2(eco, payoff_matrix = None, prior_sol=None, current_layered_attack = None):
+    Mx = eco.spectral
+    tot_points = eco.layers
+    res_conc = eco.parameters.efficiency*eco.water.res_counts*eco.parameters.layered_foraging[:, 0]
+    beta = current_layered_attack[:, 1, 0]
+    lam = ca.MX.sym('lam', 2)
+
+    sigma = ca.MX.sym('sigma', Mx.x.shape[0])
+    sigma_p = ca.MX.sym('sigma_p', Mx.x.shape[0])
+#    sigma = eco.heat_kernels[0].T @ sigma_eff
+#    sigma_p = eco.heat_kernels[0].T @ sigma_p_eff
+
+
+    inte = np.ones(eco.layers).reshape(1, eco.layers)
+
+
+    df1 = eco.parameters.efficiency*res_conc - sigma_p * beta - lam[0] * np.ones(tot_points)
+    df2 = eco.parameters.efficiency*sigma * beta - lam[1] * np.ones(tot_points)
+
+    # g0 = ca.vertcat(cons_dyn, pred_dyn)
+    g1 = inte @ Mx.M @ (df1 * sigma) + inte @ Mx.M @ (df2 * sigma_p)  #
+    g2 = inte @ Mx.M @ sigma_p - 1
+    g3 = inte @ Mx.M @ sigma - 1
+    g4 = ca.vertcat(-df1, -df2)
+    g = ca.vertcat(g1, g2, g3, g4)
+
+    # print(g0.size())
+    f = 0
+
+    sigmas = ca.vertcat(sigma, sigma_p)  # sigma_bar
+    x = ca.vertcat(*[sigmas, lam])
+    lbg = np.zeros(3 + 2 * tot_points)
+    ubg = ca.vertcat(*[np.zeros(3), [ca.inf] * 2 * tot_points])
+
+    s_opts = {'ipopt': {'print_level': 1, 'linear_solver': 'ma57', 'hessian_approximation': 'limited-memory',
+                        'acceptable_iter': 15}}  # , 'tol':10**-3, 'acceptable_tol': 10**(-2)}}
+    prob = {'x': x, 'f': f, 'g': g}
+    lbx = ca.vertcat(*[np.zeros(x.size()[0] - 2), -ca.inf, -ca.inf])
+
+    solver = ca.nlpsol('solver', 'ipopt', prob, s_opts)
+
+    sol = solver(lbx=lbx, lbg=lbg, ubg=ubg, x0=prior_sol)
+
+    x_out = np.array(sol['x']).flatten()
+
     return x_out
 
 
@@ -581,6 +628,7 @@ def simulator_new(eco, filename, h_k = None, lemke = True, min_attack_rate = 10*
     resource_list = []
     strategy_list = []
 
+    lam = np.copy(eco.water.lam)
     time_step = (1 / 365) * (1 / day_interval)
     solar_levels = solar_input_calculator(latitude=latitude, longitude=longitude, start_date=start_date, end_date = end_date)
     print(len(solar_levels))
@@ -589,7 +637,7 @@ def simulator_new(eco, filename, h_k = None, lemke = True, min_attack_rate = 10*
 
     total_time_steps = len(solar_levels)
     time = 0
-    prior_sol = np.ones(2*(eco.layers*eco.populations.size+eco.populations.size))
+    prior_sol = np.ones((eco.layers*eco.populations.size+eco.populations.size))
     for i in range(total_time_steps):
         if physiological is False:
             current_layered_attack = new_layer_attack(eco.parameters, solar_levels[i], beta_0=min_attack_rate, k = k)
@@ -598,14 +646,15 @@ def simulator_new(eco, filename, h_k = None, lemke = True, min_attack_rate = 10*
         pop_old = np.copy(eco.populations)
         population_list.append(pop_old)
         if optimal is True:
-            if sparse is False:
-                payoff_matrix = total_payoff_matrix_builder(eco, current_layered_attack)
-            else:
-                payoff_matrix = total_payoff_matrix_builder_sparse(eco, current_layered_attack)
             if lemke is True:
+                if sparse is False:
+                    payoff_matrix = total_payoff_matrix_builder(eco, current_layered_attack)
+                else:
+                    payoff_matrix = total_payoff_matrix_builder_sparse(eco, current_layered_attack)
+
                 prior_sol = lemke_optimizer(eco, payoff_matrix=payoff_matrix)
             else:
-                prior_sol = quadratic_optimizer(eco, payoff_matrix=payoff_matrix, prior_sol = prior_sol)
+                prior_sol = quadratic_optimizer_2(eco, prior_sol = prior_sol, current_layered_attack = current_layered_attack)
         if optimal is False:
             prior_sol = np.copy(eco.strategy_matrix)
         x_res = (prior_sol[0:eco.populations.size * eco.layers]).reshape((eco.populations.size, -1))
@@ -614,17 +663,16 @@ def simulator_new(eco, filename, h_k = None, lemke = True, min_attack_rate = 10*
         delta_pop = eco.total_growth(x_res)
         eco.parameters.layered_attack = current_layered_attack
         new_pop = delta_pop * time_step + eco.populations
-        error = np.linalg.norm(new_pop - pop_old)
         if population_dynamics is True:
             eco.population_setter(eco.total_growth(x_res) * time_step + eco.populations)
         eco.strategy_setter(x_res)
         r_c = np.copy(eco.water.res_counts)
         resource_list.append(r_c)
         if population_dynamics is True:
-            eco.water.update_resources(consumed_resources=eco.consumed_resources(), time_step=time_step)
+            eco.water.update_resources(consumed_resources=eco.consumed_resources(), time_step=time_step, lam = lam*solar_levels[i])
             eco.water.res_counts = eco.water.res_counts @ h_k
 
-        print(error, eco.populations, np.sum(eco.water.res_counts), i/total_time_steps, new_pop - pop_old, solar_levels[i])
+        print("Populations: ", np.sum(eco.spectral.M @ eco.water.res_counts), eco.populations, "Completion ratio: ", i/total_time_steps, "Solar level: " ,solar_levels[i])
         time += time_step
 
     with open('data/' + filename + '_eco' +'.pkl', 'wb') as f:

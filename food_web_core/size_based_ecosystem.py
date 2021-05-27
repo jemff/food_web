@@ -132,10 +132,17 @@ class ecosystem_optimization:
             normalizations = np.diag(normalizations)
         return normalizations @ I_n
 
+    def identity_creator_i(self, i):
+
+        return np.identity(self.layers)
 
     def dirac_delta_creator(self):
         for i in range(self.populations.shape[0]):
             self.heat_kernels[i] = self.dirac_delta_creator_i(i)
+
+    def identity_creator(self):
+        for i in range(self.populations.shape[0]):
+            self.heat_kernels[i] = self.identity_creator_i(i)
 
 
     def total_growth(self, x_temp = None):
@@ -171,7 +178,8 @@ class ecosystem_optimization:
 
             foraging_term = self.water.res_counts*self.parameters.forager_or_not[i] \
                             *self.parameters.clearance_rate[i] * self.parameters.layered_foraging[:, i] * strat_mat[i]
-            consumed_resources += self.populations[i]*foraging_term /(1 + self.parameters.handling_times[i]*np.sum(np.dot(self.ones, np.dot(self.spectral.M, (np.sum(layer_action, axis = 1) + foraging_term)))))
+            consumed_resources += self.populations[i]*foraging_term
+            #/ (1 + self.parameters.handling_times[i]*np.sum(np.dot(self.ones, np.dot(self.spectral.M, (np.sum(layer_action, axis = 1) + foraging_term)))))
         if self.verbose is True:
             print(np.sum(np.dot(self.spectral.M, consumed_resources)), "Consumed resources")
         return consumed_resources
@@ -431,14 +439,17 @@ class water_column:
     def resource_setter(self, new_res):
         self.res_counts = new_res
 
-    def update_resources(self, consumed_resources = 0, time_step = 0.001):
+    def update_resources(self, consumed_resources = 0, time_step = 0.001, lam = None):
         ##Chemostat step
+        if lam is None:
+            lam = self.lam
+
         if self.logistic is False:
-            self.res_counts += (self.lam*(self.resource_max - self.res_counts) - consumed_resources)*time_step
+            self.res_counts += (lam*(self.resource_max - self.res_counts) - consumed_resources)*time_step
             self.res_counts[self.res_counts < 0] = 0
 
         else:
-            self.res_counts += (self.lam*self.res_counts*(1-self.res_counts/self.resource_max) - consumed_resources)*time_step
+            self.res_counts += (lam*self.res_counts*(1-self.res_counts/self.resource_max) - consumed_resources)*time_step
             self.res_counts[self.res_counts < 0] = 10 ** (-8)
 
         ##Advection diffusion
