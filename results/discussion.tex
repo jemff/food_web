@@ -14,37 +14,46 @@ Our study of a Lotka-Volterra system with optimal behavior in the water column f
 %Incorporating populations and threats necessary to specify migration patterns
 %The choice of numerical approach is of critical importance, upgrading numerics can lead to new insights
 %Unbounded rationality, though unreasonable empirically, is not so important on the large scale but very important on small scale.
-Our model illustrates that there is a complicated interplay between population dynamics and seasons, and though the light levels may be the same at two different times of the year, the migration patterns can differ radically due to the differences in populations. Models incorporating the vertical migration as an essential component need to consider the population levels as well as the light levels.  
+Our results illustrate the complicated interplay between population dynamics, seasons, and behavior. Though light levels may be the same at two different times of the year, the migration patterns can differ radically due to the differences in populations. Bounded rationality appears to change the population dynamics imperceptibly compared to the results with perfect rationality, so even though behavior is probably not perfectly rational in reality, the difference between optimal behavior and constant behavior is much greater than between bounded and perfect rationality. Models incorporating the vertical migration as an essential component need to consider the population levels as well as the light levels, essentially incorporating some sort of behavorial element. Incorporating behavior causes non-smooth population dynamics at short time-scales. Initially this seem to indicate that models need to be very fine-grained in time to capture population dynamics accuarely, but the smooth nature of the long-term dynamics gives hope that the same dynamic could be captured with a rougher time-discretization.
 
 
+\subsection{Compare results to litterature} %2-3 paragraphs
+Seasonal variation of the vertical migration due to seasonal changes in nutrient and light levels has been studied in detail in the Arabian sea \citep{wang2014seasonal}, and our results correspond qualitively to these though we are simulating a far more northern latitude. Discounsting seasons, but looking at different environments, the variation of the vertical migration shows a clear dependence on the nutrients and light levels \citep{klevjer2016large}, in vein with what our model predicts.
 
-\subsection{Compare results to litterature} %3-5 paragraphs
-That vertical migrations change seasonally due to changes in nutrient and light has been studied in the arabian sea, \citep{wang2014seasonal}, and our method enables testable predictions of how this seasonal migration can vary, allowing comparison with large empirical studies \citep{klevjer2016large}.
 The shapes of the distributions at both day and night seem to agree better with observations in the model with bounded rationality, \citep{hay1991zooplankton}, lending credence to the idea that copepods are not perfectly rational or subject to turbulence \citep{visser2001observations}.
-In short-term models, constant populations are typically assumed constant \citep{...,...,...}. Though the populations change dramatically over the long term in our model, the population levels are essentially unchanged on a daily basis. The proposed population-dynamical model passes an essential test, as wildly fluctuating populations in the short term cannot represent the underlying physical reality. In contrast, the near-constant short-term population emerges from the behavorial optimization in the model when comparing to the model with no behavior.
+constant populations \citep{pinti2019trophic,verticalmigration}. Though the populations change dramatically over the long term in our model, the population levels are essentially unchanged on a daily basis. The proposed population-dynamical model passes an essential test, as wildly fluctuating populations in the short term cannot represent the underlying physical reality. In contrast, the near-constant short-term population emerges from the behavorial optimization in the model when comparing to the model with no behavior.
+
+
+lima2009predators Predators and the breeding bird: behavioral and reproductive flexibility under the risk of predation <- Move to introduction
+carranza1999red Red deer females collect on male clumps at mating areas <- Move to introduction
+gigerenzer2001rethinking rationality <- Move to introduction
+jones1999bounded,
+  title={Bounded rationality
+
+cressman2010ideal The ideal free distribution as an evolutionarily stable state in density-dependent population games <- Move to introduction
+
+lasry2007mean mean field games <- Move to introduction
+
+@article{krivan,
+  title={On evolutionary stability in predator--Prey models with fast behavioural dynamics},
+
+kvrivan2008ideal The ideal free distribution: a review and synthesis of the game-theoretic perspective
+cressman2004ideal Ideal free distributions, evolutionary games, and population dynamics in multiple-species environments
 
 When looking at ecosystems, there are two main approaches to incorporating behavior:
 \begin{enumerate}
   \item Assume perfect rationality
   \item Ignore it
 \end{enumerate}
-The middle way, where animals take rational choices but with a bound on their rationality is typically not included. Imperfect rationality captures that animals might not be perfectly aware of the state of a system, or when distinguishing between almost-equivalent options, choosing the best might require a disprortionate effort. The distribution of copepods in the water column with bounded rationality closely resembles empirical distributions, \citep{thomasetal}, as the model with perfect rationality suffers from an unphysical discontinuity, also seen in \citep{uhth}. Comparing the distributions with perfectly rational behavior to the ones with bounded behavior, we see that the day-time distribution is essentially the same. The optimal behavior at day is to be spread out, and the loss in fitness from the more spread-out night-ime distribution does not appear to be significant, when comparing the long-term population trajectories.
+The middle way, where animals take rational choices but with a bound on their rationality is typically not included. Imperfect rationality captures that animals might not be perfectly aware of the state of a system, or when distinguishing between almost-equivalent options, choosing the best might require a disprortionate effort.
 
-\subsection{Limitations and generalizability} %1-2 paragraphs
-The cost of migration is not incorporated in the model, which it could be. Howver, the cost of mirgation could also be introduced through a proxy where there is a constant species-specific penalty-field incentivizing specific depths, eg. disallowing infinetly deep migrations.
-The model we have developed is ready-made for incorporating more species. A logical next step would be to examine the concept of cascading migrations and Vinogradovs ladder. Our approach essentially only depends on the linearity of the fitness proxy, so it could be imagined that ontogenics could be incorporated, via. structuring the populations and considering fitness based on the Leslie matrix, enabling a proxy for life-cycle optimization.
-
-As short feeding bouts are the drivers of the population dynamics, it becomes quite hard to formulate a long-term model of the slow population dynamics without taking into account the fast feeding dynamics, as these are strongly non-linear and feedback-driven
-
+\subsection{Limitations and generalizability} %1 paragraphs
+The model we have developed is ready-made for incorporating more species, for example using it to examine the population dynamics of snapshot models \citep{pinti2019trophic}. Our approach essentially only depends on the linearity of the fitness proxy, so it could be imagined that ontogenics could be incorporated, via. structuring the populations and considering fitness based on the Leslie matrix, enabling a proxy for life-cycle optimization. It is a weakness of the model that the payoff matrices for the predator-prey interactions have to be recalculated at every instant, as this step is very computionally expensives. The shape of the population dynamics gives hope that the population dynamics could be equally well modelled using a modified clearance rate. The Nash equilibrium we find in our model is unique by \citep{verticalmigration}, but in general establishing uniqueness of the Nash equilibrium in a polymatrix game is non-trivial.
 
 \subsection{Further work} %1 paragraph
-The driver of seasonal variations in migration patterns, is a strong point of the model. Clear variatinos in the expected distributions stand out, and these can theoretically be tested via. echo-acoustics.
-The boundedly rational distributions we arrive at with our model for zooplankton and forage fish seem to agree qualitively with observations to a relatively degree. As such, our model provides a tentative answer to how much realism is lost by the usual assumption of complete rationality. The results we portray show that the overall patterns agree between a population with bounded rationality and one which is completely rational. The usual assumption of complete rational seems to be reasonable modelling assumption, but care should be taken. We show that it is possible to include bounded rationality in a systematic fashion, allowing it as a tuning parameter in future models.
-Seasonal variation in plankton production.
+A weakness of the model is that it does not incorporate a concept of satiation nor ontogenics, and expanding the model to include either of these would be a big improvement. The driver of seasonal variations in migration patterns, can theoretically be tested via. echo-acoustics. The bounded rational distributions we arrive at with our model for zooplankton and forage fish seem to qualitively agree with observations. It would be satisfying to find a general criterion to ensure that a habitat selection game has a unique Nash equilibrium.
 
-
-The fitness proxy we use guarantees an ESS, \citep{krivan}. Combing our modeling approach with these theoretical results, it becomes feasible to model multi-actor multi-environment ecosystems. A weakness of the model is, of course, that it does not incorporate a concept of satiation nor ontogenics. \todo[inline]{Til huskelisten: Det med entydighed af Nash-ligevægte. Om ikke andet må vi nævne det som et emne, der kræver opmærksomhed - hvis vi anbefaler numerisk analyse til at finde ligevægtene, så er der også brug for numeriske løsninger til at afgøre entydighed.}.
 
 \subsection{Conclusion} %1 paragraph
-
-When looking at the population dynamics of a predator-prey system through half a, the seasonal impacts stand out. Even though our model is simple in nature, it can catch essential features as the spring-bloom, and varying phytoplankton throughout the seaonss.  The long-term patterns are invisible when investigating the short-term fluctuations. As we can see the primary trophic interactions happens in a very short time, the system is fundamentally a slow system driven by a fast underlying dynamic. The migration patterns that we find with our model agree with  recent models of vertical migrations, also based on a game-theoretical perspective. This strengthens the conclusions of all three model families, as they are based on fundamentally different numerical and algorithmic schemes.
+When looking at the population dynamics of a predator-prey system through half a, the seasonal impacts stand out [FF]. Even though our model is simple in nature, it can catch essential features as the spring-bloom, and varying phytoplankton throughout the seaonss.  The long-term patterns are invisible when investigating the short-term fluctuations. As we can see the primary trophic interactions happens in a very short time, the system is fundamentally a slow system driven by a fast underlying dynamic.
+We show that it is possible to include bounded rationality in a systematic fashion, allowing it as a tuning parameter in future models. The usual assumption of complete rationality seems to be reasonable based on our results, but care should be taken.

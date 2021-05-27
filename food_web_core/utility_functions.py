@@ -202,8 +202,8 @@ def quadratic_optimizer_2(eco, payoff_matrix = None, prior_sol=None, current_lay
     inte = np.ones(eco.layers).reshape(1, eco.layers)
 
 
-    df1 = eco.parameters.efficiency*res_conc - sigma_p * beta - lam[0] * np.ones(tot_points)
-    df2 = eco.parameters.efficiency*sigma * beta - lam[1] * np.ones(tot_points)
+    df1 = eco.parameters.clearance_rate[0]*res_conc - eco.parameters.clearance_rate[1]*sigma_p * beta - lam[0] * np.ones(tot_points)
+    df2 = eco.parameters.clearance_rate[1]*eco.parameters.efficiency*sigma * beta - lam[1] * np.ones(tot_points)
 
     # g0 = ca.vertcat(cons_dyn, pred_dyn)
     g1 = inte @ Mx.M @ (df1 * sigma) + inte @ Mx.M @ (df2 * sigma_p)  #
@@ -662,7 +662,6 @@ def simulator_new(eco, filename, h_k = None, lemke = True, min_attack_rate = 10*
 
         delta_pop = eco.total_growth(x_res)
         eco.parameters.layered_attack = current_layered_attack
-        new_pop = delta_pop * time_step + eco.populations
         if population_dynamics is True:
             eco.population_setter(eco.total_growth(x_res) * time_step + eco.populations)
         eco.strategy_setter(x_res)
