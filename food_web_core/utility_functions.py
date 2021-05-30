@@ -668,7 +668,7 @@ def simulator_new(eco, filename, h_k = None, lemke = True, min_attack_rate = 10*
         r_c = np.copy(eco.water.res_counts)
         resource_list.append(r_c)
         if population_dynamics is True:
-            eco.water.update_resources(consumed_resources=eco.consumed_resources(), time_step=time_step, lam = lam*solar_levels[i])
+            eco.water.update_resources(consumed_resources=eco.consumed_resources(), time_step=time_step, lam = lam)
             eco.water.res_counts = eco.water.res_counts @ h_k
 
         print("Populations: ", np.sum(eco.spectral.M @ eco.water.res_counts), eco.populations, "Completion ratio: ", i/total_time_steps, "Solar level: " ,solar_levels[i])
