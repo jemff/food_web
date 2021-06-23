@@ -6,14 +6,15 @@
 \caption{Total populations of consumers \emph{(blue)}, predators, \emph{(red)} and resources \emph{(purple)} from 1st of april to 1st of october. We vary the rationality, from total rationality \emph{(1)}, bounded rationality ($\sigma = 10$), \emph{(2)} and fully irrational, $\sigma = \infty$, \emph{(3)}, corresponding to a simple Lotka-Volterra model.}
 \label{fig:long_term_populations}
 \end{figure}
-\Cref{fig:long_term_populations} shows the long-term population dynamics for the system we consider, comparing the population levels for the models with complete rationality (\Cref{fig:long_term_populations}(A)), bounded rationality (\Cref{fig:long_term_populations}(B)) and full irrationality (\Cref{fig:long_term_populations}(C)).
+\Cref{fig:long_term_populations} shows the long-term\todo{Det er vel bare ``seasonal'' eller sådan noget. Det med sæsonen bør forklares.} population dynamics for the system we consider, comparing the population levels for the models with complete rationality (\Cref{fig:long_term_populations}(A)), bounded rationality (\Cref{fig:long_term_populations}(B)) and full irrationality (\Cref{fig:long_term_populations}(C)). \todo{Forklar hvorfor du inddrager fuld irrationalitet.}
 
-The difference in population dynamics between a system with no behavioral optimization and complete rationality \Cref{fig:long_term_populations}(1,3) is stark, where the system with bounded rationality has approximately the same dynamics as the one . The resources reach a stable level quickly in all three cases, but the populations of consumers and predators differ markedly. The difference in populations between the system with bounded rationality \Cref{fig:long_term_populations}(2) and the fully rational system appears to be negligible, \Cref{fig:long_term_populations}(1). The main driver of the change in population dynamics seems to be the ability to retreat to a refuge, and not the exact shape of the distributions when interacting.
+The difference in population dynamics between a system with no behavioral optimization and complete rationality \Cref{fig:long_term_populations}(1,3) is stark, where the system with bounded rationality has approximately the same dynamics as the one\todo{Which one?}. The resources reach a stable level quickly in all three cases, but the populations of consumers and predators differ markedly. The difference in populations between the system with bounded rationality \Cref{fig:long_term_populations}(2) and the fully rational system appears to be negligible, \Cref{fig:long_term_populations}(1). The main driver of the change in population dynamics seems to be the ability to retreat to a refuge, and not the exact shape of the distributions when interacting.
 
 \subsection*{Bounded rationality and complete rationality}
 \begin{figure}[H]
 \includegraphics{plots/both_specific_dists.pdf}
 \caption{Daily distribution of consumers \emph{blue} and predators \emph{red} at noon \emph{(A,D)}, dusk \emph{(B,E)} and at midnight, \emph{(C,F)} with full (A-C) and bounded rationality (D-F) on the 22nd June (Summer solstice)}
+\todo[inline]{... og ressource ...}
 \label{fig:both_specific_dists}
 \end{figure}
 The plots in \Cref{fig:both_specific_dists} show snapshots of consumer and predator distributions in the water column at specific times on summer solstice, with bounded and complete rationality.
@@ -33,6 +34,7 @@ The heatmaps in \Cref{fig:heatmap_total} illustrate the seasonal variation of th
 The vertical migration pattern (\Cref{fig:heatmap_total}) is apparent throughout the seasons. Both consumers and predators are highly concentrated at the top of the water column during nighttime, and at day they scatter to the deep. The pattern of the predators \Cref{heatmap_total}(D-F) is slightly different from the consumer pattern, \Cref{fig:heatmap_total} (A-C). At nighttime there is still a non-zero concentration of predators in the upper layers of the water-column, there to catch any errant prey. In the spring \Cref{fig:heatmap_total}(A) the consumer migration is very fast, reflecting relatively fast shift in light levels, with a much slower migration in the summer \Cref{fig:heatmap_total}(B,E).
 
 Moving the hands on the clock forward to October, we see a different pattern \Cref{fig:heatmap_total}(C,F). The migration differs from summer migration, in that the descent and ascent are steeper, and the distributions are wider during the night.
+\todo[inline]{Forskellen mellem forår og efterår bør kommenteres}
 
 \subsection*{Feeding rates}
 \begin{figure}[H]
@@ -48,6 +50,7 @@ At all three points in time, consumers have a constant feeding level throughout 
 \includegraphics{plots/pop_dyn_comp_full_semi_none.pdf}
 \end{centering}
 \caption{Comparison of consumer \emph{(blue)} and predator, \emph{(red)} pr. capita growth patterns with complete rationality \emph{(A)}, bounded rationality \emph{(B)} and full irrationality \emph{(C)}}
+\todo[inline]{Jeg er ikke helt overbevist af denne figur ... lad os tale om det.}
 \label{fig:pop_short_term}
 \end{figure}
 The differentshort-term population growth patterns for complete rationality, bounded rationality and full irrationality are illustrated in \Cref{fig:pop_short_term}, by focusing on the patterns on summer solstice.
