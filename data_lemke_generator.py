@@ -32,7 +32,7 @@ obj = spectral_method(depth, layers, segments=segments)
 logn = stats.lognorm.pdf(obj.x, 1, 0)
 
 norm_dist = stats.norm.pdf(obj.x, loc=0, scale=3)
-res_start = 4*norm_dist  # 0.1*(1-obj.x/depth)
+res_start = norm_dist #Changed from 4 # 0.1*(1-obj.x/depth)
 res_max = 10*norm_dist
 
 water_start = water_column(obj, res_start, layers=layers * segments, resource_max=res_max, replacement=lam, advection=0,
@@ -41,12 +41,12 @@ water_start = water_column(obj, res_start, layers=layers * segments, resource_ma
 params = ecosystem_parameters(mass_vector, obj, lam=0.3, min_attack_rate = min_attack_rate, forage_mass = 0.05/408)
 params.handling_times = np.zeros(2)
 eco = ecosystem_optimization(mass_vector, layers * segments, params, obj, water_start, l2=l2, movement_cost=0)
-eco.population_setter(np.array([4, 0.04]))
+eco.population_setter(np.array([4, 0.004])) #Reduced predator numbers by a factor of 10
 
 eco.dirac_delta_creator()
 simulator_new(eco, "non_random_oresund", k = 0.2, min_attack_rate=min_attack_rate, sparse = False, start_date='2014-03-01', lemke = True) #solar_levels
 
-res_start = 4*norm_dist  # 0.1*(1-obj.x/depth)
+res_start = norm_dist  # 0.1*(1-obj.x/depth)
 res_max = 10*norm_dist
 
 water_start = water_column(obj, res_start, layers=layers * segments, resource_max=res_max, replacement=lam, advection=0,
@@ -59,11 +59,11 @@ eco = ecosystem_optimization(mass_vector, layers * segments, params, obj, water_
 eco.heat_kernel_creator(10**(-1))
 eco.heat_kernels[1] = eco.heat_kernels[0]
 
-eco.population_setter(np.array([4, 0.04]))
+eco.population_setter(np.array([4, 0.004]))
 
 simulator_new(eco, "more_random_oresund", k = 0.2, sparse = False, min_attack_rate=min_attack_rate, start_date='2014-03-01')
 
-res_start = 4*norm_dist  # 0.1*(1-obj.x/depth)
+res_start = norm_dist  # 0.1*(1-obj.x/depth)
 res_max = 10*norm_dist
 
 water_start = water_column(obj, res_start, layers=layers * segments, resource_max=res_max, replacement=lam, advection=0,
@@ -71,7 +71,7 @@ water_start = water_column(obj, res_start, layers=layers * segments, resource_ma
 
 params = ecosystem_parameters(mass_vector, obj, lam=0.3, min_attack_rate = min_attack_rate, forage_mass = 0.05/408)
 params.handling_times = np.zeros(2)
-params.loss_term[1] = 1/5*params.loss_term[1]
+#params.loss_term[1] = 1/5*params.loss_term[1]
 
 eco = ecosystem_optimization(mass_vector, layers * segments, params, obj, water_start, l2=l2, movement_cost=0)
 
@@ -81,6 +81,6 @@ eco.heat_kernels[1] = eco.heat_kernels[0]
 
 #eco.heat_kernels[1] = eco.heat_kernels[0]
 
-eco.population_setter(np.array([4, 0.04]))
+eco.population_setter(np.array([4, 0.004]))
 
 simulator_new(eco, "completely_random_oresund", optimal = False, k = 0.2, min_attack_rate=min_attack_rate, sparse = True, start_date='2014-03-01')

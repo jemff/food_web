@@ -3,27 +3,32 @@
 \todo[inline]{Jeg ville gerne se det generelle udbygget lidt og ``kælet for''. }
 
 \subsection*{General model framework}
+The ideal free distribution is a general model that explains a wide range of habitat choice.. .... Models where the
 
-\todo[inline]{Hvis det her ``kun'' er habitatsselektion, så kan vi lige så godt skrive det. Hvad kan det ellers være?}
+The population dynamical systems that can be modelled via games like this are where the population dynamics of species $i$ can be modelled as
+\begin{equation}
+ \dot{N_i} = N_i U_i
+\end{equation}
+\todo[inline]{Bør det ikke uddybes (en hel del)?}
+An example of such a game is a habitat selection game, where picking the strategy that maximizes the instantaneous growth gives rise to an ESS \citep{kvrivan2009}. Cressman 2010, kirvan2008
+
+%\todo[inline]{Hvis det her ``kun'' er habitatsselektion, så kan vi lige så godt skrive det. Hvad kan det ellers være?}
 
 
-The basic structure in the games we study is a system of $N$ players\todo{Arter?}, with strategies \todo{at each point in time?} given by probability distributions $\phi_i$ on a space $X$, henceforth an interval $[0,z_0]$. The payoffs $U_i$ of the players are given by matrices, or, in the continuous setting, linear operators $U_{ij}$ as
+The basic structure in the games we study is a system of $N$ players, or species, with strategies at each point in time given by probability distributions $\phi_i(x)$ on an interval $[0,z_0]$. In a polymatrix game the payoffs $U_i$ of the players are given by sums of bilinear forms determined by matrices $A_{ij}$, replaced by linear operators $U_{ij}$ in the continuous setting. The total payoff to player $i$ in the continuous setting is:
 
-\todo[inline]{Notationen bør være lidt klarere. $U_{ij}$ er vel ``bare'' en funktion af $x$, ikke? Tilføj gerne argumenterne i hvert fald første gang.}
+%\todo[inline]{Notationen bør være lidt klarere. $U_{ij}$ er vel ``bare'' en funktion af $x$, ikke? Tilføj gerne argumenterne i hvert fald første gang.}
 \begin{equation}
   \label{eq:utility}
   U_i = \sum_{j=1,j\neq i}^N \int n_{ij}\phi_i U_{ij} \phi_j dx%, ~i\neq j~n_{ij}=1,~i=j~n_{ij} = \frac{1}{2}
 \end{equation}
-We can see that this generalizes the notion of a polymatrix \todo{Indsæt reference til polymatriksspil} game, if the integral is replaced by a sum and the probability distributions are replaced by strategy vectors. The population dynamical systems that can be modelled via games like this are where the population dynamics of species $i$ can be modelled as
-\begin{equation}
-  \dot{N_i} = N_i U_i
-\end{equation}
-\todo[inline]{Bør det ikke uddybes (en hel del)?}
-  
+In the case where the interactions are purely local, $U_{ij}$ is a function $U_{ij}(x)$.
+
+We can see that this generalizes the notion of a polymatrix game \citep{howson1972equilibria}, if the integral is replaced by a sum and the probability distributions are replaced by strategy vectors.
+
 In a polymatrix population game, there is polymorphic-monomorphic equivalence \citep{broom2013game}, so an individual of type $j$ cannot distinguish whether an opposing population playing a mixed strategy $\phi$ is a mixture of individuals playing pure strategies, or all individuals play a single mixed strategy. As such, our approach entails each individual in a species or population making optimal choices, and the other groups reacting to the total choice.
 
-The Nash equilibrium of such a system consists of a family of probability distributions $(\phi_i^{*,NE})_{i=1}^N$ where no player can increase their utility by unilaterally deviating from their strategy.% An example of such a game is a habitat selection game, where picking the strategy that maximizes the instantaneous growth gives rise to an ESS \citep{kvrivan2009}.
-
+The Nash equilibrium of such a system consists of a family of probability distributions $(\phi_i^{*,NE})_{i=1}^N$ where no player can increase their utility by unilaterally deviating from their strategy.
 \subsubsection*{Noisy strategies}
 Our model incorporates that players are not necessarily perfectly rational: The player may not be a perfect decision-maker, due to imperfect information or limited capacity of information processing, but it can also model errors in our perception of the player's objectives, or inability to actuate a decision perfectly, for example due to turbulence in the water column. Our model of imperfect rationality is as follows: Say that the player aims to play the strategy $f_X(\cdot)$, which is a probability density function on $[0,z_0]$. Then our model posits that the player actually plays a strategy $\phi_i(\cdot ,\sigma)$, which is a smoothed version of $f_X(\cdot)$ obtained by solving the initial value problem
 \begin{align}
@@ -39,19 +44,18 @@ Numerically, this smoothing is performed by first determining the fundamental so
 
 
 \subsubsection*{Spatial discretization}
-In order to calculate the Nash Equilibrium efficiently, and perform numerical integration precisely we discretize the interval $[0,z_0]$ with a spectral scheme based on Legendre polynomials, \citep{kopriva2009implementing}. This allows precise integration and differentation with only relatively few points.
-We approximate pure strategy of being in a point $z_i$  by a normalized hat-function $e_i$, zero everywhere apart from $z_i$.
+In order to calculate the Nash Equilibrium efficiently, and perform numerical integration precisely we discretize the interval $[0,z_0]$ with a spectral scheme based on Legendre polynomials, \citep{kopriva2009implementing}. This allows precise integration and differentation with only relatively few points. Working on a grid with $M$ points, a strategy is a linear combination of normalized hat-functions, where the hat functions are given by:
 \begin{align*}
-	& \int_{z_i}^{z_{i+1}} e_i dz = 1 \\
+	& \int_{z_{i-1}}^{z_{i+1}} e_i dz = 1 \\
 	&e_i(z_{i-1}) = 0,~ e_i(z_{i+1}) = 0
 \end{align*}
-\todo[inline]{Bør griddet ikke introduceres før hat-funktionen? Er integrationsgrænserne ikke forkerte?}
-  Working on a grid with $M$ points, a strategy then becomes a linear combination of hat-functions,
+where the overall strategy becomes:
 \begin{align*}
   &\phi_{i} = \sum_{j<M} a_{j,i} e_j, \quad i\in \{1,\dots, N\} \\
   &\sum_{j<M} a_{j,i} = 1 \quad i\in \{1,\dots, N\}
 \end{align*}
 The strategy of a player is fully determined by the $a_i$'s.
+
 
 When considering non-optimal actors, we need to implement the convolution with $f_Y$, which also assures that the resulting distribution is smooth. An added benefit of incorporating bounded rationality then becomes that our strategy profiles are guaranteed to be smooth, decreasing the number of points needed for exact evaluation of the integrals.
 
@@ -62,7 +66,7 @@ Finding the Nash Equilibrium in a game in continuous space is usually a hard tas
 By discretizing space, we have reduced an uncountable strategy set to a more manageable finite amount, with pure strategies $e_k$. The gain of a player playing strategy $e_k$ against player $j$ playing strategy $e_l$ can be determined as $A_{ij}(e_k,e_l)$, \Cref{eq:utility}. The discretization allows us to write up payoffs for a finite approximation version of the continuous game,  with entry $(k,l)$ determined through $\ip{e_k}{A_{ij}e_l}, k,l \in \{1,\dots M\}$.
 Our discretization has reduced the problem to a bimatrix game, where finding the Nash equilibrium is more tractable.
 
-It does not appear to have diffused through the literature, but a Nash equilibrium of a polymatrix game can be found by solving a single linear complementarity problem \citep{miller1991copositive}. Using a modification \todo{Hvad er grundleddet i denne sætning?} of the argument from \citep{miller1991copositive}, specialized to the case of two-player (bimatrix) games but easily generalizable to the general $n$-player case. Assume that $(s^*_1,s^*_2)$ constitute a Nash equilibrium in mixed strategies with values $\gamma_1 = \ip{s^*_1}{E_1 s^*_2}$ and  $\gamma_2 = \ip{s^*_2}{E_2 s^*_1}$ to the consumer and predator, respectively. Then
+It does not appear to have diffused through the literature, but a Nash equilibrium of a polymatrix game can be found by solving a single linear complementarity problem \citep{miller1991copositive}. We give a short proof of this using using a modification of the argument from \citep{miller1991copositive}, specialized to the case of two-player (bimatrix) games but easily generalizable to the general $n$-player case. Assume that $(s^*_1,s^*_2)$ constitute a Nash equilibrium in mixed strategies with values $\gamma_1 = \ip{s^*_1}{E_1 s^*_2}$ and  $\gamma_2 = \ip{s^*_2}{E_2 s^*_1}$ to the consumer and predator, respectively. Then
 \[
   \ip{s_1}{1_n} =
   \ip{s_2}{1_n} =
