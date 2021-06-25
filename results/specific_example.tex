@@ -58,16 +58,16 @@ The total population growth of the consumer population is found by integrating t
 
 %\todo[inline]{Når nu disse størrelser er indført, hvorfor så ikke bruge dem over det hele? Så ville mange formler være meget mere kompakte.}
 
-At any instant, all consumers and predators simultaneously seek to find the strategy that maximizes their fitness, so the predators and prey follow an evolutionarily stable strategy in terms of the ideal free distribution at any instant \citep{cressman2010ideal}. A strategy in our case is a probability distribution in the water column. The optimal strategy $\phi_c^*$ of a consumer depends on the strategy of the predators, and likewise for $\phi_p^*$ for the predators. Denoting the space of probability distributions on $[0,z_0]$ by $\mathbb{P}(0,z_0)$, this can be expressed as:
+At any instant, all consumers and predators simultaneously seek to find the strategy that maximizes their fitness, so the predators and prey follow an evolutionarily stable strategy in terms of the ideal free distribution at any instant \citep{cressman2010ideal}. A strategy in our case is a probability distribution in the water column. The optimal strategy $\phi_c^*$ of a consumer depends on the strategy of the predators, and likewise for $\phi_p^*$ for the predators. Denoting the space of square-integrable probability distributions on $[0,z_0]$ by $K$ (\Cref{eq:space_of_dists}), this can be expressed as:
 \begin{align*}
-	\phi_c^*(z,t)(\phi_p) &= \argmax_{\phi_c \in \mathbb{P}(0,z_0)}  F_c(\phi_c, \phi_p)  \\
-	\phi_p^*(z,t)(\phi_c) &= \argmax_{\phi_p \in \mathbb{P}(0,z_0)} F_p(\phi_c, \phi_p)
+	\phi_c^*(z,t)(\phi_p) &= \argmax_{\phi_c \in K}  F_c(\phi_c, \phi_p)  \\
+	\phi_p^*(z,t)(\phi_c) &= \argmax_{\phi_p \in K} F_p(\phi_c, \phi_p)
 \end{align*}
 The Nash equilibrium of the instantaneous game is:
 \begin{align}
   \label{eq:nash_equilibria}
-	\phi_c^{*,NE} &=  \argmax_{\phi_c \in \mathbb{P}(0,z_0)}  F_p(\phi_c, \phi_p^{*,NE}) \\
-	\phi_p^{*,NE} &=  \argmax_{\phi_p \in \mathbb{P}(0,z_0)} F_p(\phi_c^{*,NE}, \phi_p) C(t) \int_0^{z_0}
+	\phi_c^{*,NE} &=  \argmax_{\phi_c \in K}  F_p(\phi_c, \phi_p^{*,NE}) \\
+	\phi_p^{*,NE} &=  \argmax_{\phi_p \in K} F_p(\phi_c^{*,NE}, \phi_p) C(t) \int_0^{z_0}
 \end{align}
 Since the fitness, \Cref{eq:fitness}, is a linear function of the strategies for the predator and prey we can apply the method \Cref{eq:lcp} to find the Nash equilibrium. Using this, we are able to solve the time-dynamics for the predator-prey system by a Euler scheme. The dynamics of the resource are more complicated due to the diffusion term, \Cref{eq:population_growth_prob_dens}. We solve the partial differential equation for the resource using the method of exponential time-differencing with a first-order approximation of the integral. Using exponential time-differencing guarantees a stable solution, though the system may be stiff, \cite{hochbruck2010exponential}
 

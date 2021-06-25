@@ -2,37 +2,85 @@
 
 \todo[inline]{Jeg ville gerne se det generelle udbygget lidt og ``kælet for''. }
 
-\subsection*{General game-theoretic model}
-The ideal free distribution is a general model that explains a wide range of habitat choice.. .... Models where the
-An example of such a game is a habitat selection game, where picking the strategy that maximizes the instantaneous growth gives rise to an ESS \citep{kvrivan2009}. Cressman 2010, kirvan2008
+\subsection*{General model}
 
+Our general model is that of population dynamics where the populations can migrate in a continuous habitat on a much faster time-scale than population dynamics \citep{cressman2006migration}. The background motivation is enabling the coupling of population dynamics with the ideal free distribution also in the continuous setting, generalizing the success of models for discrete patch choice \citep{valdovinos2010consequences}.
 
-The population dynamical systems that can be modelled via games like this are where the population dynamics of species $i$ can be modelled as
+The ideal free distribution is the optimal distribution of an individual when animals of $N$ types seek to find the optimum patch in a habitat with $M$ distinct patches \citep{kvrivan2008ideal}. It arises in a a multi-species Lotka-Volterra model with patches. Due to the Lotka-Volterra structure, the interactions of animals of type $i$ with type $j$ is given by a matrix $A_{ij}$. Defining the individual fitness of an individual of type $i$ at patch $k$ by $A_i(k)$:
 \begin{equation}
- \dot{N_i} = N_i U_i
+  A_i(\phi_i, (N_j \phi_j)_{j \leq N, j \neq i})(k) = p_i(k) \sum_{j=1,}^N {A_{ij}(t)N_j p_j}(k) %, ~i\neq
+  \label{eq:utility_pm}
 \end{equation}
-A solution of a polymatrix game describing patch-selection is the multi-species ideal free distribution for a multiple patch-choice model. The patch-choice determines the instantaneous growth of each individual.
-Generally assume migration dynamics much faster than the population time-scale.
-The patch-choice model is often a necessary simplification of a continuous habitat, algorithms akin to ours have been used before, but only single-species and not with discretization (patrizio et al. )
-%\todo[inline]{Hvis det her ``kun'' er habitatsselektion, så kan vi lige så godt skrive det. Hvad kan det ellers være?}
+the ideal free distribution arises when all individuals seek to maximize their growth given by \Cref{eq:utility_pm} simultaneously \citep{cressman2004ideal}. A population distributed according to the ideal free distribution cannot be invaded by populations following other strategies, so it constitute an evolutionarily stable strategy \citep{cressman2010ideal}.
 
 
-The basic structure in the games we study is a system of $N$ players, or species, with strategies at each point in time given by probability distributions $\phi_i(x)$ on an interval $[0,z_0]$. In a polymatrix game the payoffs $U_i$ of the players are given by sums of bilinear forms determined by matrices $A_{ij}$, replaced by linear operators $U_{ij}$ in the continuous setting. The total payoff to player $i$ in the continuous setting is:
+
+If we instead of assuming that an individual is at patch $k$, but instead assumes that it chooses randomly from a probability distribution $(p_i(k))_{k=1}^N$, i.e. plays a mixed strategy, the system of utilities in \Cref{eq:utility_pm} can be interpreted as a polymatrix game \citep{howson1972equilibria}. A polymatrix game has so-called polymorphic-monomorphic equivalence, so an individual of type $j$ cannot determine whether it is playing against a polymorphic population with pure strategies, or a monomorphic population with a mixed strategy. This insight is essential in generalizing to the continuous case, since it highlights that the important factor in \Cref{eq:utility_pm} is the distribution on patches $p_i$.
+
+In nature many habitats are continuous and cannot be described well as discrete patches, our approach provides a way to resolve population games while keeping the continuous nature of the habitat.
+
+To extend population games to continuous space and facilitate the incorporation of imperfect decision making, we consider a habitat described by an interval $[0,z_0]$. Define the continuous analogue of the patch distribution $p_i$ by:
+\begin{equation}
+  K = \{ f \in L^2([0,z_0]) : f \geq 0,~\int f dx = 1\}
+  \label{def:space_of_dists}
+\end{equation}
+i.e. $K$ is the set of square-integrable probability distributions on $[0,z_0]$. The quantity $N_i \phi_i(z)$ gives the population of type $i$ at $z$. Interactions between animals of type $i$ and $j$ are given by linear operators $U_{ij}(t): L^2([0,z_0]) \to L^2([0,z_0])$, which reduces to simple multiplication by functions in case that interactions are assumed local. Using $K$ and $U_{ij}$ we can define the continuous analogue of a polymatrix game, where the total payoff to an individual of type $i$ playing strategy $\phi_i$ in the continuous setting is:
 
 %\todo[inline]{Notationen bør være lidt klarere. $U_{ij}$ er vel ``bare'' en funktion af $x$, ikke? Tilføj gerne argumenterne i hvert fald første gang.}
 \begin{equation}
+  U_i(\phi_i, (N_j \phi_j)_{j \leq N, j \neq i}) = \sum_{j=1,j\neq i}^N \int \phi_i(x) (U_{ij}(t)N_j \phi_j)(x) dx%, ~i\neq j~n_{ij}=1,~i=j~n_{ij} = \frac{1}{2}
   \label{eq:utility}
-  U_i = \sum_{j=1,j\neq i}^N \int n_{ij}\phi_i U_{ij} \phi_j dx%, ~i\neq j~n_{ij}=1,~i=j~n_{ij} = \frac{1}{2}
 \end{equation}
-In the case where the interactions are purely local, $U_{ij}$ is a function $U_{ij}(x)$.
+In the case where the interactions are purely local, $U_{ij}(t)$ is a function $U_{ij}(t)(x)$. The habitat selection game is given by each animal maximizing the functional in \Cref{eq:utility} simultaneously, since the game again has polymorphic-monomorphic equivalence.
 
-We can see that this generalizes the notion of a polymatrix game \citep{howson1972equilibria}, if the integral is replaced by a sum and the probability distributions are replaced by strategy vectors.
+We assume that at every instant the animals are distributed according to the ideal free distribution. That is, no animal can increase their utility by unilaterally deviating from their strategy. i.e. that we are at a Nash equilibrium of \Cref{eq:utility}. Denoting the Nash equilibrium by $(\phi_i^{*,NE})^N_{i=1}$, the population dynamics are:
+\begin{equation}
+  \dot{N_i}((\phi_j^{*,NE})_{j=1}^N ) = N_i U_i((\phi_j, N_j)_{j=1}^N)
+\end{equation}
 
-In a polymatrix population game, there is polymorphic-monomorphic equivalence \citep{broom2013game}, so an individual of type $j$ cannot distinguish whether an opposing population playing a mixed strategy $\phi$ is a mixture of individuals playing pure strategies, or all individuals play a single mixed strategy. As such, our approach entails each individual in a species or population making optimal choices, and the other groups reacting to the total choice.
+% the population dynamics of type $i$ are given by:
+%\begin{equation}
+% \dot{N_i} = N_i U_i((N_j, p_j)_{j=1}^N)
+%\end{equation}
+%
+%The Nash equilibrium of such a system consists of a family of probability distributions
+%. In a polymatrix game describing habitat choice, a system of $N$ animals, or species, with strategies at %each
+%In a polymatrix game the payoffs $U_i$ of the animals are given by sums of bilinear forms determined by time-varying matrices $A_{ij}$.
 
-The Nash equilibrium of such a system consists of a family of probability distributions $(\phi_i^{*,NE})_{i=1}^N$ where no player can increase their utility by unilaterally deviating from their strategy.
+
+
+
+ %distribution  When $N$ different types of animals share a habitat, with population growth of each species $i$ given by all animals are assumed to have population dynamics given by Lotka-Volterra type dynamics
+
+
+ %Picking the strategy that maximizes the instantaneous growth gives rise to an ESS \citep{kvrivan2009}. Cressman 2010, kirvan2008
+ %Fast migrations
+ %Population dynamics given by the patch-choices
+ %Population dynamics and patch-choice happen same time-scale (at least trophic interactions)
+ %Continuous or discrete patch-choice
+
+ %Species interactions are generally modelled as pairwise,
+ %If we assume that the underlying population dynamics can be described by a Lotka-Volterra structure, and all interactions pairwise, we can write up the the equations:
+
+
+ %The population dynamical systems that can be modelled via games like this are where the population %dynamics of species $i$ can be modelled as
+ %The Nash equilibrium of a polymatrix game describing patch-selection is the multi-species ideal free %distribution for a patch-choice model.
+
+ %The patch-choice determines the instantaneous growth of each individual.
+ %Generally assume migration dynamics much faster than the population time-scale.
+ %\todo[inline]{Hvis det her ``kun'' er habitatsselektion, så kan vi lige så godt skrive det. Hvad kan det ellers være?}
+ % let $K$ be the set of square-integrable square-integrable probability distribution $\phi_i(x)$ on that interval $[0,z_0]$.  , replaced by linear operators $U_{ij}$ in the continuous setting.
+% The games we study are a generalization of a polymatrix game describing habitat selection.
+
+
+%The general model we consider is the population dynamics of $N$ interacting species, sharing a continuous habitat modeled as an interval $[0,z_0]$, where at every instant an individual animal maximizes its fitness.
+
+%In a polymatrix population game, there is polymorphic-monomorphic equivalence \citep{broom2013game}, so an individual of type $j$ cannot distinguish whether an opposing population playing a mixed strategy $\phi$ is a mixture of individuals playing pure strategies, or all individuals play a single mixed strategy. As such, our approach entails each individual in a species or population making optimal choices, and the other groups reacting to the total choice.
+
+
+
 \subsubsection*{Noisy strategies}
-Our model incorporates that players are not necessarily perfectly rational: The player may not be a perfect decision-maker, due to imperfect information or limited capacity of information processing, but it can also model errors in our perception of the player's objectives, or inability to actuate a decision perfectly, for example due to turbulence in the water column. Our model of imperfect rationality is as follows: Say that the player aims to play the strategy $f_X(\cdot)$, which is a probability density function on $[0,z_0]$. Then our model posits that the player actually plays a strategy $\phi_i(\cdot ,\sigma)$, which is a smoothed version of $f_X(\cdot)$ obtained by solving the initial value problem
+Our model incorporates that animals are not necessarily perfectly rational: The animal may not be a perfect decision-maker, due to imperfect information or limited capacity of information processing, but it can also model errors in our perception of the animal's objectives, or inability to actuate a decision perfectly, for example due to turbulence in the water column. Our model of imperfect rationality is as follows: Say that the animal aims to play the strategy $f_X(\cdot)$, which is a probability density function on $[0,z_0]$. Then our model posits that the animal actually plays a strategy $\phi_i(\cdot ,\sigma)$, which is a smoothed version of $f_X(\cdot)$ obtained by solving the initial value problem
 \begin{align}
   \label{eq:density_PDE}
   &\partial_s \phi_i = \frac{1}{2}\partial_z^2 \phi_i \\
@@ -40,7 +88,7 @@ Our model incorporates that players are not necessarily perfectly rational: The 
   &\partial_z \phi_i \mid_{z = z_0} = 0 \\
   & \phi_i(z,0) = f_X(z) \quad .
 \end{align}
-on the interval $[0,\sigma]$. Thus, the parameter $\sigma$ determines the degree of smoothing: With $\sigma=0$, the player is perfectly rational ($\phi_i(z,0)=f_X(z)$) while with $\sigma=\infty$, we have a completely random decisions where $\phi_i(z,\infty)$ is a constant function of $z$, corresponding to a uniform distribution on $[0,z_0]$. Note that $s$ or $\sigma$ are not connected to time; this smoothing takes place instantaneously at each point in time.
+on the interval $[0,\sigma]$. Thus, the parameter $\sigma$ determines the degree of smoothing: With $\sigma=0$, the animal is perfectly rational ($\phi_i(z,0)=f_X(z)$) while with $\sigma=\infty$, we have a completely random decisions where $\phi_i(z,\infty)$ is a constant function of $z$, corresponding to a uniform distribution on $[0,z_0]$. Note that $s$ or $\sigma$ are not connected to time; this smoothing takes place instantaneously at each point in time.
 
 Numerically, this smoothing is performed by first determining the fundamental solution to this initial value problem, ignoring boundaries, which is a Gaussian kernel. Then the boundary conditions are implemented using the method of images. Finally, the initial condition is convolved with this kernel.
 
@@ -56,7 +104,7 @@ where the overall strategy becomes:
   &\phi_{i} = \sum_{j<M} a_{j,i} e_j, \quad i\in \{1,\dots, N\} \\
   &\sum_{j<M} a_{j,i} = 1 \quad i\in \{1,\dots, N\}
 \end{align*}
-The strategy of a player is fully determined by the $a_i$'s.
+The strategy of a player, or animal, is fully determined by the $a_i$'s.
 
 
 When considering non-optimal actors, we need to implement the convolution with $f_Y$, which also assures that the resulting distribution is smooth. An added benefit of incorporating bounded rationality then becomes that our strategy profiles are guaranteed to be smooth, decreasing the number of points needed for exact evaluation of the integrals.
@@ -65,10 +113,10 @@ When considering non-optimal actors, we need to implement the convolution with $
 \subsubsection*{Finding the Nash Equilibrium}
 Finding the Nash Equilibrium in a game in continuous space is usually a hard task, requiring the development of bespoke methods, \citep{verticalmigration}, or very long runtimes, \citep{jerome}. The method we have use circumvents these problems, by combining a little-known result in mathematical optimization with a spectral scheme.
 
-By discretizing space, we have reduced an uncountable strategy set to a more manageable finite amount, with pure strategies $e_k$. The gain of a player playing strategy $e_k$ against player $j$ playing strategy $e_l$ can be determined as $A_{ij}(e_k,e_l)$, \Cref{eq:utility}. The discretization allows us to write up payoffs for a finite approximation version of the continuous game,  with entry $(k,l)$ determined through $\ip{e_k}{A_{ij}e_l}, k,l \in \{1,\dots M\}$.
+By discretizing space, we have reduced an uncountable strategy set to a more manageable finite amount, with pure strategies $e_k$. The gain of a animal playing strategy $e_k$ against animal $j$ playing strategy $e_l$ can be determined as $A_{ij}(e_k,e_l)$, \Cref{eq:utility}. The discretization allows us to write up payoffs for a finite approximation version of the continuous game,  with entry $(k,l)$ determined through $\ip{e_k}{A_{ij}e_l}, k,l \in \{1,\dots M\}$.
 Our discretization has reduced the problem to a bimatrix game, where finding the Nash equilibrium is more tractable.
 
-It does not appear to have diffused through the literature, but a Nash equilibrium of a polymatrix game can be found by solving a single linear complementarity problem \citep{miller1991copositive}. We give a short proof of this using using a modification of the argument from \citep{miller1991copositive}, specialized to the case of two-player (bimatrix) games but easily generalizable to the general $n$-player case. Assume that $(s^*_1,s^*_2)$ constitute a Nash equilibrium in mixed strategies with values $\gamma_1 = \ip{s^*_1}{E_1 s^*_2}$ and  $\gamma_2 = \ip{s^*_2}{E_2 s^*_1}$ to the consumer and predator, respectively. Then
+It does not appear to have diffused through the literature, but a Nash equilibrium of a polymatrix game can be found by solving a single linear complementarity problem \citep{miller1991copositive}. We give a short proof of this using using a modification of the argument from \citep{miller1991copositive}, specialized to the case of two-player (bimatrix) games but easily generalizable to the general $N$-player case. Assume that $(s^*_1,s^*_2)$ constitute a Nash equilibrium in mixed strategies with values $\gamma_1 = \ip{s^*_1}{E_1 s^*_2}$ and  $\gamma_2 = \ip{s^*_2}{E_2 s^*_1}$ to the first and second player, respectively. Then
 \[
   \ip{s_1}{1_n} =
   \ip{s_2}{1_n} =
