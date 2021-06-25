@@ -6,9 +6,14 @@
 
 Our general model is that of population dynamics where the populations can migrate in a continuous habitat on a much faster time-scale than population dynamics \citep{cressman2006migration}. The background motivation is enabling the coupling of population dynamics with the ideal free distribution also in the continuous setting, generalizing the success of models for discrete patch choice \citep{valdovinos2010consequences}.
 
-The ideal free distribution is the optimal distribution of an individual when animals of $N$ types seek to find the optimum patch in a habitat with $M$ distinct patches \citep{kvrivan2008ideal}. It arises in a a multi-species Lotka-Volterra model with patches. Due to the Lotka-Volterra structure, the interactions of animals of type $i$ with type $j$ is given by a matrix $A_{ij}$. Defining the individual fitness of an individual of type $i$ at patch $k$ by $A_i(k)$:
+The ideal free distribution is the optimal distribution of an individual when animals of $N$ types seek to find the optimum patch in a habitat with $M$ distinct patches \citep{kvrivan2008ideal}. It arises from behavioral optimization in a multi-species Lotka-Volterra model with patches, where the interactions of animals of type $i$ with type $j$ is given by a matrix $A_{ij}$. Assuming that the populations are distributed according to $(p_i)_{i=1}^N$ the population dynamics of species $N_i$ are given by:
 \begin{equation}
-  A_i(\phi_i, (N_j \phi_j)_{j \leq N, j \neq i})(k) = p_i(k) \sum_{j=1,}^N {A_{ij}(t)N_j p_j}(k) %, ~i\neq
+  \dot{N}_i = N_i\sum_{j=1,k=1}^N {A_{ij}(t)N_j p_j}(k) %, ~i\neq
+  \label{eq:utility_pm}
+\end{equation}
+Defining the individual fitness of an individual of type $i$ at patch $k$ by $A_i(k)$:
+\begin{equation}
+  A_i(\phi_i, (N_j \phi_j)_{j \leq N, j \neq i})(k) = p_i(k) \sum_{j=1}^N {A_{ij}(t)N_j p_j}(k) %, ~i\neq
   \label{eq:utility_pm}
 \end{equation}
 the ideal free distribution arises when all individuals seek to maximize their growth given by \Cref{eq:utility_pm} simultaneously \citep{cressman2004ideal}. A population distributed according to the ideal free distribution cannot be invaded by populations following other strategies, so it constitute an evolutionarily stable strategy \citep{cressman2010ideal}.
