@@ -8,12 +8,12 @@ Our general model is that of population dynamics where the populations can migra
 
 The ideal free distribution is the optimal distribution of an individual when animals of $N$ types seek to find the optimum patch in a habitat with $M$ distinct patches \citep{kvrivan2008ideal}. It arises from behavioral optimization in a multi-species Lotka-Volterra model with patches, where the interactions of animals of type $i$ with type $j$ is given by a matrix $A_{ij}$. Assuming that the populations are distributed according to $(p_i)_{i=1}^N$ the population dynamics of species $N_i$ are given by:
 \begin{equation}
-  \dot{N}_i = N_i\sum_{j=1,k=1}^N {A_{ij}(t)N_j p_j}(k) %, ~i\neq
+  \dot{N}_i = N_i\sum_{j=1,k=1}^N {A_{ij}N_j p_j}(k) %, ~i\neq
   \label{eq:utility_pm}
 \end{equation}
 Defining the individual fitness of an individual of type $i$ at patch $k$ by $A_i(k)$:
 \begin{equation}
-  A_i(\phi_i, (N_j \phi_j)_{j \leq N, j \neq i})(k) = p_i(k) \sum_{j=1}^N {A_{ij}(t)N_j p_j}(k) %, ~i\neq
+  A_i(\phi_i, (N_j \phi_j)_{j \leq N, j \neq i})(k) = p_i(k) \sum_{j=1}^N {A_{ij}N_j p_j}(k) %, ~i\neq
   \label{eq:utility_pm}
 \end{equation}
 the ideal free distribution arises when all individuals seek to maximize their growth given by \Cref{eq:utility_pm} simultaneously \citep{cressman2004ideal}. A population distributed according to the ideal free distribution cannot be invaded by populations following other strategies, so it constitute an evolutionarily stable strategy \citep{cressman2010ideal}.
@@ -43,7 +43,7 @@ We assume that at every instant the animals are distributed according to the ide
   \dot{N_i}((\phi_j^{*,NE})_{j=1}^N ) = N_i U_i((\phi_j, N_j)_{j=1}^N)
 \end{equation}
 
-The model we use can theoretically be used for other situations than studying the interplay between habitat-choice and population in a continuous setting, as long as the population dynamics are proportional to sums of bilinear payoffs in the strategies. 
+The model we use can theoretically be used for other situations than studying the interplay between habitat-choice and population in a continuous setting, as long as the population dynamics are proportional to sums of bilinear payoffs in the strategies.
 % the population dynamics of type $i$ are given by:
 %\begin{equation}
 % \dot{N_i} = N_i U_i((N_j, p_j)_{j=1}^N)
