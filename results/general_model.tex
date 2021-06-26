@@ -2,22 +2,22 @@
 
 \todo[inline]{Jeg ville gerne se det generelle udbygget lidt og ``kælet for''. }
 
-\subsection*{General model and the discrete motivation}
+\subsection{General model and the discrete motivation}
+\label{sec:gen_model}
+Our general model is that of a population-game \citep{kvrivan2009evolutionary} where the populations can migrate in a continuous habitat on a much faster time-scale than population dynamics \citep{cressman2006migration}. %The background motivation is enabling the coupling of game- dynamics with the ideal free distribution also in the continuous setting, generalizing the success of models for discrete patch choice \citep{valdovinos2010consequences}.
 
-Our general model is that of population dynamics where the populations can migrate in a continuous habitat on a much faster time-scale than population dynamics \citep{cressman2006migration}. The background motivation is enabling the coupling of population dynamics with the ideal free distribution also in the continuous setting, generalizing the success of models for discrete patch choice \citep{valdovinos2010consequences}.
-
-To understand the intrinsic coupling of the ideal-free distribution with population dynamics,
+To understand the intrinsic coupling of patch-choice models with population dynamics,
 consider a Lotka-Volterra model with patches. Assume the interactions of animals of type $i$ with type $j$ is given by a matrix $A_{ij}$. Assuming that the populations are distributed according to $(p_i)_{i=1}^N$ the population dynamics of type $i$ with total abundance $N_i$ in is given by:
 \begin{equation}
   \dot{N}_i = N_i\sum_{j=1,k=1}^N {A_{ij}N_j p_j}(k) %, ~i\neq
-  \label{eq:utility_pm}
+  \label{eq:pop_dyn_lv}
 \end{equation}
 Defining the individual fitness of an individual of type $i$ at patch $k$ by $A_i(k)$:
 \begin{equation}
   A_i(\phi_i, (N_j \phi_j)_{j \leq N, j \neq i})(k) = p_i(k) \sum_{j=1}^N {A_{ij}N_j p_j}(k) %, ~i\neq
   \label{eq:utility_pm}
 \end{equation}
-the ideal free distribution arises when when animals of $N$ types simultaneously seek to find the optimum patch in the sense of maximizing \Cref{eq:utility_pm} in a habitat with $M$ distinct patches \citep{cressman2004ideal}. A population distributed according to the ideal free distribution cannot be invaded by populations following other strategies, so it constitute an evolutionarily stable strategy \citep{cressman2010ideal}. Using ideal free distributions coupled with population dynamics via. \Cref{eq:utility_pm} is a successful approach to coupling optimal behavior with population dynamics \citep{kvrivan2008ideal,morris2020time,mougi2019adaptive}.
+If migrations are very fast and the habitat is highly interconnected \citep{abrams2007role}, it is reasonable to assume all animals of any type simultaneously seek to find the optimum patch in the sense of seeking $k$ to maximize \Cref{eq:utility_pm}. A population which follows the optimal strategy for patch selection at any instant cannot be invaded by mutants following other strategies, so it constitute an evolutionarily stable strategy \citep{kvrivan2009evolutionary}. Population games, i.e. \Cref{eq:pop_dyn_lv} where the distribution is given by finding the best patch via \Cref{eq:utility_pm}, is a successful approach to coupling optimal behavior with population dynamics \citep{kvrivan2008ideal,morris2020time,mougi2019adaptive}.
 
 %The ideal free distribution is the resulting distribution  It arises from behavioral optimization in a multi-species Lotka-Volterra model with patches,
 
@@ -28,24 +28,24 @@ In nature many habitats are continuous and cannot be described well as discrete 
 
 To extend population games to continuous space and facilitate the incorporation of imperfect decision making, we consider a habitat described by an interval $[0,z_0]$. Define the continuous analogue of the patch distribution $p_i$ by:
 \begin{equation}
-  K = \{ f \in L^2([0,z_0]) : f \geq 0,~\int f dx = 1\}
-  \label{def:space_of_dists}
+  K = \{ f \in L^2([0,z_0]) : f \geq 0,~\int f dz = 1\}
+  \label{eq:space_of_dists}
 \end{equation}
 i.e. $K$ is the set of square-integrable probability distributions on $[0,z_0]$. The quantity $N_i \phi_i(z)$ gives the population of type $i$ at $z$. Interactions between animals of type $i$ and $j$ are given by linear operators $U_{ij}: L^2([0,z_0]) \to L^2([0,z_0])$, which reduces to simple multiplication by functions in case that interactions are assumed local. This consideration explains why we require square-integrability. Using $K$ and $U_{ij}$ we can define the continuous analogue of a polymatrix game, where the total payoff to an individual of type $i$ playing strategy $\phi_i$ in the continuous setting is:
 
 %\todo[inline]{Notationen bør være lidt klarere. $U_{ij}$ er vel ``bare'' en funktion af $x$, ikke? Tilføj gerne argumenterne i hvert fald første gang.}
 \begin{equation}
-  U_i(\phi_i, (N_j \phi_j)_{j \leq N, j \neq i}) = \sum_{j=1,j\neq i}^N \int \phi_i(x) (U_{ij}N_j \phi_j)(x) dx%, ~i\neq j~n_{ij}=1,~i=j~n_{ij} = \frac{1}{2}
+  U_i(\phi_i, (N_j \phi_j)_{j \leq N, j \neq i}) = \sum_{j=1,j\neq i}^N \int \phi_i(x) (U_{ij}N_j \phi_j)(x) dz%, ~i\neq j~n_{ij}=1,~i=j~n_{ij} = \frac{1}{2}
   \label{eq:utility}
 \end{equation}
-In the case where the interactions are purely local, $U_{ij}$ is a function $U_{ij}(x)$. The habitat selection game is given by each animal maximizing the functional in \Cref{eq:utility} simultaneously, since the game again has polymorphic-monomorphic equivalence.
+The habitat selection game is given by each animal maximizing the functional in \Cref{eq:utility} simultaneously, since the game again has polymorphic-monomorphic equivalence.
 
 We assume that at every instant the animals are distributed according to the ideal free distribution. That is, no animal can increase their utility by unilaterally deviating from their strategy. i.e. that we are at a Nash equilibrium of \Cref{eq:utility}. Denoting the Nash equilibrium by $(\phi_i^{*,NE})^N_{i=1}$, the population dynamics are:
 \begin{equation}
   \dot{N_i}((\phi_j^{*,NE})_{j=1}^N ) = N_i U_i((\phi_j, N_j)_{j=1}^N)
 \end{equation}
 
-The model we use can theoretically be used for other situations than studying the interplay between habitat-choice and population in a continuous setting, as long as the population dynamics are proportional to sums of bilinear payoffs in the strategies.
+The model we use can theoretically be used for other situations than habitat-choice and population dynamics. As long as the population dynamics can be formulated in way where they are proportional to sums of bilinear payoffs in the strategies, our approach can be used.
 % the population dynamics of type $i$ are given by:
 %\begin{equation}
 % \dot{N_i} = N_i U_i((N_j, p_j)_{j=1}^N)
@@ -87,21 +87,23 @@ The model we use can theoretically be used for other situations than studying th
 
 
 
-\subsubsection*{Noisy strategies}
+\subsubsection{Noisy strategies}
 Our model incorporates that animals are not necessarily perfectly rational: The animal may not be a perfect decision-maker and may choose a slightly sub-optimal habitat, due to imperfect information or limited capacity of information processing, but it can also model errors in our perception of the animal's objectives, or inability to actuate a decision perfectly, for example due to turbulence in the water column. Our model of imperfect rationality is as follows: Say that the animal aims to play the strategy $f_X(\cdot)$, which is a probability density function on $[0,z_0]$. Then our model posits that the animal actually plays a strategy $\phi_i(\cdot ,\sigma)$, which is a smoothed version of $f_X(\cdot)$ obtained by solving the initial value problem
-\begin{align}
+\begin{equation}
+  \begin{split}
   \label{eq:density_PDE}
-  &\partial_s \phi_i = \frac{1}{2}\partial_z^2 \phi_i \\
-  &\partial_z \phi_i \mid_{z=0} = 0 \\
-  &\partial_z \phi_i \mid_{z = z_0} = 0 \\
-  & \phi_i(z,0) = f_X(z) \quad .
-\end{align}
+  \partial_s \phi_i &= \frac{1}{2}\partial_z^2 \phi_i \\
+  \partial_z \phi_i \mid_{z=0} &= 0 \\
+  \partial_z \phi_i \mid_{z = z_0} &= 0 \\
+   \phi_i(z,0) &= f_X(z) \quad .
+ \end{split}
+\end{equation}
 on the interval $[0,\sigma]$. Thus, the parameter $\sigma$ determines the degree of smoothing: With $\sigma=0$, the animal is perfectly rational ($\phi_i(z,0)=f_X(z)$) while with $\sigma=\infty$, we have a completely random decisions where $\phi_i(z,\infty)$ is a constant function of $z$, corresponding to a uniform distribution on $[0,z_0]$. Note that $s$ or $\sigma$ are not connected to time; this smoothing takes place instantaneously at each point in time.
 
 Numerically, this smoothing is performed by first determining the fundamental solution to this initial value problem, ignoring boundaries, which is a Gaussian kernel. Then the boundary conditions are implemented using the method of images. Finally, the initial condition is convolved with this kernel.
 
 
-\subsubsection*{Spatial discretization}
+\subsubsection{Spatial discretization}
 In order to calculate the Nash Equilibrium efficiently, and perform numerical integration precisely we discretize the interval $[0,z_0]$ with a spectral scheme based on Legendre polynomials, \citep{kopriva2009implementing}. This allows precise integration and differentation with only relatively few points. Working on a grid with $M$ points, a strategy is a linear combination of normalized hat-functions, where the hat functions are given by:
 \begin{align*}
 	& \int_{z_{i-1}}^{z_{i+1}} e_i dz = 1 \\
@@ -118,11 +120,11 @@ The strategy of a player, or animal, is fully determined by the $a_i$'s.
 When considering non-optimal actors, we need to implement the convolution with $f_Y$, which also assures that the resulting distribution is smooth. An added benefit of incorporating bounded rationality then becomes that our strategy profiles are guaranteed to be smooth, decreasing the number of points needed for exact evaluation of the integrals.
 
 
-\subsubsection*{Finding the Nash Equilibrium}
+\subsubsection{Finding the Nash Equilibrium}
 Finding the Nash Equilibrium in a game in continuous space is usually a hard task, requiring the development of bespoke methods, \citep{verticalmigration}, or very long runtimes, \citep{jerome}. The method we have use circumvents these problems, by combining a little-known result in mathematical optimization with a spectral scheme.
 
 By discretizing space, we have reduced an uncountable strategy set to a more manageable finite amount, with pure strategies $e_k$. The gain of a animal playing strategy $e_k$ against animal $j$ playing strategy $e_l$ can be determined as $A_{ij}(e_k,e_l)$, \Cref{eq:utility}. The discretization allows us to write up payoffs for a finite approximation version of the continuous game,  with entry $(k,l)$ determined through $\ip{e_k}{A_{ij}e_l}, k,l \in \{1,\dots M\}$.
-Our discretization has reduced the problem to a bimatrix game, where finding the Nash equilibrium is more tractable.
+Our discretization has reduced the problem to a polymatrix game, where finding the Nash equilibrium is more tractable.
 
 It does not appear to have diffused through the literature, but a Nash equilibrium of a polymatrix game can be found by solving a single linear complementarity problem \citep{miller1991copositive}. We give a short proof of this using using a modification of the argument from \citep{miller1991copositive}, specialized to the case of two-player (bimatrix) games but easily generalizable to the general $N$-player case. Assume that $(s^*_1,s^*_2)$ constitute a Nash equilibrium in mixed strategies with values $\gamma_1 = \ip{s^*_1}{E_1 s^*_2}$ and  $\gamma_2 = \ip{s^*_2}{E_2 s^*_1}$ to the first and second player, respectively. Then
 \[
@@ -141,8 +143,7 @@ $w_1$ and $w_2$ are non-negative ``slack variables'' that state that the payoff 
   \ip{s^*_1}{w_1} =   \ip{s^*_2}{w_2} = 0
 \]
 holds. Assume for convenience that all elements in $E_1$ and $E_1$ are negative; this can always be obtained without changing the Nash equilibria by substracting a constant from $E_1$ and $E_2$. Consequenty, also the payoffs $\gamma_1$ and $\gamma_2$ are negative and thus the vector $z = (s_1,s_2,-\gamma_1,-\gamma_2)$ satisfies the Linear Complementarity Problem (LCP)
-\[
-\label{eq:lcp}
+\begin{equation}
   z \geq 0,
   w \geq 0 ,
   H
@@ -161,8 +162,8 @@ holds. Assume for convenience that all elements in $E_1$ and $E_1$ are negative;
   ,
   \quad
   \ip{z}{w} = 0
-  .
-\]
+  .  \label{eq:lcp}
+\end{equation}
 where
 \[
   H =
