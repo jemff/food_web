@@ -15,9 +15,9 @@ We consider a food-chain in a water column, consisting of a resource $R$, a cons
 
 Forage fish are visual predators, so their predation success is heavily light dependent. The available light decreases with depth in the water column, and varies with the time of day.
 The light intensity $I$ at depth $z$ is approximately $I(z) = I_0\exp(-kz)$, and the light-dependent clearance rate of a predator is $\beta_{p,0}$.  However, even when there is no light available there is still a chance of catching a consumer if it is directly encountered,  so the clearance rate, $\beta_p(z,t)$, of forage fish never goes to 0 even at the middle of the night or at the deepest depths.
-\begin{align*}
+\begin{equation*}
   \beta_p(z,t) = \beta_{p,0} \frac{I(z,t)}{1+I(z,t)} + \beta_{p,min}
-\end{align*}
+\end{equation*}
 
 
 We model the light-levels at the surface via. the python package pvlib \citep{holmgren2018pvlib} in the North Sea. The light levels are given by the direct horizontal light intensity at the sea-surface, neglecting more complicated optic effects. The model takes the precipitable water $w_a$, and aerosol optical depth, $aod$. We model light decay throughout the water column as $\exp(-kz)$.
@@ -32,24 +32,31 @@ The interactions between the consumer and resource are local, as are the interac
 
 \subsection{Population dynamics}
 
-The resource cannot move actively, so its time dynamics are naturally specified locally. The growth of the resource is modeled with a logistic growth, with a loss from grazing by consumers and diffusion from the natural movement of the water. We assume interactions can be described with a Type I functional response, allowing us to use the method developed in \Cref{sec:gen_model}. %In natural environments, undersaturation of nutrients is the norm, \citep{}.
-
+The resource cannot move actively, so its time dynamics are naturally specified locally. The growth of the resource is modeled with a logistic growth, with a loss from grazing by consumers and diffusion from the natural movement of the water. We assume interactions can be described with a Type I functional response, allowing us to eventually use the method developed in \Cref{sec:gen_model}. The resource dynamics become:
+\begin{equation}
+  \label{eq:res_dyn}
+	\dot{r} = r(z,t)\pa{1-\frac{r(z,t)}{r_{max}(z)}} - \beta_c(z,t)\phi_c(z,t)C(t) r(z,t)  + k \partial_z^2 r(z,t) \\
+\end{equation}
+%In natural environments, undersaturation of nutrients is the norm, \citep{}.
 
 The total population growth of the consumer population is found by integrating the local grazing rate over the entire water column multiplied by a conversion efficiency $\epsilon$, subtracting the loss from predation. The growth of the predators is given by the predation rate integrated over the water column. The instantaneous pr. capita fitness of the consumer $F_c$ and predator $F_p$ without metabolic losses become:
-\begin{align}
+\begin{equation}
+  \begin{split}
 	F_c(\phi_c, \phi_p) &= \int_0^{z_0} \varepsilon \beta_c(z,t)\phi_c(z,t)r(z,t) dz\\ &- P(t)\int_0^{z_0} \beta_p(z,t) \phi_c(z,t) \phi_p(z,t)dz \\
 	F_p(\phi_c, \phi_p) &=  C(t) \int_0^{z_0} \varepsilon \beta_p(z,t)\phi_c(z,t)\phi_p(z,t) dz
+  \end{split}
   \label{eq:fitness}
-\end{align}
+\end{equation}
 
-Using \Cref{eq:fitness} we arrive at equations for the population dynamics:
-\begin{align}
-	\dot{r} &= r(z,t)\pa{1-\frac{r(z,t)}{r_{max}(z)}} - \beta_c(z,t)\phi_c(z,t)C(t) r(z,t)  + k \partial_z^2 r(z,t) \\
-  \label{eq:res_dyn}
+
+Using \Cref{eq:fitness} we arrive at equations for the predator-prey population dynamics:
+\begin{equation}
+  \begin{split}
 	\dot{C} &= C(t)\left ( F_c - \mu_C \right ) \\
 	\dot{P} &= P(t) \left ( F_p - \mu_P  \right )
+\end{split}
   \label{eq:population_growth_prob_dens}
-\end{align}
+\end{equation}
 
 \subsection{Simulating the model}
 
@@ -67,11 +74,13 @@ At any instant, all consumers and predators simultaneously seek to find the stra
 %	\phi_p^*(z,t)(\phi_c) &= \argmax_{\phi_p \in K} F_p(\phi_c, \phi_p)
 %\end{align*}
 Using the notation of \Cref{sec:gen_model}, with $F_i$ taking the place of $U_i$, the Nash equilibrium of the instantaneous game is:
-\begin{align}
+\begin{equation}
   \label{eq:nash_equilibria}
-	\phi_c^{*,NE} &=  \argmax_{\phi_c \in K}  F_c(\phi_c, \phi_p^{*,NE}) \\
-	\phi_p^{*,NE} &=  \argmax_{\phi_p \in K} F_p(\phi_c^{*,NE}, \phi_p)
-\end{align}
+  \begin{split}
+  	\phi_c^{*,NE} &=  \argmax_{\phi_c \in K}  F_c(\phi_c, \phi_p^{*,NE}) \\
+  	\phi_p^{*,NE} &=  \argmax_{\phi_p \in K} F_p(\phi_c^{*,NE}, \phi_p)
+  \end{split}
+\end{equation}
 We apply the method \Cref{eq:lcp} to find the Nash equilibrium of the discretized system. Using the Nash equillibrium \Cref{eq:nash_equilibria} we are able to solve the time-dynamics for the predator-prey system \Cref{eq:population_growth_prob_dens} by a Euler scheme. The dynamics of the resource are more complicated due to the diffusion term, \Cref{eq:res_dyn}. We solve the partial differential equation for the resource using the method of exponential time-differencing \citep{hochbruck2010exponential} with a first-order approximation of the integral. Using exponential time-differencing guarantees a stable solution, though the system may be stiff \cite{hochbruck2010exponential}.
 
 \subsection{Model parameters}
