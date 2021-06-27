@@ -45,6 +45,8 @@ The total population growth of the consumer population is found by integrating t
 %Incorporating \Cref{eq:prob_dens} in \Cref{eq:population_growth}, we arrive at equations for the population dynamics governed by probability densities:
 \begin{align}
 	\dot{r} &= r(z,t)\pa{1-\frac{r(z,t)}{r_{max}(z)}} - \beta_c(z,t)\phi_c(z,t)C(t) r(z,t)  + k \partial_z^2 r(z,t)\\
+  \label{eq:res_dyn}
+
 	\dot{C} &= C(t)\left ( F_c - \mu_C \right ) \\
 	\dot{P} &= P(t) \left ( F_p - \mu_P  \right )
   \label{eq:population_growth_prob_dens}
@@ -58,18 +60,20 @@ The total population growth of the consumer population is found by integrating t
 
 %\todo[inline]{Når nu disse størrelser er indført, hvorfor så ikke bruge dem over det hele? Så ville mange formler være meget mere kompakte.}
 
-At any instant, all consumers and predators simultaneously seek to find the strategy that maximizes their fitness ($F_c, F_p$). A strategy in our case is a probability distribution in the water column. The optimal strategy $\phi_c^*$ of a consumer depends on the strategy of the predators, and likewise for $\phi_p^*$ for the predators. Denoting the space of square-integrable probability distributions on $[0,z_0]$ by $K$ (\Cref{eq:space_of_dists}), this can be expressed as:
-\begin{align*}
-	\phi_c^*(z,t)(\phi_p) &= \argmax_{\phi_c \in K}  F_c(\phi_c, \phi_p)  \\
-	\phi_p^*(z,t)(\phi_c) &= \argmax_{\phi_p \in K} F_p(\phi_c, \phi_p)
-\end{align*}
-In the notation of \Cref{sec:gen_model} the Nash equilibrium of the instantaneous game is:
+At any instant, all consumers and predators simultaneously seek to find the strategy that maximizes their fitness ($F_c, F_p$) \Cref{eq:utility}. A strategy in our case is a square-integrable probability distribution in the water column, i.e. an element in $K$, \Cref{eq:space_of_dists}.
+
+%The optimal strategy $\phi_c^*$ of a consumer depends on the strategy of the predators, and likewise for $\phi_p^*$ for the predators. the space of square-integrable probability distributions on $[0,z_0]$ by $K$ (\Cref{eq:space_of_dists}), this can be expressed as:
+%\begin{align*}
+%	\phi_c^*(z,t)(\phi_p) &= \argmax_{\phi_c \in K}  F_c(\phi_c, \phi_p)  \\
+%	\phi_p^*(z,t)(\phi_c) &= \argmax_{\phi_p \in K} F_p(\phi_c, \phi_p)
+%\end{align*}
+Using the notation of \Cref{sec:gen_model}, with $F_i$ taking the place of $U_i$, the Nash equilibrium of the instantaneous game is:
 \begin{align}
   \label{eq:nash_equilibria}
 	\phi_c^{*,NE} &=  \argmax_{\phi_c \in K}  F_c(\phi_c, \phi_p^{*,NE}) \\
 	\phi_p^{*,NE} &=  \argmax_{\phi_p \in K} F_p(\phi_c^{*,NE}, \phi_p)
 \end{align}
-We apply the method \Cref{eq:lcp} to find the Nash equilibrium. Using this, we are able to solve the time-dynamics for the predator-prey system by a Euler scheme. The dynamics of the resource are more complicated due to the diffusion term, \Cref{eq:population_growth_prob_dens}. We solve the partial differential equation for the resource using the method of exponential time-differencing with a first-order approximation of the integral. Using exponential time-differencing guarantees a stable solution, though the system may be stiff, \cite{hochbruck2010exponential}
+We apply the method \Cref{eq:lcp} to find the Nash equilibrium of the discretized system. Using the Nash equillibrium \Cref{eq:nash_equilibria} we are able to solve the time-dynamics for the predator-prey system \Cref{eq:population_growth_prob_dens} by a Euler scheme. The dynamics of the resource are more complicated due to the diffusion term, \Cref{eq:res_dyn}. We solve the partial differential equation for the resource using the method of exponential time-differencing \citep{hochbruck2010exponential} with a first-order approximation of the integral. Using exponential time-differencing guarantees a stable solution, though the system may be stiff \cite{hochbruck2010exponential}.
 
 \subsection{Model parameters}
 Following \citep{yodzis1992body}, we parameterize the clearance and loss rates in a metabolically scaled manner following Kleiber's law, \citep{yodzis1992body}, using scaling constants from \citep{kha_2019}. We use the default parameters in the clear-sky model, modeling a sequence of moonless nights. This is a bit of a simplification, but it should not have a great effect on our results. The North Sea is modeled with a rather high attenuation coefficient. We use the notation $\mathcal{N}(0,\sigma^2)$ for the normal distribution with mean $0$ and variance $\sigma^2$.
