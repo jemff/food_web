@@ -1,4 +1,4 @@
-\documentclass[10pt,a4paper]{article}
+\documentclass[10pt,a4paper]{elsarticle}
 \usepackage{changes}
 \usepackage{pgf}
 \usepackage{comment}
@@ -10,7 +10,7 @@
 \usepackage{url}
 \usepackage{srcltx}
 \usepackage{hyperref}
-\usepackage{amsmath,amsfonts ,amssymb,fancyhdr,setspace,lastpage,comment,graphics, cleveref,natbib}
+\usepackage{amsmath,amsfonts ,amssymb,fancyhdr,setspace,lastpage,comment,graphics, cleveref,natbib, lineno}
 \usepackage{mathrsfs}
 \usepackage{todonotes}
 \usepackage[all]{xy}
@@ -125,11 +125,16 @@
 %\title{Fast adaptive behavior in a tri-trophic system: Breakdown of the paradox of enrichment}
 \title{Solving multispecies population games in continuous space and time}
 \author{Emil Friis Frølich, Uffe Høgsbro Thygesen}
-\date{November 2020}
+\date{June 2021}
 
 \begin{document}
 
 \maketitle
+
+
+\linenumbers{}
+\modulolinenumbers[3]
+
 
 \input{introduction_general.tex}
 \input{general_model.tex}

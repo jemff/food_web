@@ -7,17 +7,17 @@
 Our general model is that of a population-game \citep{kvrivan2009evolutionary} where the populations can migrate in a continuous habitat on a much faster time-scale than population dynamics \citep{cressman2006migration, abrams2007role}. %The background motivation is enabling the coupling of game- dynamics with the ideal free distribution also in the continuous setting, generalizing the success of models for discrete patch choice \citep{valdovinos2010consequences}.
 
 To understand the intrinsic coupling of patch-choice models with population dynamics,
-consider a Lotka-Volterra model with patches. Assume the interactions of animals of type $i$ with type $j$ is given by a matrix $A_{ij}$. Assuming that the populations are distributed according to $(p_i)_{i=1}^N$ the population dynamics of type $i$ with total abundance $N_i$ in is given by:
+consider a Lotka-Volterra model with patches. Assume the interactions of animals of type $i$ with type $j$ is given by a matrix $A_{ij}$, describing the inter-patch interactions. Assuming that the populations are distributed according to $(p_i)_{i=1}^N$ the population dynamics of type $i$ with total abundance $N_i$ become:
 \begin{equation}
   \dot{N}_i = N_i\sum_{j=1,k=1}^N {A_{ij}N_j p_j}(k) %, ~i\neq
   \label{eq:pop_dyn_lv}
 \end{equation}
-Defining the individual fitness of an individual of type $i$ at patch $k$ by $A_i(k)$:
+Define the individual fitness of an individual of type $i$ at patch $k$ by $A_i(k)$:
 \begin{equation}
   A_i(\phi_i, (N_j \phi_j)_{j \leq N, j \neq i})(k) = p_i(k) \sum_{j=1}^N {A_{ij}N_j p_j}(k) %, ~i\neq
   \label{eq:utility_pm}
 \end{equation}
-If migrations are very fast and the habitat is highly interconnected \citep{abrams2007role}, it is reasonable to assume all animals of any type simultaneously seek to find the optimum patch in the sense of seeking $k$ to maximize \Cref{eq:utility_pm}. A population which follows the optimal strategy for patch selection at any instant cannot be invaded by mutants following other strategies, so it constitute an evolutionarily stable strategy \citep{kvrivan2009evolutionary}. Population games, i.e. \Cref{eq:pop_dyn_lv} where the distribution is given by finding the best patch via \Cref{eq:utility_pm}, is a successful approach to coupling optimal behavior with population dynamics \citep{kvrivan2008ideal,morris2020time,mougi2019adaptive}.
+If migrations are very fast and the habitat is highly interconnected \citep{abrams2007role, cressman2006migration}, it is reasonable to assume all animals of any type simultaneously seek to find the optimum patch in the sense of seeking $k$ to maximize \Cref{eq:utility_pm}. A population which follows the optimal strategy for patch selection at any instant cannot be invaded by mutants following other strategies, so it constitute an evolutionarily stable strategy \citep{kvrivan2009evolutionary}. Population games, i.e. \Cref{eq:pop_dyn_lv} where the distribution is given by finding the best patch via \Cref{eq:utility_pm}, is a successful approach to coupling optimal behavior with population dynamics \citep{kvrivan2008ideal,morris2020time,mougi2019adaptive}.
 
 %The ideal free distribution is the resulting distribution  It arises from behavioral optimization in a multi-species Lotka-Volterra model with patches,
 
