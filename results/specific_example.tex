@@ -28,7 +28,7 @@ In contrast to forage fish, copepods are olfactory predators, and their clearanc
 	\beta_c(z,t) &=  \beta_{c,0}
 \end{align*}
 
-The interactions between the consumer and resource are local, as are the interactions between a predator and a consumer. The local encounter rate between consumers and resources is given by $\beta_c(z,t)c(z,t)r(z,t)$, and the local encounter rate between predators and consumers is $\beta_p(z,t)c(z,t)p(z,t)$.
+The interactions between the consumer and resource are local, as are the interactions between a predator and a consumer. The local encounter rate between consumers and resources is given by $C\beta_c(z,t)\phi_c(z,t)r(z,t)$, and the local encounter rate between predators and consumers is $CP\beta_p(z,t)\phi_c(z,t)\phi_p(z,t)$.
 
 \subsection{Population dynamics}
 
@@ -42,11 +42,10 @@ The total population growth of the consumer population is found by integrating t
   \label{eq:fitness}
 \end{align}
 
-%Incorporating \Cref{eq:prob_dens} in \Cref{eq:population_growth}, we arrive at equations for the population dynamics governed by probability densities:
+Using \Cref{eq:fitness} we arrive at equations for the population dynamics:
 \begin{align}
-	\dot{r} &= r(z,t)\pa{1-\frac{r(z,t)}{r_{max}(z)}} - \beta_c(z,t)\phi_c(z,t)C(t) r(z,t)  + k \partial_z^2 r(z,t)\\
+	\dot{r} &= r(z,t)\pa{1-\frac{r(z,t)}{r_{max}(z)}} - \beta_c(z,t)\phi_c(z,t)C(t) r(z,t)  + k \partial_z^2 r(z,t) \\
   \label{eq:res_dyn}
-
 	\dot{C} &= C(t)\left ( F_c - \mu_C \right ) \\
 	\dot{P} &= P(t) \left ( F_p - \mu_P  \right )
   \label{eq:population_growth_prob_dens}
