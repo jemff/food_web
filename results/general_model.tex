@@ -81,7 +81,7 @@ where the overall strategy becomes:
   &\phi_{i} = \sum_{j<M} a_{j,i} e_j, \quad i\in \{1,\dots, N\} \\
   &\sum_{j<M} a_{j,i} = 1 \quad i\in \{1,\dots, N\}
 \end{align*}
-The strategy of a player, or animal, is fully determined by the $a_i$'s.
+The strategy of a player, or type, is fully determined by the $a_i$'s.
 
 
 When considering non-optimal actors, we need to implement the convolution with $f_Y$, which also assures that the resulting distribution is smooth. An added benefit of incorporating bounded rationality then becomes that our strategy profiles are guaranteed to be smooth, decreasing the number of points needed for exact evaluation of the integrals.
@@ -90,7 +90,7 @@ When considering non-optimal actors, we need to implement the convolution with $
 \subsubsection{Finding the Nash Equilibrium}
 Finding the Nash Equilibrium in a game in continuous space is usually a hard task, requiring the development of bespoke methods, \citep{verticalmigration, jerome}. The method we use circumvents these problems, by combining a result on linear complementarity problems \citep{miller1991copositive} with a spectral scheme.
 
-By discretizing space, we have reduced an uncountable strategy set to a more manageable finite set, with pure strategies $e_k$. The gain of a animal playing strategy $e_k$ against animal $j$ playing strategy $e_l$ can be determined as $A_{ij}(e_k,e_l)$, \Cref{eq:utility_pm}. The discretization allows us to write up payoffs for a finite approximation version of the continuous game,  with entry $(k,l)$ determined through $\ip{e_k}{A_{ij}e_l}, k,l \in \{1,\dots M\}$.
+By discretizing space, we have reduced an uncountable strategy set to a more manageable finite set, with pure strategies $e_k$. The gain of type $k$ playing strategy $e_k$ against type $j$ playing strategy $e_l$ can be determined as $A_{ij}(e_k,e_l)$, \Cref{eq:utility_pm}. The discretization allows us to write up payoffs for a finite approximation version of the continuous game,  with entry $(k,l)$ determined through $\ip{e_k}{A_{ij}e_l}, k,l \in \{1,\dots M\}$.
 Our discretization has reduced the problem to a polymatrix game, where finding the Nash equilibrium is more tractable.
 
 It does not appear to have diffused through the literature, but a Nash equilibrium of a polymatrix game can be found by solving a single linear complementarity problem \citep{miller1991copositive}. We give a short proof of this using using a modification of the argument from \citep{miller1991copositive}, specialized to the case of two-player (bimatrix) games but easily generalizable to the general $N$-player case. Assume that $(s^*_1,s^*_2)$ constitute a Nash equilibrium in mixed strategies with values $\gamma_1 = \ip{s^*_1}{E_1 s^*_2}$ and  $\gamma_2 = \ip{s^*_2}{E_2 s^*_1}$ to the first and second player, respectively. Then
