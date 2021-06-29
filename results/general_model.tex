@@ -8,11 +8,14 @@ Our general model is that of a population-game \citep{kvrivan2009evolutionary} w
 
 To understand the intrinsic coupling of patch-choice models with population dynamics,
 consider a Lotka-Volterra model with patches. Assume the interactions of animals of type $i$ with type $j$ is given by a matrix $A_{ij}$, describing the inter-patch interactions. Assuming that the populations are distributed according to $(p_i)_{i=1}^N$ the population dynamics of type $i$ with total abundance $N_i$ become:
-\begin{equation}
+  \begin{equation}
   \dot{N}_i = N_i\sum_{j=1,k=1}^N {A_{ij}N_j p_j}(k) %, ~i\neq
   \label{eq:pop_dyn_lv}
 \end{equation}
-Define the individual fitness of an individual of type $i$ at patch $k$ by $A_i(k)$:
+\todo[inline]{Udmærket generel formulering - men den skal lige poleres. Hvad med et konstant specifikt vækstled? Beskriver $N$ både antal arter og antal patches? Brug i øvrigt ikke $N$, da det også er abundancen. Brug ikke $A$ for både interaktionsmatricen og fitness. Jeg kan ikke gennemskue detaljerne i notationen ... }
+Define the individual fitness
+\todo{Jeg er ikke glad for at kalde en vækstrate for ``fitness''. Du bruger det vist i betydningen ``det der optimeres''. Men fitness defineres normalt som et individs forventede antal efterkommere. Brug evt. ``fitness proxy''.}
+of an individual of type $i$ at patch $k$ by $A_i(k)$:
 \begin{equation}
   A_i(\phi_i, (N_j \phi_j)_{j \leq N, j \neq i})(k) = p_i(k) \sum_{j=1}^N {A_{ij}N_j p_j}(k) %, ~i\neq
   \label{eq:utility_pm}
@@ -24,7 +27,7 @@ If migrations are very fast and the habitat is highly interconnected \citep{abra
 
 The system of utilities in \Cref{eq:utility_pm} can equivalently be interpreted as a polymatrix game \citep{howson1972equilibria}. This interpretation comes if we assume that individuals of type $i$ choose their positions randomly according to the distribution $(p_i)$, i.e. a monomorphic population. A polymatrix game has so-called polymorphic-monomorphic equivalence, so an individual of type $j$ cannot determine whether it is playing against a polymorphic population with pure strategies, or a monomorphic population with a mixed strategy. This insight is essential in generalizing to the continuous case, since it highlights that the important factor in \Cref{eq:utility_pm} is the distribution on patches $p_i$.
 
-In nature many habitats are continuous and cannot be described well as discrete patches, our approach provides a way to resolve population games while keeping the continuous nature of the habitat.
+In nature many habitats are continuous and cannot be described well as discrete patches, \added{so } our approach provides a way to resolve population games while keeping the continuous nature of the habitat.
 
 To extend population games to continuous space and facilitate the incorporation of imperfect decision making, we consider a habitat described by an interval $[0,z_0]$. Define the continuous analogue of the patch distribution $p_i$ by:
 \begin{equation}
@@ -32,8 +35,8 @@ To extend population games to continuous space and facilitate the incorporation 
   \label{eq:space_of_dists}
 \end{equation}
 i.e. $K$ is the set of square-integrable probability distributions on $[0,z_0]$. The quantity $N_i \phi_i(z)$ gives the population of type $i$ at $z$. Interactions between animals of type $i$ and $j$ are given by linear operators $U_{ij}: L^2([0,z_0]) \to L^2([0,z_0])$, which reduces to simple multiplication by functions in case that interactions are assumed local. This consideration explains why we require square-integrability. Using $K$ and $U_{ij}$ we can define the continuous analogue of a polymatrix game, where the total payoff to an individual of type $i$ playing strategy $\phi_i$ in the continuous setting is:
+\todo[inline]{Afhængigt af tidsskriftet bør vi overveje om det med $U$-operatoren skal gøres mere eksplicit.}
 
-%\todo[inline]{Notationen bør være lidt klarere. $U_{ij}$ er vel ``bare'' en funktion af $x$, ikke? Tilføj gerne argumenterne i hvert fald første gang.}
 \begin{equation}
   U_i(\phi_i, (N_j \phi_j)_{j \leq N, j \neq i}) = \sum_{j=1,j\neq i}^N \int \phi_i(x) (U_{ij}N_j \phi_j)(x) dz%, ~i\neq j~n_{ij}=1,~i=j~n_{ij} = \frac{1}{2}
   \label{eq:utility}
@@ -85,6 +88,7 @@ The model we use can theoretically be used for other situations than habitat-cho
 
 %In a polymatrix population game, there is polymorphic-monomorphic equivalence \citep{broom2013game}, so an individual of type $j$ cannot distinguish whether an opposing population playing a mixed strategy $\phi$ is a mixture of individuals playing pure strategies, or all individuals play a single mixed strategy. As such, our approach entails each individual in a species or population making optimal choices, and the other groups reacting to the total choice.
 
+\todo[inline]{Udmærket struktur; skal bare gennemskrives en gang.}
 
 
 \subsubsection{Noisy strategies}
@@ -121,7 +125,7 @@ When considering non-optimal actors, we need to implement the convolution with $
 
 
 \subsubsection{Finding the Nash Equilibrium}
-Finding the Nash Equilibrium in a game in continuous space is usually a hard task, requiring the development of bespoke methods, \citep{verticalmigration, jerome}. The method we use circumvents these problems, by combining a little-known result in mathematical optimization with a spectral scheme.
+Finding the Nash Equilibrium in a game in continuous space is usually a hard task, requiring the development of bespoke methods, \citep{verticalmigration, jerome}. The method we use circumvents these problems, by combining a little-known result in mathematical optimization  \todo{Her må du gerne være lidt mere eksplicit og have en reference med.} with a spectral scheme.
 
 By discretizing space, we have reduced an uncountable strategy set to a more manageable finite set, with pure strategies $e_k$. The gain of a animal playing strategy $e_k$ against animal $j$ playing strategy $e_l$ can be determined as $A_{ij}(e_k,e_l)$, \Cref{eq:utility_pm}. The discretization allows us to write up payoffs for a finite approximation version of the continuous game,  with entry $(k,l)$ determined through $\ip{e_k}{A_{ij}e_l}, k,l \in \{1,\dots M\}$.
 Our discretization has reduced the problem to a polymatrix game, where finding the Nash equilibrium is more tractable.
