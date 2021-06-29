@@ -1,4 +1,4 @@
-\documentclass[10pt,a4paper]{elsarticle}
+\documentclass{./elsarticle}
 \usepackage{changes}
 \usepackage{pgf}
 \usepackage{comment}
@@ -19,119 +19,63 @@
 
 
 \DeclareMathOperator{\argmax}{argmax}
-\DeclareMathOperator{\id}{id}
-\DeclareMathOperator{\Nil}{Nil}
-\DeclareMathOperator{\ran}{Ran}
-\DeclareMathOperator{\conv}{conv}
-\DeclareMathOperator{\cont}{cont}
-\DeclareMathOperator{\sign}{sign}
-\DeclareMathOperator{\diag}{diag}
-\DeclareMathOperator{\colim}{colim}
-\DeclareMathOperator{\sing}{sing}
-\DeclareMathOperator{\coker}{Coker}
-\DeclareMathOperator{\im}{Im}
-\DeclareMathOperator{\loc}{loc}
-\DeclareMathOperator{\comp}{comp}
-\DeclareMathOperator{\findex}{index}
-\DeclareMathOperator{\dist}{dist}
-\DeclareMathOperator{\op}{op}
-\DeclareMathOperator{\spin}{Spin}
-\DeclareMathOperator{\pin}{Pin}
-\DeclareMathOperator{\SO}{SO}
-\DeclareMathOperator{\dom}{Dom}
-\DeclareMathOperator{\lip}{Lip}
-\DeclareMathOperator{\supp}{supp}
-\DeclareMathOperator{\GL}{GL}
-\DeclareMathOperator{\Cg}{C^*_{\lambda}(G)}
-\DeclareMathOperator{\elset}{\text{ else }}
-\DeclareMathOperator{\ift}{\text{ if }}
-\DeclareMathOperator{\red}{\text{red}}
-\DeclareMathOperator{\Lie}{Lie}
-\DeclareMathOperator{\End}{End}
-\DeclareMathOperator{\spn}{span}
-\DeclareMathOperator{\ind}{Ind}
-
-
-
-%i\DeclareMathOperator{\exp}{exp}
-\newcommand{\sta}[1]{\text{#1}^{\text{\sout{o}}}}
-\newcommand{\de}[2]{\frac{\text{d} #1}{\text{d} #2}}
-%\newcommand{\titlez}[1]{\title{#1}\rhead{#1}}
-\newcommand{\Lr}{\Leftrightarrow}
 \newcommand{\pa}[1]{\left ( #1 \right )}
-\newcommand{\nintd}[4]{\int_{#3}^{#4} \!#1 \,\text{d}#2}
-\newcommand{\nint}[2]{\int \!#1 \,\text{d}#2}
-\newcommand{\refz}[1]{(\ref{#1})}
-\newcommand{\dpart}[2]{\frac{\partial #1}{\partial #2}}
-\newcommand{\dt}[1]{d{#1}}
-\newcommand{\df}[1]{\ensuremath{\mathop{\makebox[0pt]{\hspace{10.5pt}{\(^{\text{-}}\)}}d}} #1}
 \newcommand{\abs}[1]{\left | #1 \right |}
 \newcommand{\for}[0]{\text{ for }}
-\newcommand{\nin}[0]{\notin}
-\newcommand{\ol}[0]{\overline}
-\newcommand{\comm}[1]{\left [ #1 \right ]}
-\newcommand{\F}{\mathcal{F}}
-\newcommand{\AS}{\mathfrak{S}}
-\newcommand{\osum}{\oplus}
-\newcommand{\G}{\mathcal{G}}
-\newcommand{\g}{\mathfrak{g}}
-\newcommand{\K}{\mathbb{K}}
-\newcommand{\V}{\mathcal{V}}
-\newcommand{\Adel}{\mathbb{A}}
-\newcommand{\De}{\mathbb{D}}
-\newcommand{\Cstar}{$C^*~$}
-\newcommand{\DO}{\mathfrak{D}}
-\newcommand{\E}[0]{\mathcal{E}}
-\newcommand{\lin}[0]{\mathcal{L}}
-\newcommand{\pd}[0]{$\Psi$DO }
-\newcommand{\dlim}{\lim\limits_{\longrightarrow}}
 \newcommand{\overbar}[1]{\mkern 1.5mu\overline{\mkern-1.5mu#1\mkern-1.5mu}\mkern 1.5mu}
-\newcommand{\exre}[0]{\overbar{\boldsymbolb{R}}}
-\newcommand{\lsp}[1]{\mathcal{L}^{ #1 }}
 \newcommand{\ip}[2]{\left \langle #1,#2 \right \rangle}
 \newcommand{\brak}[1]{\langle #1 \rangle}
-\newcommand{\N}[0]{\mathbb{N}}
 \newcommand{\C}[0]{\mathbb{C}}
 \newcommand{\Z}[0]{\mathbb{Z}}
-\newcommand{\T}[0]{\mathcal{T}}
 \newcommand{\R}[0]{\mathbb{R}}
-\newcommand{\Q}[0]{\mathbb{Q}}
-\newcommand{\B}[0]{\mathcal{B}}
-\newcommand{\Cl}[0]{\C l}
-\newcommand{\M}[0]{\mathfrak{M}}
-\newcommand{\tensh}[0]{\hat{\otimes}}
-\newcommand{\optens}{\widetilde{\otimes}}
-\newcommand{\A}[0]{\mathcal{A}}
-\newcommand{\Cu}{\mathcal{O}}
-\newcommand{\bwed}[1]{\bigwedge\nolimits^{\!#1}}
-\newcommand{\Zred}{\hat{\mathbb{Z}}}
 \newcommand{\norm}[1]{\left \Vert #1 \right \Vert }
-\newcommand{\D}[0]{\mathscr{D}}
-\newcommand{\tens}[0]{\otimes}
-\newcommand{\bra}[1]{\langle #1 \rvert}
-\newcommand{\ket}[1]{\lvert #1 \rangle}
 
-
-\renewcommand{\H}{\mathbb{H}}
-\renewcommand{\S}[0]{\mathcal{S}}
 \renewcommand{\part}[0]{\partial}
-\renewcommand{\Re}{\text{Re}}
-
 
 \let\oldphi\phi \let\phi\varphi \let\varphi\oldphi
 \let\oldphi\phi \let\epsilon\varepsilon
 
 
 %\title{Fast adaptive behavior in a tri-trophic system: Breakdown of the paradox of enrichment}
-\title{Solving multispecies population games in continuous space and time}
-\author{Emil Friis Frølich, Uffe Høgsbro Thygesen}
-\date{June 2021}
+%\title{Solving multispecies population games in continuous space and time}
+
+%\title{Solving multispecies population games in continuous space and time \tnoteref{t1}}\tnotetext[t1]{This document is the results of the researchproject funded by the National Science Foundation.}%\tnotetext[t2]{The second title footnote which is a longertext matter to fill through the whole text width andoverflow into another line in the footnotes area of thefirst page.}
+
+
+%\author{Emil Friis Frølich, Uffe Høgsbro Thygesen}
+
+\title{Solving multispecies population games in continuous space and time \tnoteref{t1}}
+\tnotetext[t1]{This document is the results of the research
+   project funded by the National Science Foundation.}
+\author[1]{Emil F. Fr{\o}lich\corref{cor1}} %\fnref{fn2}
+\ead{jaem@dtu.dk}
+
+\author[2]{Uffe H. Thygesen}
+\ead{uhth@dtu.dk}
+
+\cortext[cor1]{Corresponding author}
+%\fntext[fn1]{This is the first author footnote.}
+
+
+%\affiliation[1]{organization={Technical University of Denmark \\ Department of Applied Mathematics and Computer Science - DTU Compute},
+%     addressline={Building 303B, Matematiktorvet},
+%     postcode={2800},
+%     city={Kgs. Lyngby},
+%     country={Denmark}
+%     }
+%\affiliation[2]{organization={Technical University of Denmark \\ Department of Applied Mathematics and Computer Science - DTU Compute},
+%      addressline={Building 303B, Matematiktorvet},
+%      postcode={2800},
+%      city={Kgs. Lyngby},
+%      country={Denmark}
+%      }
 
 \begin{document}
 
 \maketitle
-
-
+\begin{keyword} population-dynamics \sep habitat-choice \sep game-theory \sep vertical-migration \sep predator-prey \sep population-game %% keywords here, in the form: keyword \sep keyword
+\end{keyword}
+\begin{highlights}\item Research highlight 1\item Research highlight 2\end{highlights}
 \linenumbers{}
 \modulolinenumbers[3]
 
