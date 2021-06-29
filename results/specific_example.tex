@@ -39,7 +39,7 @@ The resource cannot move actively, so its time dynamics are naturally specified 
 \end{equation}
 %In natural environments, undersaturation of nutrients is the norm, \citep{}.
 
-The total population growth of the consumer population is found by integrating the local grazing rate over the entire water column multiplied by a conversion efficiency $\epsilon$, subtracting the loss from predation. The growth of the predators is given by the predation rate integrated over the water column. The instantaneous pr. capita fitness of the consumer $F_c$ and predator $F_p$ without metabolic losses become:
+The total population growth of the consumer population is found by integrating the local grazing rate over the entire water column multiplied by a conversion efficiency $\epsilon$, subtracting the loss from predation. The growth of the predators is given by the predation rate integrated over the water column. The instantaneous pr. capita population growth without metabolic losses, of the consumer $F_c$ and predator $F_p$  become:
 \begin{equation}
   \begin{split}
 	F_c(\phi_c, \phi_p) &= \int_0^{z_0} \varepsilon \beta_c(z,t)\phi_c(z,t)r(z,t) dz\\ &- P(t)\int_0^{z_0} \beta_p(z,t) \phi_c(z,t) \phi_p(z,t)dz \\
@@ -57,7 +57,7 @@ Using \Cref{eq:fitness} we arrive at equations for the predator-prey population 
 \end{split}
   \label{eq:population_growth_prob_dens}
 \end{equation}
-
+We use $F_c,~F_p$, \Cref{eq:fitness}, as our fitness proxies.
 \subsection{Simulating the model}
 
 %The instantaneous fitness pr. capita of a forage fish $(F_p)$ or copepod $(F_c)$ is given by t. We arrive at the fitness by dividing the population growth rate \Cref{eq:population_growth_prob_dens} by the total populations, eliminating the terms $C(t), P(t)$ outside the parentheses in \Cref{eq:population_growth_prob_dens}.
@@ -73,7 +73,7 @@ At any instant, all consumers and predators simultaneously seek to find the stra
 %	\phi_c^*(z,t)(\phi_p) &= \argmax_{\phi_c \in K}  F_c(\phi_c, \phi_p)  \\
 %	\phi_p^*(z,t)(\phi_c) &= \argmax_{\phi_p \in K} F_p(\phi_c, \phi_p)
 %\end{align*}
-Using the notation of \Cref{sec:gen_model}, with $F_i$ taking the place of $U_i$, the Nash equilibrium of the instantaneous game is:
+Using the notation of \Cref{sec:gen_model}, the Nash equilibrium of the instantaneous game is:
 \begin{equation}
   \label{eq:nash_equilibria}
   \begin{split}
