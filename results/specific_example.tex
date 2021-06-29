@@ -3,16 +3,6 @@
 We apply our method to the diel vertical migration where the game is well-understood, but the interplay between the daily variations and the population dynamics have not been properly investigated. In addition  the Nash Equilibrium is known to be unique \citep{verticalmigration} at every instant.
 We consider a food-chain in a water column, consisting of a resource $R$, a consumer $C$, and a predator $P$. The resource is thought of as phytoplankton, the consumer as copepods and the predator as forage fish. The predators and consumers are each distributed in the water column according to probability distributions, $\phi_c(z,t),\phi_p(z,t)$, and the resource is distributed according to $r(z,t)$.
 
-%%See \Cref{fig:model_sketch}
-%\begin{figure}
-% \begin{centering}
-%   \includegraphics{plots/sketch_for_article.pdf}
-% \end{centering}
-% \label{fig:model_sketch}
-% \caption{Sketch of model ecosystem, showing example distribution of resources, $(r(z,t)/R(t)$ \emph{(yellow)}, consumers ,$\phi_c$ \emph{(blue)} and predators, $\phi_p$ \emph{(red)}}
-% \todo[inline]{Det er noget forvirrende at dette kun er ``example distribution''. Hvad skal læseren tage med sig fra denne figur?}
-%\end{figure}
-
 Forage fish are visual predators, so their predation success is heavily light dependent. The available light decreases with depth in the water column, and varies with the time of day.
 The light intensity $I$ at depth $z$ is approximately $I(z) = I_0\exp(-kz)$, and the light-dependent clearance rate of a predator is $\beta_{p,0}$.  However, even when there is no light available there is still a chance of catching a consumer if it is directly encountered,  so the clearance rate, $\beta_p(z,t)$, of forage fish never goes to 0 even at the middle of the night or at the deepest depths.
 \begin{equation*}
@@ -95,10 +85,10 @@ Following \citep{yodzis1992body}, we parameterize the clearance and loss rates i
   Consumer mass & $m_c$ & 0.05 g \\
   Predator mass & $m_p$ & 20 g \\
   Consumer clearance rate & $\beta_c$ & 32 m$^{3}$ year$^{-1}$ \\
-  Predator clearance rate & $\beta_p$ & 2800 m$^3$ year$^{-1}$ \\
+  Predator clearance rate & $\beta_{p,0}$ & 2800 m$^3$ year$^{-1}$ \\
   Consumer metabolic rate & $\mu_c$ & 0.24 year$^{-1}$ \\
   Predator metabolic rate & $\mu_p$ & 21 year$^{-1}$ \\
-  Minimal attack rate & $\beta_0$ & $5 \cdot 10^{-3} \beta_p$ \\
+  Minimal attack rate & $\beta_{p,min}$ & $5 \cdot 10^{-3} \beta_p$ \\
   Phytoplankton growth & $\lambda$ & 100 year$^{-1}$ \\
   Phytoplankton max & $r_{max}$ & $10\mathcal{N}(0,6)$ g m $^{-1}$ \\
   Irrationality & $\sigma$ & 10 m$^2$ \\
