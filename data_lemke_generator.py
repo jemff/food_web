@@ -46,7 +46,7 @@ eco.population_setter(np.array([4, 0.04])) #Reduced predator numbers by a factor
 eco.dirac_delta_creator()
 simulator_new(eco, "non_random_oresund", k = 0.2, min_attack_rate=min_attack_rate, sparse = False, start_date='2014-03-01', lemke = True) #solar_levels
 
-res_start = norm_dist  # 0.1*(1-obj.x/depth)
+res_start = 4*norm_dist  # 0.1*(1-obj.x/depth)
 res_max = 10*norm_dist
 
 water_start = water_column(obj, res_start, layers=layers * segments, resource_max=res_max, replacement=lam, advection=0,
@@ -63,7 +63,7 @@ eco.population_setter(np.array([4, 0.04]))
 
 simulator_new(eco, "more_random_oresund", k = 0.2, sparse = False, min_attack_rate=min_attack_rate, start_date='2014-03-01')
 
-res_start = norm_dist  # 0.1*(1-obj.x/depth)
+res_start = 4*norm_dist  # 0.1*(1-obj.x/depth)
 res_max = 10*norm_dist
 
 water_start = water_column(obj, res_start, layers=layers * segments, resource_max=res_max, replacement=lam, advection=0,
