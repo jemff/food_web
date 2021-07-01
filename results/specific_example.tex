@@ -1,6 +1,6 @@
 
 \section{Modeling population dynamics and the diel vertical migration}
-We apply our method to the diel vertical migration where the game is well-understood, but the interplay between the daily variations and the population dynamics have not been properly investigated. In addition  the Nash Equilibrium is known to be unique \citep{verticalmigration} at every instant.
+We apply our method to the diel vertical migration where the game is well-understood, but the interplay between the daily variations and the population dynamics have not been properly investigated. %In addition the Nash Equilibrium is known to be unique \citep{verticalmigration} at every instant.
 We consider a food-chain in a water column, consisting of a resource $R$, a consumer $C$, and a predator $P$. The resource is thought of as phytoplankton, the consumer as copepods and the predator as forage fish. The predators and consumers are each distributed in the water column according to probability distributions, $\phi_c(z,t),\phi_p(z,t)$, and the resource is distributed according to $r(z,t)$.
 
 Forage fish are visual predators, so their predation success is heavily light dependent. The available light decreases with depth in the water column, and varies with the time of day.
@@ -56,7 +56,7 @@ We use $F_c,~F_p$, \Cref{eq:fitness}, as our fitness proxies.
 
 %\todo[inline]{Når nu disse størrelser er indført, hvorfor så ikke bruge dem over det hele? Så ville mange formler være meget mere kompakte.}
 
-At any instant, all consumers and predators simultaneously seek to find the strategy that maximizes their fitness ($F_c, F_p$) \Cref{eq:utility}. A strategy in our case is a square-integrable probability distribution in the water column, i.e. an element in $K$, \Cref{eq:space_of_dists}.
+As in \Cref{sec:gen_model} at any instant, all consumers and predators simultaneously seek to find the strategy that maximizes their fitness ($F_c, F_p$) \Cref{eq:utility}. A strategy in our case is a square-integrable probability distribution in the water column, i.e. an element in $K$, \Cref{eq:space_of_dists}.
 
 %The optimal strategy $\phi_c^*$ of a consumer depends on the strategy of the predators, and likewise for $\phi_p^*$ for the predators. the space of square-integrable probability distributions on $[0,z_0]$ by $K$ (\Cref{eq:space_of_dists}), this can be expressed as:
 %\begin{align*}

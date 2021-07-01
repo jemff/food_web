@@ -25,8 +25,19 @@ If migrations are very fast and the habitat is highly interconnected \citep{abra
 
 %The ideal free distribution is the resulting distribution  It arises from behavioral optimization in a multi-species Lotka-Volterra model with patches,
 
-
-The system of utilities in \Cref{eq:utility_pm} can equivalently be interpreted as a polymatrix game \citep{howson1972equilibria}. This interpretation comes if we assume that individuals of type $i$ choose their positions randomly according to the distribution $(p_i)$, instead of having a fixed position $p_i(k)$, i.e. a monomorphic population rather than a polymorphic population. A polymatrix game has so-called polymorphic-monomorphic equivalence \citep{broom2013game}, so an individual of type $j$ cannot determine whether it is playing against a polymorphic population with pure strategies, or a monomorphic population with a mixed strategy. This insight is essential in generalizing to the continuous case, since it highlights that the important factor in \Cref{eq:utility_pm} is the distribution on patches $p_i$.
+The system of utilities in \Cref{eq:utility_pm} can equivalently be interpreted as a polymatrix game \citep{howson1972equilibria}. This interpretation comes if we assume that individuals of type $i$ choose their positions randomly according to the distribution $(p_i)$, instead of having a fixed position $p_i(k)$, i.e. a monomorphic population rather than a polymorphic population. Concretely, let $\Gamma_i$ be a matrix where every row is $G_i$ and define the total payoff matrices $E_{ij}$ for the interaction between type $i$ and $j$:
+\begin{equation}
+  \label{eq:disc_tot_payoff}
+  \begin{split}
+  \Gamma_i(k,l) = G_i(l) \\
+    E_{ij} = N_j A_{ij} + \frac{1}{n-1}\Gamma_i
+  \end{split}
+\end{equation}
+Then we can rewrite $F_i$ as:
+\begin{equation}
+  F_i(\phi_i, (N_j \phi_j)_{j \leq T, j \neq i}) = \ip{p_i}{\sum_{j=1}^T E_{ij} p_j}
+\end{equation}
+A polymatrix game has so-called polymorphic-monomorphic equivalence \citep{broom2013game}, so an individual of type $j$ cannot determine whether it is playing against a polymorphic population with pure strategies, or a monomorphic population with a mixed strategy. This insight is essential in generalizing to the continuous case, since it highlights that the important factor in \Cref{eq:utility_pm} is the distribution on patches $p_i$.
 
 In nature many habitats are continuous and cannot be described well as discrete patches, so our approach provides a way to resolve population games while keeping the continuous nature of the habitat.
 
@@ -35,7 +46,7 @@ To extend population games to continuous space and facilitate the incorporation 
   K = \{ f \in L^2([0,z_0]) : f \geq 0,~\int f dz = 1\}
   \label{eq:space_of_dists}
 \end{equation}
-i.e. $K$ is the set of square-integrable probability distributions on $[0,z_0]$. The quantity $N_i \phi_i(z)$ gives the population of type $i$ at $z$. Interactions between animals of type $i$ and $j$ are given by bounded linear operators $U_{ij}: L^2([0,z_0]) \to L^2([0,z_0])$. A bounded linear operator on $L^2([0,z_0])$ can be thought of as an infinite-dimensional matrix. In case the interactions are local, the operators $U_{ij}$ reduce to multiplication by bounded functions, corresponding to diagonal matrices. This consideration explains why we require square-integrability, since we want to be able to consider purely local interactions. As in the finite case, we define the local intrinsic growth by a bounded function $G_i$. Using $G_i$, $K$, and $U_{ij}$ we can define the fitness proxy $F_i$ of an individual of type $i$ playing strategy $\phi_i$ in the continuous setting:
+i.e. $K$ is the set of square-integrable probability distributions on $[0,z_0]$. The quantity $N_i \phi_i(z)$ gives the population of type $i$ at $z$. Interactions between animals of type $i$ and $j$ are given by bounded linear operators $U_{ij}: L^2([0,z_0]) \to L^2([0,z_0])$. A bounded linear operator on $L^2([0,z_0])$ can be thought of as an infinite-dimensional matrix. In case the interactions are local, the operators $U_{ij}$ reduce to multiplication by bounded functions, corresponding to diagonal matrices. This consideration explains why we require square-integrability, since we want to be able to consider purely local interactions. As in the finite case, we define the local intrinsic growth by a bounded function $H_i$. Using $H_i$, $K$, and $U_{ij}$ we can define the fitness proxy $F_i$ of an individual of type $i$ playing strategy $\phi_i$ in the continuous setting:
 %\todo[inline]{Afhængigt af tidsskriftet bør vi overveje om det med $U$-operatoren skal gøres mere eksplicit.}
 \begin{equation}
   F_i(\phi_i, (N_j \phi_j)_{j \leq T, j \neq i}) = \sum_{j=1,j\neq i}^T \int \phi_i(z) (U_{ij}N_j \phi_j)(z) dz + \int \phi_i(z) G_i(z) dz %, ~i\neq j~n_{ij}=1,~i=j~n_{ij} = \frac{1}{2}
@@ -90,7 +101,8 @@ When considering non-optimal actors, we need to implement the convolution with $
 \subsubsection{Finding the Nash Equilibrium}
 Finding the Nash Equilibrium in a game in continuous space is usually a hard task, requiring the development of bespoke methods, \citep{verticalmigration, jerome}. We develop a general method which does not rely on the specific structure of the interactions or habitat, by combining a result on linear complementarity problems \citep{miller1991copositive} with an efficient solver.
 
-By discretizing space, we have reduced an uncountable strategy set to a more manageable finite set, with pure strategies $e_k$. The gain of type $k$ playing strategy $e_k$ against type $j$ playing strategy $e_l$ can be determined as $U_{ij}(e_k,e_l)$, \Cref{eq:utility}. Evaluating these integrals reduces the continuous game to a discrete habitat choice game \Cref{utility_pm} with payoff matrices $A_{ij}$ determined through the numerical integration $A_{ij}(k,l)=\ip{e_k}{U_{ij}e_l}, k,l \in \{1,\dots M\}$.
+By discretizing space, we have reduced an uncountable strategy set to a more manageable finite set, with pure strategies $e_k$. The gain of type $k$ playing strategy $e_k$ against type $j$ playing strategy $e_l$ can be determined as $U_{ij}(e_k,e_l)$, \Cref{eq:utility}. Evaluating these integrals reduces the continuous game to a discrete habitat choice game \Cref{utility_pm} with payoff matrices $A_{ij}$ determined through the numerical integration $A_{ij}(k,l)=\ip{e_k}{U_{ij}e_l}, k,l \in \{1,\dots M\}$. The location-specific growth is discretized by defining $G_i(k) = \int H_i(z) e_k(z) dz$. We construct the total payoff matrices $E_{ij}$ for the game between types $i$ and $j$ as in the discrete case \Cref{eq:disc_tot_payoff}.
+
 Our discretization has reduced the problem to a polymatrix game, where finding the Nash equilibrium is tractable.
 
 It does not appear to have diffused through the literature, but a Nash equilibrium of a polymatrix game can be found by solving a single linear complementarity problem \citep{miller1991copositive}. We give a short proof of this using using a modification of the argument from \citep{miller1991copositive}, specialized to the case of two-player (bimatrix) games but easily generalizable to the general $N$-player case. Assume that $(s^*_1,s^*_2)$ constitute a Nash equilibrium in mixed strategies with values $\gamma_1 = \ip{s^*_1}{E_1 s^*_2}$ and  $\gamma_2 = \ip{s^*_2}{E_2 s^*_1}$ to the first and second player, respectively. Then
