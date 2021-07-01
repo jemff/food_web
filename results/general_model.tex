@@ -12,14 +12,14 @@ consider a Lotka-Volterra model with $M$ patches and $T$ types. Assume the inter
 \end{equation}
 We define the fitness proxy for an individual of type $i$ at patch $k$ by $H_i(k)$.
 \begin{equation}
-  H_i(\phi_i, (N_j \phi_j)_{j \leq T})(k) = \pa{\sum_{j=1}^T {A_{ij}N_j p_j}(k) + G_{i}(k)}%
+  H_i(p_i, (N_j p_j)_{j=1}^T)(k) = \pa{\sum_{j=1}^T {A_{ij}N_j p_j}(k)} + G_i(k)%
   \label{eq:utility_pm}
 \end{equation}
-If migrations are very fast and the habitat is highly interconnected \citep{cressman2006migration}, it is reasonable to assume all animals of any type simultaneously seek to find the optimum patch in the sense of seeking $k$ to maximize \Cref{eq:utility_pm}. In a single-species case, this is the ideal free distribution \citep{fretwell1969territorial}. The approach of using population dynamics determined by \Cref{eq:pop_dyn_lv} with optimal strategies determined by the Nash equilibrium defines a population game, and is a successful approach to coupling optimal behavior with population dynamics \citep{valdovinos2010consequences, mougi2019adaptive, pinti2021co}.
+If migrations are very fast and the habitat is highly interconnected \citep{cressman2006migration, abrams2007role}, it is reasonable to assume all animals of any type simultaneously seek to find the optimum patch in the sense of seeking $k$ to maximize \Cref{eq:utility_pm}. In a single-species case, this is the ideal free distribution \citep{fretwell1969territorial}. The approach of using population dynamics determined by \Cref{eq:pop_dyn_lv} with optimal strategies determined by the Nash equilibrium defines a population game, and is a successful approach to coupling optimal behavior with population dynamics \citep{valdovinos2010consequences, mougi2019adaptive, pinti2021co}.
 
 %The ideal free distribution is the resulting distribution  It arises from behavioral optimization in a multi-species Lotka-Volterra model with patches,
 
-The problem of maximizing all $H_i(k)$ in \Cref{eq:utility_pm} simultaneously can equivalently be interpreted as finding the Nash equilibrium in a polymatrix game \citep{howson1972equilibria}. A polymatrix game has so-called polymorphic-monomorphic equivalence \citep{broom2013game}, so an individual of type $j$ cannot determine whether it is playing against a polymorphic population $i$ with pure strategies, or a monomorphic population with a mixed strategy. This interpretation comes if we assume that all individuals of type $i$ choose their positions randomly according to the distribution $(p_i)$, instead of having a fixed position $p_i(k)$, i.e. a monomorphic population rather than a polymorphic population. In the polymorphic game \Cref{eq:utility_pm} if an individual of type $i$ at patch $k$ interacts with other individuals of type $i$ each individual gets equal payoff, corresponding to the monomorphic population getting half the payoff \citep{kvrivan2008ideal, eaves1973polymatrix}. We indicate this by $v_{ij}$. If we let $\Gamma_i$ be a matrix where every row is $G_i$ we can define the total payoff matrices $E_{ij}$ for the interaction between type $i$ and $j$:
+The problem of maximizing all $H_i(k)$ in \Cref{eq:utility_pm} simultaneously can equivalently be interpreted as finding the Nash equilibrium in a polymatrix game \citep{howson1972equilibria}. A polymatrix game has so-called polymorphic-monomorphic equivalence \citep{broom2013game}, so an individual of type $j$ cannot determine whether it is playing against a polymorphic population $i$ with pure strategies, or a monomorphic population with a mixed strategy. This interpretation comes if we assume that all individuals of type $i$ choose their positions randomly according to the distribution $(p_i)$, instead of having a fixed position $p_i(k)$, i.e. a monomorphic population rather than a polymorphic population. In the polymorphic game \Cref{eq:utility_pm} if an individual of type $i$ at patch $k$ interacts with other individuals of type $i$ each individual gets equal payoff, corresponding to the monomorphic population getting half the payoff \citep{kvrivan2008ideal, eaves1973polymatrix}. We indicate this by $v_{ij}$. Letting $\Gamma_i$ be a matrix where every row is $G_i$ we can define the total payoff matrices $E_{ij}$ for the interaction between type $i$ and $j$:
 \begin{equation}
   \label{eq:disc_tot_payoff}
   \begin{split}
@@ -27,21 +27,19 @@ The problem of maximizing all $H_i(k)$ in \Cref{eq:utility_pm} simultaneously ca
     E_{ij} = v_{ij}N_j A_{ij} + \frac{1}{T-1}\Gamma_i, \quad v_{ij}=1,i\neq j,~v_{ij}=\frac{1}{2},i=i
   \end{split}
 \end{equation}
-By the polymorphic-monomorphic equivalence, finding $k$ to simultaneously maximize the $H_i(k)$ is equivalent to maximizing:
+By the polymorphic-monomorphic equivalence, finding $k$ to simultaneously maximize \Cref{eq:utility_pm} is equivalent to maximizing the monomorphic fitness:
 \begin{equation}
   \label{eq:poly_fitness}
   F_i(p_i, (N_j p_j)_{j=1}^T) = \ip{p_i}{\sum_{j=1}^T E_{ij} p_j}
 \end{equation}
-for all $i$ simultaneously. In the case where there is no density dependence, the fitness \Cref{eq:poly_fitness} is exactly the population growth rate \Cref{eq:pop_dyn_lv}. In this case, a population where each individual is always at the best patch cannot be invaded by mutants, i.e. the population follows an evolutionarily stable strategy \citep{kvrivan2009evolutionary}. The insight of using the monomorphic-polymorphic equivalence is essential in generalizing to the continuous case, since it highlights that the important factor in \Cref{eq:utility_pm} is the distribution on patches $p_i$.
+for all $i$ simultaneously, that is, finding the Nash equilibrium in a polymatrix game. We see that \Cref{eq:poly_fitness} is the growth rate \Cref{eq:pop_dyn_lv} with $N_{ij}$ scaled by $\frac{1}{v_{ij}}$. Therefore, populations where \Cref{eq:utility_pm} has no density dependence and where the distributions follow the Nash equilibrium cannot be invaded by mutants \citep{kvrivan2009evolutionary} i.e. the populations follow an evolutionarily stable strategy. These considerations resolve the discrete case, but in nature many habitats are continuous and cannot be described well as discrete patches. Our approach provides a way to resolve population games while keeping the continuous nature of the habitat.
 
-In nature many habitats are continuous and cannot be described well as discrete patches, so our approach provides a way to resolve population games while keeping the continuous nature of the habitat.
-
-To extend population games to continuous space and facilitate the incorporation of imperfect decision making, we consider a habitat described by an interval $[0,z_0]$. We again assume we have $T$ different types. Define the continuous analogue of the patch distribution $p_i$ by:
+The insight of using the monomorphic-polymorphic equivalence is essential in generalizing to the continuous case, since it highlights that the important factor in \Cref{eq:utility_pm} is the distribution on patches $p_i$. To extend population games to continuous space and facilitate the incorporation of imperfect decision making, we consider a habitat described by an interval $[0,z_0]$. We again assume we have $T$ different types. Define the continuous analogues of patch distribution by:
 \begin{equation}
-  K = \{ f \in L^2([0,z_0]) : f \geq 0,~\int f dz = 1\}
+  K = \{ \phi \in L^2([0,z_0]) : \phi \geq 0,~\int \phi dz = 1\}
   \label{eq:space_of_dists}
 \end{equation}
-i.e. $K$ is the set of square-integrable probability distributions on $[0,z_0]$. The quantity $N_i \phi_i(z)$ gives the population of type $i$ at $z$. Interactions between animals of type $i$ and $j$ are given by bounded linear operators $U_{ij}: L^2([0,z_0]) \to L^2([0,z_0])$. A bounded linear operator on $L^2([0,z_0])$ can be thought of as an infinite-dimensional matrix. In case the interactions are local, the operators $U_{ij}$ reduce to multiplication by bounded functions, corresponding to diagonal matrices. This consideration explains why we require square-integrability, since we want to be able to consider purely local interactions. As in the finite case, we define the local intrinsic growth by a bounded function $H_i$. Using $H_i$, $K$, and $U_{ij}$ we can define the fitness proxy $F_i$ of an individual of type $i$ playing strategy $\phi_i$ in the continuous setting. We define $v_{ij}$ as in \Cref{eq:disc_tot_payoff}:
+i.e. $K$ is the set of square-integrable probability distributions on $[0,z_0]$, and $\phi_i \in K$ corresponds to a patch distribution $p_i$. The quantity $N_i \phi_i(z)$ gives the population of type $i$ at $z$. Interactions between animals of type $i$ and $j$ are given by bounded linear operators $U_{ij}: L^2([0,z_0]) \to L^2([0,z_0])$. A bounded linear operator on $L^2([0,z_0])$ can be thought of as an infinite-dimensional matrix. In case the interactions are local, the operators $U_{ij}$ reduce to multiplication by bounded functions, corresponding to diagonal matrices. This consideration explains why we require square-integrability, since we want to be able to consider purely local interactions. As in the finite case, we define the local intrinsic growth by a bounded function $B_i$. Using $B_i$, $K$, and $U_{ij}$ we can define the fitness proxy $F_i$ of an individual of type $i$ playing strategy $\phi_i$ in the continuous setting:
 %\todo[inline]{Afhængigt af tidsskriftet bør vi overveje om det med $U$-operatoren skal gøres mere eksplicit.}
 \begin{equation}
   F_i(\phi_i, (N_j \phi_j)_{j=1}^T = \sum_{j=1}^T \int \phi_i(z) (v_{ij}U_{ij}N_j \phi_j)(z) dz + \int \phi_i(z) G_i(z) dz %, ~i\neq j~n_{ij}=1,~i=j~n_{ij} = \frac{1}{2}
@@ -51,7 +49,7 @@ The game given by maximizing all $F_i$ with respect to $\phi_i$ is the continuou
 
 Modeling the population dynamics, we assume that at every instant the animals are distributed according to the Nash equilibrium of \Cref{eq:utility}. That is, no animal can increase their utility by unilaterally deviating from their strategy. Denoting the Nash equilibrium by $(\phi_i^{*,NE})^T_{i=1}$, the population dynamics are:
 \begin{equation}
-  \dot{N_i}((\phi_j^{*,NE})_{j=1}^T ) = N_i F_i((\phi_j^{*,NE}, N_j)_{j=1}^N)
+  \dot{N_i}((\phi_j^{*,NE})_{j=1}^T ) = N_i F_i((\phi_j^{*,NE}, \frac{1}{v_{ij}}N_j)_{j=1}^N)
 \end{equation}
 
 The model we use can theoretically be used for other situations than habitat-choice and population dynamics. As long as the population dynamics can be formulated in way where they are proportional to sums of bilinear payoffs in the strategies, our approach can be used.
@@ -73,7 +71,7 @@ Our model incorporates that animals are not necessarily perfectly rational: The 
 \end{equation}
 on the interval $[0,\sigma]$. Thus, the parameter $\sigma$ determines the degree of smoothing: With $\sigma=0$, the animal is perfectly rational ($\phi_i(z,0)=f_i(z)$) while with $\sigma=\infty$, we have a completely random decisions where $\phi_i(z,\infty)$ is a constant function of $z$, corresponding to a uniform distribution on $[0,z_0]$. Note that $s$ or $\sigma$ are not connected to time; this smoothing takes place instantaneously at each point in time.
 
-Numerically, this smoothing is performed by first determining the fundamental solution to this initial value problem, ignoring boundaries, which is a Gaussian kernel. Then the boundary conditions are implemented using the method of images, resulting in a kernel $G(x)$. Finally, the initial condition is convolved with $G(x)$ kernel.
+Numerically, this smoothing is performed by first determining the fundamental solution to this initial value problem, ignoring boundaries, which is a Gaussian kernel. Then the boundary conditions are implemented using the method of images, resulting in a kernel $S(x)$. Finally, the initial condition is convolved with the kernel $S(x)$.
 
 
 \subsubsection{Spatial discretization}
@@ -96,7 +94,7 @@ When considering non-optimal actors, we need to implement the convolution with $
 \subsubsection{Finding the Nash Equilibrium}
 Finding the Nash Equilibrium in a game in continuous space is usually a hard task, requiring the development of bespoke methods, \citep{verticalmigration, jerome}. We develop a general method which does not rely on the specific structure of the interactions or habitat, by combining a result on linear complementarity problems \citep{miller1991copositive} with an efficient solver.
 
-By discretizing space, we have reduced an uncountable strategy set to a more manageable finite set, with pure strategies $e_k$. The gain of type $k$ playing strategy $e_k$ against type $j$ playing strategy $e_l$ can be determined as $U_{ij}(e_k,e_l)$, \Cref{eq:utility}. Evaluating these integrals reduces the continuous game to a discrete habitat choice game \Cref{utility_pm} with payoff matrices $A_{ij}$ determined through the numerical integration $A_{ij}(k,l)=\ip{e_k}{U_{ij}e_l}, k,l \in \{1,\dots M\}$. The location-specific growth is discretized by defining $G_i(k) = \int H_i(z) e_k(z) dz$. We construct the total payoff matrices $E_{ij}$ for the game between types $i$ and $j$ as in the discrete case \Cref{eq:disc_tot_payoff}.
+By discretizing space, we have reduced an uncountable strategy set to a more manageable finite set, with pure strategies $e_k$. The gain of type $k$ playing strategy $e_k$ against type $j$ playing strategy $e_l$ can be determined as $U_{ij}(e_k,e_l)$, \Cref{eq:utility}. Evaluating these integrals reduces the continuous game to a discrete habitat choice game \Cref{utility_pm} with payoff matrices $A_{ij}$ determined through the numerical integration $A_{ij}(k,l)=\ip{e_k}{U_{ij}e_l}, k,l \in \{1,\dots M\}$. The location-specific growth is discretized by defining $G_i(k) = \int B_i(z) e_k(z) dz$. We construct the total payoff matrices $E_{ij}$ for the game between types $i$ and $j$ as in the discrete case \Cref{eq:disc_tot_payoff}.
 
 Our discretization has reduced the problem to a polymatrix game, where finding the Nash equilibrium is tractable.
 
