@@ -10,28 +10,28 @@ consider a Lotka-Volterra model with $M$ patches and $T$ types. Assume the inter
   \dot{N}_i = N_i \sum_{k=1}^M p_i(k) \pa{\sum_{j=1}^T {(A_{ij}N_j) p_j}(k) + G_i(k)} %, ~i\neq
   \label{eq:pop_dyn_lv}
 \end{equation}
-We define the fitness proxy for an individual of type $i$ at patch $k$ by $F_i(k)$. Remark that if an individual of type $i$ at patch $k$ interacts with other individuals of type $i$ each individual gets half the total payoff \Cref{kvrivan2008ideal}, which we indicate by $v_{ij}$.
+We define the fitness proxy for an individual of type $i$ at patch $k$ by $H_i(k)$.
 \begin{equation}
-  F_i(\phi_i, (N_j \phi_j)_{j \leq T})(k) = p_i(k) \pa{\sum_{j=1}^T {v_{ij}A_{ij}N_j p_j}(k) + G_{i}(k)}, \quad v_{ij}=1,i\neq j,~v_{ij}=\frac{1}{2},i=i
+  H_i(\phi_i, (N_j \phi_j)_{j \leq T})(k) = \pa{\sum_{j=1}^T {A_{ij}N_j p_j}(k) + G_{i}(k)}%
   \label{eq:utility_pm}
 \end{equation}
 If migrations are very fast and the habitat is highly interconnected \citep{abrams2007role, cressman2006migration}, it is reasonable to assume all animals of any type simultaneously seek to find the optimum patch in the sense of seeking $k$ to maximize \Cref{eq:utility_pm}. A population where every individual follows the optimal strategy for patch selection at any instant, that is finding $k$ to maximize \Cref{eq:utility_pm}, cannot be invaded by mutants following other strategies, so it constitutes an evolutionarily stable strategy \citep{kvrivan2009evolutionary}. The approach of using population dynamics determined by \Cref{eq:pop_dyn_lv} with optimal strategies determined by the Nash equilibrium defines a population game, and is a successful approach to coupling optimal behavior with population dynamics \citep{valdovinos2010consequences, mougi2019adaptive, pinti2021co}.
 
 %The ideal free distribution is the resulting distribution  It arises from behavioral optimization in a multi-species Lotka-Volterra model with patches,
 
-The system of utilities in \Cref{eq:utility_pm} can equivalently be interpreted as a polymatrix game \citep{howson1972equilibria}. This interpretation comes if we assume that individuals of type $i$ choose their positions randomly according to the distribution $(p_i)$, instead of having a fixed position $p_i(k)$, i.e. a monomorphic population rather than a polymorphic population. Concretely, let $\Gamma_i$ be a matrix where every row is $G_i$ and define the total payoff matrices $E_{ij}$ for the interaction between type $i$ and $j$:
+The system of utilities in \Cref{eq:utility_pm} can equivalently be interpreted as a polymatrix game \citep{howson1972equilibria}. This interpretation comes if we assume that individuals of type $i$ choose their positions randomly according to the distribution $(p_i)$, instead of having a fixed position $p_i(k)$, i.e. a monomorphic population rather than a polymorphic population. In the polymorphic game \Cref{eq:utility_pm} if an individual of type $i$ at patch $k$ interacts with other individuals of type $i$ each individual gets equal payoff, corresponding to the monomorphic population gatting half the payoff \citep{kvrivan2008ideal}. We indicate this by $v_{ij}$. If we let $\Gamma_i$ be a matrix where every row is $G_i$ we can define the total payoff matrices $E_{ij}$ for the interaction between type $i$ and $j$:
 \begin{equation}
   \label{eq:disc_tot_payoff}
   \begin{split}
   \Gamma_i(k,l) = G_i(l) \\
-    E_{ij} = v_{ij}N_j A_{ij} + \frac{1}{T-1}\Gamma_i
+    E_{ij} = v_{ij}N_j A_{ij} + \frac{1}{T-1}\Gamma_i, \quad v_{ij}=1,i\neq j,~v_{ij}=\frac{1}{2},i=i
   \end{split}
 \end{equation}
-Then we can rewrite $F_i$ as:
+A polymatrix game has so-called polymorphic-monomorphic equivalence \citep{broom2013game}, so an individual of type $j$ cannot determine whether it is playing against a polymorphic population $i$ with pure strategies, or a monomorphic population with a mixed strategy. Then finding $k$ to simultaneously maximize the $H_i(k)$ is equivalent to maximizing:
 \begin{equation}
-  F_i(\phi_i, (N_j \phi_j)_{j=1}^T) = \ip{p_i}{\sum_{j=1}^T E_{ij} p_j}
+  F_i(p_i, (N_j p_j)_{j=1}^T) = \ip{p_i}{\sum_{j=1}^T E_{ij} p_j}
 \end{equation}
-A polymatrix game has so-called polymorphic-monomorphic equivalence \citep{broom2013game}, so an individual of type $j$ cannot determine whether it is playing against a polymorphic population $i$ with pure strategies, or a monomorphic population with a mixed strategy. This insight is essential in generalizing to the continuous case, since it highlights that the important factor in \Cref{eq:utility_pm} is the distribution on patches $p_i$.
+The insight of using the monomorphic-polymorphic equivalence is essential in generalizing to the continuous case, since it highlights that the important factor in \Cref{eq:utility_pm} is the distribution on patches $p_i$.
 
 In nature many habitats are continuous and cannot be described well as discrete patches, so our approach provides a way to resolve population games while keeping the continuous nature of the habitat.
 
@@ -40,7 +40,7 @@ To extend population games to continuous space and facilitate the incorporation 
   K = \{ f \in L^2([0,z_0]) : f \geq 0,~\int f dz = 1\}
   \label{eq:space_of_dists}
 \end{equation}
-i.e. $K$ is the set of square-integrable probability distributions on $[0,z_0]$. The quantity $N_i \phi_i(z)$ gives the population of type $i$ at $z$. Interactions between animals of type $i$ and $j$ are given by bounded linear operators $U_{ij}: L^2([0,z_0]) \to L^2([0,z_0])$. A bounded linear operator on $L^2([0,z_0])$ can be thought of as an infinite-dimensional matrix. In case the interactions are local, the operators $U_{ij}$ reduce to multiplication by bounded functions, corresponding to diagonal matrices. This consideration explains why we require square-integrability, since we want to be able to consider purely local interactions. As in the finite case, we define the local intrinsic growth by a bounded function $H_i$. Using $H_i$, $K$, and $U_{ij}$ we can define the fitness proxy $F_i$ of an individual of type $i$ playing strategy $\phi_i$ in the continuous setting. We define $v_{ij}$ as in \Cref{eq:utility_pm}:
+i.e. $K$ is the set of square-integrable probability distributions on $[0,z_0]$. The quantity $N_i \phi_i(z)$ gives the population of type $i$ at $z$. Interactions between animals of type $i$ and $j$ are given by bounded linear operators $U_{ij}: L^2([0,z_0]) \to L^2([0,z_0])$. A bounded linear operator on $L^2([0,z_0])$ can be thought of as an infinite-dimensional matrix. In case the interactions are local, the operators $U_{ij}$ reduce to multiplication by bounded functions, corresponding to diagonal matrices. This consideration explains why we require square-integrability, since we want to be able to consider purely local interactions. As in the finite case, we define the local intrinsic growth by a bounded function $H_i$. Using $H_i$, $K$, and $U_{ij}$ we can define the fitness proxy $F_i$ of an individual of type $i$ playing strategy $\phi_i$ in the continuous setting. We define $v_{ij}$ as in \Cref{eq:disc_tot_payoff}:
 %\todo[inline]{Afhængigt af tidsskriftet bør vi overveje om det med $U$-operatoren skal gøres mere eksplicit.}
 \begin{equation}
   F_i(\phi_i, (N_j \phi_j)_{j=1}^T = \sum_{j=1}^T \int \phi_i(z) (v_{ij}U_{ij}N_j \phi_j)(z) dz + \int \phi_i(z) G_i(z) dz %, ~i\neq j~n_{ij}=1,~i=j~n_{ij} = \frac{1}{2}
@@ -113,7 +113,7 @@ since these mixed strategies are probability distributions on strategy space. He
 \]
 $w_1$ and $w_2$ are non-negative ``slack variables'' that state that the payoff for the first player can be no greater than the expected payoff $\gamma_1$, but can be smaller for some fixed strategies. These non-optimal strategies, where the slack $w_1$ is positive, must then be chosen with probability 0, and as a consequence the complementarity condition
 \[
-  \ip{s^*_1}{w_1} =   \ip{s^*_2}{w_2} = 0
+  \ip{s^*_1}{w_1} = \ip{s^*_2}{w_2} = 0
 \]
 holds. Assume for convenience that all elements in $E_1$ and $E_1$ are negative; this can always be obtained without changing the Nash equilibrium by subtracting a constant from $E_1$ and $E_2$. Consequenty, the payoffs $\gamma_1$ and $\gamma_2$ are also negative and thus the vector $z = (s_1,s_2,-\gamma_1,-\gamma_2)$ satisfies the Linear Complementarity Problem (LCP)
 \begin{equation}
