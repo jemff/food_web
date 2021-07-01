@@ -67,11 +67,11 @@ Our model incorporates that animals are not necessarily perfectly rational: The 
 \end{equation}
 on the interval $[0,\sigma]$. Thus, the parameter $\sigma$ determines the degree of smoothing: With $\sigma=0$, the animal is perfectly rational ($\phi_i(z,0)=f_i(z)$) while with $\sigma=\infty$, we have a completely random decisions where $\phi_i(z,\infty)$ is a constant function of $z$, corresponding to a uniform distribution on $[0,z_0]$. Note that $s$ or $\sigma$ are not connected to time; this smoothing takes place instantaneously at each point in time.
 
-Numerically, this smoothing is performed by first determining the fundamental solution to this initial value problem, ignoring boundaries, which is a Gaussian kernel. Then the boundary conditions are implemented using the method of images. Finally, the initial condition is convolved with this kernel.
+Numerically, this smoothing is performed by first determining the fundamental solution to this initial value problem, ignoring boundaries, which is a Gaussian kernel. Then the boundary conditions are implemented using the method of images, resulting in a kernel $G(x)$. Finally, the initial condition is convolved with $G(x)$ kernel.
 
 
 \subsubsection{Spatial discretization}
-In order to calculate the Nash Equilibrium efficiently, and perform numerical integration precisely we discretize the interval $[0,z_0]$ with a spectral scheme based on Legendre polynomials, \citep{kopriva2009implementing}. This allows precise integration and differentation with only relatively few points. Working on a grid with $M$ points, a strategy is a linear combination of normalized hat-functions, where the hat functions are given by:
+In order to calculate the Nash Equilibrium efficiently, and perform numerical integration precisely we discretize the interval $[0,z_0]$ with a spectral scheme based on Legendre polynomials, \citep{kopriva2009implementing}. This allows precise integration and differentation of piece-wise smooth functions with only relatively few points. Working on a grid with $M$ points, a strategy is a linear combination of normalized hat-functions, where the hat functions are given by:
 \begin{align*}
 	& \int_{z_{i-1}}^{z_{i+1}} e_i dz = 1 \\
 	&e_i(z_{i-1}) = 0,~ e_i(z_{i+1}) = 0
@@ -84,14 +84,14 @@ where the overall strategy becomes:
 The strategy of a player, or type, is fully determined by the $a_i$'s.
 
 
-When considering non-optimal actors, we need to implement the convolution with $f_Y$, which also assures that the resulting distribution is smooth. An added benefit of incorporating bounded rationality then becomes that our strategy profiles are guaranteed to be smooth, decreasing the number of points needed for exact evaluation of the integrals.
+When considering non-optimal actors, we need to implement the convolution with $G(x)$, which also assures that the resulting distribution is smooth. An added benefit of incorporating bounded rationality then becomes that our strategy profiles are guaranteed to be smooth, decreasing the number of points required for numerically exact evaluation of the integrals determining the fitness \Cref{eq:utility}.
 
 
 \subsubsection{Finding the Nash Equilibrium}
-Finding the Nash Equilibrium in a game in continuous space is usually a hard task, requiring the development of bespoke methods, \citep{verticalmigration, jerome}. The method we use circumvents these problems, by combining a result on linear complementarity problems \citep{miller1991copositive} with a spectral scheme.
+Finding the Nash Equilibrium in a game in continuous space is usually a hard task, requiring the development of bespoke methods, \citep{verticalmigration, jerome}. We develop a general method which does not rely on the specific structure of the interactions or habitat, by combining a result on linear complementarity problems \citep{miller1991copositive} with an efficient solver.
 
-By discretizing space, we have reduced an uncountable strategy set to a more manageable finite set, with pure strategies $e_k$. The gain of type $k$ playing strategy $e_k$ against type $j$ playing strategy $e_l$ can be determined as $A_{ij}(e_k,e_l)$, \Cref{eq:utility_pm}. The discretization allows us to write up payoffs for a finite approximation version of the continuous game,  with entry $(k,l)$ determined through $\ip{e_k}{A_{ij}e_l}, k,l \in \{1,\dots M\}$.
-Our discretization has reduced the problem to a polymatrix game, where finding the Nash equilibrium is more tractable.
+By discretizing space, we have reduced an uncountable strategy set to a more manageable finite set, with pure strategies $e_k$. The gain of type $k$ playing strategy $e_k$ against type $j$ playing strategy $e_l$ can be determined as $U_{ij}(e_k,e_l)$, \Cref{eq:utility}. Evaluating these integrals reduces the continuous game to a discrete habitat choice game \Cref{utility_pm} with payoff matrices $A_{ij}$ determined through the numerical integration $A_{ij}(k,l)=\ip{e_k}{U_{ij}e_l}, k,l \in \{1,\dots M\}$.
+Our discretization has reduced the problem to a polymatrix game, where finding the Nash equilibrium is tractable.
 
 It does not appear to have diffused through the literature, but a Nash equilibrium of a polymatrix game can be found by solving a single linear complementarity problem \citep{miller1991copositive}. We give a short proof of this using using a modification of the argument from \citep{miller1991copositive}, specialized to the case of two-player (bimatrix) games but easily generalizable to the general $N$-player case. Assume that $(s^*_1,s^*_2)$ constitute a Nash equilibrium in mixed strategies with values $\gamma_1 = \ip{s^*_1}{E_1 s^*_2}$ and  $\gamma_2 = \ip{s^*_2}{E_2 s^*_1}$ to the first and second player, respectively. Then
 \[
