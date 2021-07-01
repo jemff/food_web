@@ -45,7 +45,7 @@ The game given by maximizing all $F_i$ with respect to $\phi_i$ is the continuou
 
 Modeling the population dynamics, we assume that at every instant the animals are distributed according to the Nash equilibrium of \Cref{eq:utility}. That is, no animal can increase their utility by unilaterally deviating from their strategy. Denoting the Nash equilibrium by $(\phi_i^{*,NE})^T_{i=1}$, the population dynamics are:
 \begin{equation}
-  \dot{N_i}((\phi_j^{*,NE})_{j=1}^T ) = N_i F_i((\phi_j, N_j)_{j=1}^N)
+  \dot{N_i}((\phi_j^{*,NE})_{j=1}^T ) = N_i F_i((\phi_j^{*,NE}, N_j)_{j=1}^N)
 \end{equation}
 
 The model we use can theoretically be used for other situations than habitat-choice and population dynamics. As long as the population dynamics can be formulated in way where they are proportional to sums of bilinear payoffs in the strategies, our approach can be used.
@@ -55,17 +55,17 @@ The model we use can theoretically be used for other situations than habitat-cho
 
 
 \subsubsection{Noisy strategies}
-Our model incorporates that animals are not necessarily perfectly rational: The animal may not be a perfect decision-maker and may choose a slightly sub-optimal habitat, due to imperfect information or limited capacity of information processing, but it can also model errors in our perception of the animal's objectives, or inability to actuate a decision perfectly, for example due to turbulence in the water column. Our model of imperfect rationality is as follows: Say that the animal aims to play the strategy $f_X(\cdot)$, which is a probability density function on $[0,z_0]$. Then our model posits that the animal actually plays a strategy $\phi_i(\cdot ,\sigma)$, which is a smoothed version of $f_X(\cdot)$ obtained by solving the initial value problem
+Our model incorporates that animals are not necessarily perfectly rational: The animal may not be a perfect decision-maker and may choose a slightly sub-optimal habitat, due to imperfect information or limited capacity of information processing, but it can also model errors in our perception of the animal's objectives, or inability to actuate a decision perfectly, for example due to turbulence in the water column. Our model of imperfect rationality is as follows: Say that an animal of type $i$ aims to play the strategy $f_i(\cdot)$, which is a probability density function on $[0,z_0]$. Then our model posits that the animal actually plays a strategy $\phi_i(\cdot ,\sigma)$, which is a smoothed version of $f_i(\cdot)$ obtained by solving the initial value problem
 \begin{equation}
   \begin{split}
   \label{eq:density_PDE}
   \partial_s \phi_i &= \frac{1}{2}\partial_z^2 \phi_i \\
   \partial_z \phi_i \mid_{z=0} &= 0 \\
   \partial_z \phi_i \mid_{z = z_0} &= 0 \\
-   \phi_i(z,0) &= f_X(z) \quad .
+   \phi_i(z,0) &= f_i(z) \quad .
  \end{split}
 \end{equation}
-on the interval $[0,\sigma]$. Thus, the parameter $\sigma$ determines the degree of smoothing: With $\sigma=0$, the animal is perfectly rational ($\phi_i(z,0)=f_X(z)$) while with $\sigma=\infty$, we have a completely random decisions where $\phi_i(z,\infty)$ is a constant function of $z$, corresponding to a uniform distribution on $[0,z_0]$. Note that $s$ or $\sigma$ are not connected to time; this smoothing takes place instantaneously at each point in time.
+on the interval $[0,\sigma]$. Thus, the parameter $\sigma$ determines the degree of smoothing: With $\sigma=0$, the animal is perfectly rational ($\phi_i(z,0)=f_i(z)$) while with $\sigma=\infty$, we have a completely random decisions where $\phi_i(z,\infty)$ is a constant function of $z$, corresponding to a uniform distribution on $[0,z_0]$. Note that $s$ or $\sigma$ are not connected to time; this smoothing takes place instantaneously at each point in time.
 
 Numerically, this smoothing is performed by first determining the fundamental solution to this initial value problem, ignoring boundaries, which is a Gaussian kernel. Then the boundary conditions are implemented using the method of images. Finally, the initial condition is convolved with this kernel.
 
