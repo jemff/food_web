@@ -10,7 +10,7 @@ consider a Lotka-Volterra model with $M$ patches and $T$ types. Assume the inter
   \dot{N}_i = N_i \sum_{k=1}^M p_i(k) \pa{\sum_{j=1}^T {(A_{ij}N_j) p_j}(k) + G_i(k)} %, ~i\neq
   \label{eq:pop_dyn_lv}
 \end{equation}
-We define the fitness proxy for an individual of type $i$ at patch $k$ by $F_i(k)$. Remark that if an individual of type $i$ at patch $k$ interacts with other individuals of type $i$ each individual gets half the total payoff, which we indicate by $v_{ij}$.
+We define the fitness proxy for an individual of type $i$ at patch $k$ by $F_i(k)$. Remark that if an individual of type $i$ at patch $k$ interacts with other individuals of type $i$ each individual gets half the total payoff \Cref{kvrivan2008ideal}, which we indicate by $v_{ij}$.
 \begin{equation}
   F_i(\phi_i, (N_j \phi_j)_{j \leq T})(k) = p_i(k) \pa{\sum_{j=1}^T {v_{ij}A_{ij}N_j p_j}(k) + G_{i}(k)}, \quad v_{ij}=1,i\neq j,~v_{ij}=\frac{1}{2},i=i
   \label{eq:utility_pm}
@@ -40,10 +40,10 @@ To extend population games to continuous space and facilitate the incorporation 
   K = \{ f \in L^2([0,z_0]) : f \geq 0,~\int f dz = 1\}
   \label{eq:space_of_dists}
 \end{equation}
-i.e. $K$ is the set of square-integrable probability distributions on $[0,z_0]$. The quantity $N_i \phi_i(z)$ gives the population of type $i$ at $z$. Interactions between animals of type $i$ and $j$ are given by bounded linear operators $U_{ij}: L^2([0,z_0]) \to L^2([0,z_0])$. A bounded linear operator on $L^2([0,z_0])$ can be thought of as an infinite-dimensional matrix. In case the interactions are local, the operators $U_{ij}$ reduce to multiplication by bounded functions, corresponding to diagonal matrices. This consideration explains why we require square-integrability, since we want to be able to consider purely local interactions. As in the finite case, we define the local intrinsic growth by a bounded function $H_i$. Using $H_i$, $K$, and $U_{ij}$ we can define the fitness proxy $F_i$ of an individual of type $i$ playing strategy $\phi_i$ in the continuous setting, with $v_{ij}$ as in \Cref{eq:utility_pm}:
+i.e. $K$ is the set of square-integrable probability distributions on $[0,z_0]$. The quantity $N_i \phi_i(z)$ gives the population of type $i$ at $z$. Interactions between animals of type $i$ and $j$ are given by bounded linear operators $U_{ij}: L^2([0,z_0]) \to L^2([0,z_0])$. A bounded linear operator on $L^2([0,z_0])$ can be thought of as an infinite-dimensional matrix. In case the interactions are local, the operators $U_{ij}$ reduce to multiplication by bounded functions, corresponding to diagonal matrices. This consideration explains why we require square-integrability, since we want to be able to consider purely local interactions. As in the finite case, we define the local intrinsic growth by a bounded function $H_i$. Using $H_i$, $K$, and $U_{ij}$ we can define the fitness proxy $F_i$ of an individual of type $i$ playing strategy $\phi_i$ in the continuous setting. We define $v_{ij}$ as in \Cref{eq:utility_pm}:
 %\todo[inline]{Afhængigt af tidsskriftet bør vi overveje om det med $U$-operatoren skal gøres mere eksplicit.}
 \begin{equation}
-  F_i(\phi_i, (N_j \phi_j)^{j=1}^T = \sum_{j=1}^T \int \phi_i(z) (v_{ij}U_{ij}N_j \phi_j)(z) dz + \int \phi_i(z) G_i(z) dz %, ~i\neq j~n_{ij}=1,~i=j~n_{ij} = \frac{1}{2}
+  F_i(\phi_i, (N_j \phi_j)_{j=1}^T = \sum_{j=1}^T \int \phi_i(z) (v_{ij}U_{ij}N_j \phi_j)(z) dz + \int \phi_i(z) G_i(z) dz %, ~i\neq j~n_{ij}=1,~i=j~n_{ij} = \frac{1}{2}
   \label{eq:utility}
 \end{equation}
 The game given by maximizing all $F_i$ with respect to $\phi_i$ is the continuous analogue of a polymatrix game. Since the game again has polymorphic-monomorphic equivalence, the Nash equilibrium for the individual habitat selection game is also given by finding the Nash equilibrium of the game specified by \Cref{eq:utility}.
