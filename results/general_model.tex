@@ -1,7 +1,5 @@
 \section{Method}
 
-%\todo[inline]{Jeg ville gerne se det generelle udbygget lidt og ``kælet for''. }
-
 \subsection{General model and the discrete motivation}
 \label{sec:gen_model}
 Our general model is that of a population-game \citep{kvrivan2009evolutionary} where the populations can migrate in a continuous habitat on a much faster time-scale than population dynamics \citep{cressman2006migration, abrams2007role}.
@@ -12,13 +10,9 @@ consider a Lotka-Volterra model with $M$ patches and $T$ types. Assume the inter
   \dot{N}_i = N_i \sum_{k=1}^M p_i(k) \pa{\sum_{j=1}^T {(A_{ij}N_j) p_j}(k) + G_i(k)} %, ~i\neq
   \label{eq:pop_dyn_lv}
 \end{equation}
-%\todo[inline]{Udmærket generel formulering - men den skal lige poleres. Hvad med et konstant specifikt vækstled? Beskriver $N$ både antal arter og antal patches? Brug i øvrigt ikke $N$, da det også er abundancen. Brug ikke $A$ for både interaktionsmatricen og fitness. Jeg kan ikke gennemskue detaljerne i notationen ... }
-%\todo[inline]{Konstant vækstled tilføjet, patches vs arter ryddet op. }
-We define the fitness proxy for an individual by the individual growth rate:
-%\todo{Jeg er ikke glad for at kalde en vækstrate for ``fitness''. Du bruger det vist i betydningen ``det der optimeres''. Men fitness defineres normalt som et individs forventede antal efterkommere. Brug evt. ``fitness proxy''.}
-of an individual of type $i$ at patch $k$ by $F_i(k)$:
+We define the fitness proxy for an individual of type $i$ at patch $k$ by $F_i(k)$. Remark that if an individual of type $i$ at patch $k$ interacts with other individuals of type $i$ each individual gets half the total payoff, which we indicate by $v_{ij}$.
 \begin{equation}
-  F_i(\phi_i, (N_j \phi_j)_{j \leq T, j \neq i})(k) = p_i(k) \pa{\sum_{j=1}^T {A_{ij}N_j p_j}(k) + G_{i}(k)} %, ~i\neq
+  F_i(\phi_i, (N_j \phi_j)_{j \leq T})(k) = p_i(k) \pa{\sum_{j=1}^T {v_{ij}A_{ij}N_j p_j}(k) + G_{i}(k)}, \quad v_{ij}=1,i\neq j,~v_{ij}=\frac{1}{2},i=i
   \label{eq:utility_pm}
 \end{equation}
 If migrations are very fast and the habitat is highly interconnected \citep{abrams2007role, cressman2006migration}, it is reasonable to assume all animals of any type simultaneously seek to find the optimum patch in the sense of seeking $k$ to maximize \Cref{eq:utility_pm}. A population where every individual follows the optimal strategy for patch selection at any instant, that is finding $k$ to maximize \Cref{eq:utility_pm}, cannot be invaded by mutants following other strategies, so it constitutes an evolutionarily stable strategy \citep{kvrivan2009evolutionary}. The approach of using population dynamics determined by \Cref{eq:pop_dyn_lv} with optimal strategies determined by the Nash equilibrium defines a population game, and is a successful approach to coupling optimal behavior with population dynamics \citep{valdovinos2010consequences, mougi2019adaptive, pinti2021co}.
@@ -30,14 +24,14 @@ The system of utilities in \Cref{eq:utility_pm} can equivalently be interpreted 
   \label{eq:disc_tot_payoff}
   \begin{split}
   \Gamma_i(k,l) = G_i(l) \\
-    E_{ij} = N_j A_{ij} + \frac{1}{n-1}\Gamma_i
+    E_{ij} = v_{ij}N_j A_{ij} + \frac{1}{T-1}\Gamma_i
   \end{split}
 \end{equation}
 Then we can rewrite $F_i$ as:
 \begin{equation}
   F_i(\phi_i, (N_j \phi_j)_{j \leq T, j \neq i}) = \ip{p_i}{\sum_{j=1}^T E_{ij} p_j}
 \end{equation}
-A polymatrix game has so-called polymorphic-monomorphic equivalence \citep{broom2013game}, so an individual of type $j$ cannot determine whether it is playing against a polymorphic population with pure strategies, or a monomorphic population with a mixed strategy. This insight is essential in generalizing to the continuous case, since it highlights that the important factor in \Cref{eq:utility_pm} is the distribution on patches $p_i$.
+A polymatrix game has so-called polymorphic-monomorphic equivalence \citep{broom2013game}, so an individual of type $j$ cannot determine whether it is playing against a polymorphic population $i$ with pure strategies, or a monomorphic population with a mixed strategy. This insight is essential in generalizing to the continuous case, since it highlights that the important factor in \Cref{eq:utility_pm} is the distribution on patches $p_i$.
 
 In nature many habitats are continuous and cannot be described well as discrete patches, so our approach provides a way to resolve population games while keeping the continuous nature of the habitat.
 
@@ -46,10 +40,10 @@ To extend population games to continuous space and facilitate the incorporation 
   K = \{ f \in L^2([0,z_0]) : f \geq 0,~\int f dz = 1\}
   \label{eq:space_of_dists}
 \end{equation}
-i.e. $K$ is the set of square-integrable probability distributions on $[0,z_0]$. The quantity $N_i \phi_i(z)$ gives the population of type $i$ at $z$. Interactions between animals of type $i$ and $j$ are given by bounded linear operators $U_{ij}: L^2([0,z_0]) \to L^2([0,z_0])$. A bounded linear operator on $L^2([0,z_0])$ can be thought of as an infinite-dimensional matrix. In case the interactions are local, the operators $U_{ij}$ reduce to multiplication by bounded functions, corresponding to diagonal matrices. This consideration explains why we require square-integrability, since we want to be able to consider purely local interactions. As in the finite case, we define the local intrinsic growth by a bounded function $H_i$. Using $H_i$, $K$, and $U_{ij}$ we can define the fitness proxy $F_i$ of an individual of type $i$ playing strategy $\phi_i$ in the continuous setting:
+i.e. $K$ is the set of square-integrable probability distributions on $[0,z_0]$. The quantity $N_i \phi_i(z)$ gives the population of type $i$ at $z$. Interactions between animals of type $i$ and $j$ are given by bounded linear operators $U_{ij}: L^2([0,z_0]) \to L^2([0,z_0])$. A bounded linear operator on $L^2([0,z_0])$ can be thought of as an infinite-dimensional matrix. In case the interactions are local, the operators $U_{ij}$ reduce to multiplication by bounded functions, corresponding to diagonal matrices. This consideration explains why we require square-integrability, since we want to be able to consider purely local interactions. As in the finite case, we define the local intrinsic growth by a bounded function $H_i$. Using $H_i$, $K$, and $U_{ij}$ we can define the fitness proxy $F_i$ of an individual of type $i$ playing strategy $\phi_i$ in the continuous setting, with $v_{ij}$ as in \Cref{eq:utility_pm}:
 %\todo[inline]{Afhængigt af tidsskriftet bør vi overveje om det med $U$-operatoren skal gøres mere eksplicit.}
 \begin{equation}
-  F_i(\phi_i, (N_j \phi_j)_{j \leq T, j \neq i}) = \sum_{j=1,j\neq i}^T \int \phi_i(z) (U_{ij}N_j \phi_j)(z) dz + \int \phi_i(z) G_i(z) dz %, ~i\neq j~n_{ij}=1,~i=j~n_{ij} = \frac{1}{2}
+  F_i(\phi_i, (N_j \phi_j)^{j=1}^T = \sum_{j=1}^T \int \phi_i(z) (v_{ij}U_{ij}N_j \phi_j)(z) dz + \int \phi_i(z) G_i(z) dz %, ~i\neq j~n_{ij}=1,~i=j~n_{ij} = \frac{1}{2}
   \label{eq:utility}
 \end{equation}
 The game given by maximizing all $F_i$ with respect to $\phi_i$ is the continuous analogue of a polymatrix game. Since the game again has polymorphic-monomorphic equivalence, the Nash equilibrium for the individual habitat selection game is also given by finding the Nash equilibrium of the game specified by \Cref{eq:utility}.
@@ -105,7 +99,7 @@ By discretizing space, we have reduced an uncountable strategy set to a more man
 
 Our discretization has reduced the problem to a polymatrix game, where finding the Nash equilibrium is tractable.
 
-It does not appear to have diffused through the literature, but a Nash equilibrium of a polymatrix game can be found by solving a single linear complementarity problem \citep{miller1991copositive}. We give a short proof of this using using a modification of the argument from \citep{miller1991copositive}, specialized to the case of two-player (bimatrix) games but easily generalizable to the general $N$-player case. Assume that $(s^*_1,s^*_2)$ constitute a Nash equilibrium in mixed strategies with values $\gamma_1 = \ip{s^*_1}{E_1 s^*_2}$ and  $\gamma_2 = \ip{s^*_2}{E_2 s^*_1}$ to the first and second player, respectively. Then
+It does not appear to have diffused through the literature, but a Nash equilibrium of a polymatrix game can be found by solving a single linear complementarity problem \citep{miller1991copositive}. We give a short proof of this using using a modification of the argument from \citep{miller1991copositive}, specialized to the case of two-player (bimatrix) games but easily generalizable to the general $T$-player case. Assume that $(s^*_1,s^*_2)$ constitute a Nash equilibrium in mixed strategies with values $\gamma_1 = \ip{s^*_1}{E_1 s^*_2}$ and  $\gamma_2 = \ip{s^*_2}{E_2 s^*_1}$ to the first and second player, respectively. Then
 \[
   \ip{s_1}{1_n} =
   \ip{s_2}{1_n} =
