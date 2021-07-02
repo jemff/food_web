@@ -5,7 +5,7 @@
 
 Our general model is that of a population-game \citep{kvrivan2009evolutionary} where the populations can migrate in a continuous habitat on a much faster time-scale than population dynamics \citep{cressman2006migration}. We start by building up the general approach in a discrete setting, and then translate the structures we have built up into the continuous setting.
 
-\subsubsection{Developing a discrete model of habitat choice}
+\subsubsection{Developing a discrete population game}
 To understand the intrinsic coupling of patch-choice models with population dynamics, consider start by considering a Lotka-Volterra model with $M$ patches and $T$ types. Assume the interactions of animals of type $i$ with type $j$ is given by a matrix $A_{ij}(k,l)$, describing the inter-patch interactions between patch $k$ and $l$. The intrinsic growth of type $i$ at patch $k$ is given by a function $G_{i}(k)$ on $\{1,\dots,M\}$. Assuming that the populations are distributed according to probability distributions $(p_i)_{i=1}^T$ on the patches $\{1,\ldots,M\}$. The population dynamics of type $i$ with total abundance $N_i$ become:
   \begin{equation}
   \dot{N}_i = N_i \sum_{k=1}^M p_i(k) \pa{\sum_{j=1}^T {(N_j A_{ij} p_j)}(k) + G_i(k)}
@@ -20,14 +20,13 @@ If migrations are very fast and the habitat is highly interconnected \citep{cres
 
 
 %In the polymorphic game \Cref{eq:utility_pm} \todo{Jeg forstår ikke denne henvisning} if an individual of type $i$ at patch $k$ interacts with other individuals of type $i$ each individual gets equal payoff, corresponding to the monomorphic population getting half \todo{Dette er uklart, og jeg er ikke sikker på at jeg er enig i fortolkningen.} the payoff \citep{kvrivan2008ideal, eaves1973polymatrix}.
-
-
-If we assume that $A_{ii}=0$ for all $i$, the problem of finding the Nash equilibrium $(p_i^{*,NE})_{i=1}^T$ of the game specified by all $H_i$ in \Cref{eq:utility_pm} can be interpreted as finding the Nash equilibrium in a polymatrix game \citep{howson1972equilibria, eaves1973polymatrix}. %The interpretation comes from noting that $H_i$ is affine in $p_j$ and independent of $p_i$, so the sum of the payoff at all patches can be written as
+%The interpretation comes from noting that $H_i$ is affine in $p_j$ and independent of $p_i$, so the sum of the payoff at all patches can be written as
 %\begin{equation}%
-  %\ip{p_i}{H_i((N_j p_j)_{j=1}^T)} = \ip{p_i}{\pa{\sum_{j=1}^T (N_j A_{ij}p_j)(k)} + G_i(k)}%
+ %\ip{p_i}{H_i((N_j p_j)_{j=1}^T)} = \ip{p_i}{\pa{\sum_{j=1}^T (N_j A_{ij}p_j)(k)} + G_i(k)}%
 %\end{equation}
 
-A polymatrix game has so-called polymorphic-monomorphic equivalence \citep{broom2013game, eaves1973polymatrix}, so an individual of type $j$ cannot determine whether it is playing against a polymorphic population $i$ with pure strategies, or a monomorphic population with a mixed strategy. The monomorphic interpretation is that we assume that all individuals of type $i$ choose their positions randomly according to the distribution $p_i$, instead of having players pick fixed position $p_i(k)$. Finding the Nash equilibrium $(p_i)^{*,NE}$ of \Cref{eq:utility_pm} is then equivalent to finding the Nash equilibrium of the game:
+
+If we assume that $A_{ii}=0$ for all $i$, the problem of finding the Nash equilibrium $(p_i^{*,NE})_{i=1}^T$ of the game specified by all $H_i$ in \Cref{eq:utility_pm} can be interpreted as finding the Nash equilibrium in a polymatrix game \citep{howson1972equilibria, eaves1973polymatrix}. A polymatrix game has so-called polymorphic-monomorphic equivalence \citep{broom2013game, eaves1973polymatrix}, so an individual of type $j$ cannot determine whether it is playing against a polymorphic population $i$ with pure strategies, or a monomorphic population with a mixed strategy. The monomorphic interpretation is that we assume that all individuals of type $i$ choose their positions randomly according to the distribution $p_i$, instead of having players pick fixed position $p_i(k)$. Finding the Nash equilibrium $(p_i)^{*,NE}$ of \Cref{eq:utility_pm} is then equivalent to finding the Nash equilibrium of the game:
 \begin{equation}
   \label{eq:poly_fitness}
   F_i(p_i, (N_j p_j)_{j=1}^T) = \ip{p_i}{\sum_{j=1}^T E_{ij} p_j}
