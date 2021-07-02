@@ -1,11 +1,12 @@
 \section{Method}
 
-\subsection{General model and the discrete motivation}
+\subsection{General continuous model and the discrete motivation}
 \label{sec:gen_model}
+
 Our general model is that of a population-game \citep{kvrivan2009evolutionary} where the populations can migrate in a continuous habitat on a much faster time-scale than population dynamics \citep{cressman2006migration}. We start by building up the general approach in a discrete setting, and then translate the structures we have built up into the continuous setting.
 
-To understand \added{?} the intrinsic coupling of patch-choice models with population dynamics,
-consider a Lotka-Volterra model\todo{Uklart om dette \emph{er} ``the general model'', eller et eksempel på hvad en model kunne være.} with $M$ patches and $T$ types. Assume the interactions of animals of type $i$ with type $j$ is given by a matrix $A_{ij}(k,l)$, describing the inter-patch interactions between patch $k$ and $l$. The intrinsic growth of type $i$ at patch $k$ is given by a function $G_{i}(k)$ on $\{1,\dots,M\}$. Assuming that the populations are distributed according to probability distributions $(p_i)_{i=1}^T$ on the patches $\{1,\ldots,M\}$. The population dynamics of type $i$ with total abundance $N_i$ become:
+\subsubsection{Developing a discrete model of habitat choice}
+To understand the intrinsic coupling of patch-choice models with population dynamics, consider start by considering a Lotka-Volterra model with $M$ patches and $T$ types. Assume the interactions of animals of type $i$ with type $j$ is given by a matrix $A_{ij}(k,l)$, describing the inter-patch interactions between patch $k$ and $l$. The intrinsic growth of type $i$ at patch $k$ is given by a function $G_{i}(k)$ on $\{1,\dots,M\}$. Assuming that the populations are distributed according to probability distributions $(p_i)_{i=1}^T$ on the patches $\{1,\ldots,M\}$. The population dynamics of type $i$ with total abundance $N_i$ become:
   \begin{equation}
   \dot{N}_i = N_i \sum_{k=1}^M p_i(k) \pa{\sum_{j=1}^T {(N_j A_{ij} p_j)}(k) + G_i(k)}
   \label{eq:pop_dyn_lv}
@@ -44,8 +45,9 @@ Where we let $\Gamma_i$ be matrix where every column is $G_i$, so that $(\Gamma_
 %with $A_{ii}$ scaled by $\frac{1}{2}, but otherwise subtly different
 %In the case where \Cref{eq:utility_pm} has no density dependence
 
-Changing to a polymatrix game reveals a clear connection between the individual game and the population growth rate, \Cref{eq:poly_fitness} is the growth rate \Cref{eq:pop_dyn_lv}. Therefore, optimizing the population growth per type and at the individual level are the same when there is no density dependence $(A_{ii}=0)$. Following the Nash equilibrium of the game \Cref{eq:poly_fitness} at every instant is an evolutionary stable strategy, i.e. the populations cannot be invaded by mutants \citep{kvrivan2009evolutionary}. These considerations resolve the discrete case, but in nature many habitats are continuous and cannot be described well as discrete patches. Our approach provides a way to resolve population games while keeping the continuous nature of the habitat.
+Changing to a polymatrix game reveals a clear connection between the individual game and the population growth rate, \Cref{eq:poly_fitness} is the growth rate \Cref{eq:pop_dyn_lv}. Therefore, optimizing the population growth per type and at the individual level are the same when there is no density dependence $(A_{ii}=0)$. Following the Nash equilibrium of the game \Cref{eq:poly_fitness} at every instant is an evolutionary stable strategy, i.e. the populations cannot be invaded by mutants \citep{kvrivan2009evolutionary}. These considerations resolve the discrete case, but in nature many habitats are continuous and cannot be described well as discrete patches. However, having a fully-developed discrete model sets the stage for the continuous generalization, and lets use the ideas for constructing a population game in continuous space.
 
+\subsubsection{The continuous model}
 The insight of using the monomorphic-polymorphic equivalence is essential in generalizing to the continuous case, since it highlights that the important factor in the individual patch choice \Cref{eq:utility_pm} is the overall distribution on patches $p_i$. To extend population games to continuous space and facilitate the incorporation of imperfect decision making, we consider a habitat described by an interval $[0,z_0]$. We again assume we have $T$ different types. Define the continuous analogues of patch distribution by:
 \begin{equation}
   K = \{ \phi \in L^2([0,z_0]) : \phi \geq 0,~\int \phi dz = 1\}
