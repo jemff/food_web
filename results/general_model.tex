@@ -44,7 +44,7 @@ Where we let $\Gamma_i$ be matrix where every column is $G_i$, so that $(\Gamma_
 %with $A_{ii}$ scaled by $\frac{1}{2}, but otherwise subtly different
 %In the case where \Cref{eq:utility_pm} has no density dependence
 
-We recognize \Cref{eq:poly_fitness} as the growth rate in \Cref{eq:pop_dyn_lv}. Therefore, optimizing the population growth per type and at the individual level are the same when there is no density dependence $(A_{ii}=0)$. Following the Nash equilibrium of the game \Cref{eq:poly_fitness} at every instant is an evolutionary stable strategy, i.e. the populations cannot be invaded by mutants \citep{kvrivan2009evolutionary}. These considerations resolve the discrete case, but in nature many habitats are continuous and cannot be described well as discrete patches. However, having a fully-developed discrete model sets the stage for the continuous generalization, and lets use the ideas for constructing a population game in continuous space.
+We recognize \Cref{eq:poly_fitness} as the growth rate in \Cref{eq:pop_dyn_lv}. Therefore, optimizing the population growth per type and at the individual level are the same when there is no density dependence $(A_{ii}=0)$. Following the Nash equilibrium of the game \Cref{eq:poly_fitness} at every instant is an evolutionary stable strategy, i.e. the populations cannot be invaded by mutants \citep{kvrivan2009evolutionary}. These considerations resolve the discrete case, but in nature many habitats are continuous and cannot be described well as discrete patches. However, having a fully-developed discrete model sets the stage for the continuous generalization, and giving us a toolbox of ideas for constructing a population game in continuous space.
 
 \subsubsection{The continuous model}
 The insight of using the monomorphic-polymorphic equivalence is essential in generalizing to the continuous case, since it highlights that the important factor in the individual patch choice \Cref{eq:utility_pm} is the overall distribution on patches $p_i$. To extend population games to continuous space and facilitate the incorporation of imperfect decision making, we consider a habitat described by an interval $[0,z_0]$. We again assume we have $T$ different types. Define the continuous analogues of patch distribution by:
@@ -60,7 +60,7 @@ i.e. $K$ is the set of square-integrable probability distributions on $[0,z_0]$,
 \end{equation}
 The game given by maximizing all $F_i$ with respect to $\phi_i$ is the continuous analogue of a polymatrix game. Since the game again has polymorphic-monomorphic equivalence, the Nash equilibrium for the individual habitat selection game is also given by finding the Nash equilibrium of the game specified by \Cref{eq:utility}.
 
-Modeling the population dynamics, we assume that at every instant the animals are distributed according to the Nash equilibrium of \Cref{eq:utility}. That is, no animal can increase their utility by unilaterally deviating from their strategy. Denoting the Nash equilibrium by $(\phi_i^{*,NE})^T_{i=1}$, the population dynamics are:
+Modeling the population dynamics, we assume that at every instant the animals are distributed according to the Nash equilibrium of \Cref{eq:utility}. That is, no animal can increase their utility by unilaterally deviating from their strategy. Denoting the Nash equilibrium by $(\phi_i^{*,NE})^T_{i=1}$, the population dynamics in the general continuous model are:
 \begin{equation}
   \dot{N_i}((\phi_j^{*,NE})_{j=1}^T ) = N_i F_i((\phi_j^{*,NE},N_j)_{j=1}^N)
 \end{equation}
