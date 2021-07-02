@@ -10,9 +10,9 @@ consider a Lotka-Volterra model\todo{Uklart om dette \emph{er} ``the general mod
   \dot{N}_i = N_i \sum_{k=1}^M p_i(k) \pa{\sum_{j=1}^T {(N_j A_{ij} p_j)}(k) + G_i(k)}
   \label{eq:pop_dyn_lv}
 \end{equation}
-We define the fitness proxy for an individual of type $i$ at patch $k$ by $H_i(k)$, as the growth of an animal of type $i$ at patch $k$ given that all types are distributed according to $(p_i)_{i=1}^T$.
+We define the fitness proxy for an individual of type $i$ at patch $k$ by $H_i(k)$, as the growth of an individual of type $i$ at patch $k$ given that all types are distributed according to $(p_i)_{i=1}^T$.
 \begin{equation}
-  H_i((N_j p_j)_{j=1}^T)(k) = \pa{\sum_{j=1}^T {A_{ij}N_j p_j}(k)} + G_i(k)%
+  H_i((N_j p_j)_{j=1}^T)(k) = \pa{\sum_{j=1}^T (N_j A_{ij}p_j)(k)} + G_i(k)%
   \label{eq:utility_pm}
 \end{equation}
 If migrations are very fast and the habitat is highly interconnected \citep{cressman2006migration, abrams2007role}, it is reasonable to assume all animals of any type simultaneously seek to find the optimum patch in the sense of seeking $k$ to maximize \Cref{eq:utility_pm}. In a single-species case, the resulting patch distribution $p^*$ is the ideal free distribution \citep{fretwell1969territorial}. At the Nash equilibrium, the payoff $H_i((N_j p_j^*)_{j=1}^T)(k)$ is constant except where $p_i(k)$ is zero. The approach of using population dynamics determined by \Cref{eq:pop_dyn_lv} with optimal strategies determined by the Nash equilibrium defines a population game on discrete patches, and is a successful approach to coupling optimal behavior with population dynamics \citep{valdovinos2010consequences, mougi2019adaptive, pinti2021co}.
@@ -21,18 +21,23 @@ If migrations are very fast and the habitat is highly interconnected \citep{cres
 %In the polymorphic game \Cref{eq:utility_pm} \todo{Jeg forstår ikke denne henvisning} if an individual of type $i$ at patch $k$ interacts with other individuals of type $i$ each individual gets equal payoff, corresponding to the monomorphic population getting half \todo{Dette er uklart, og jeg er ikke sikker på at jeg er enig i fortolkningen.} the payoff \citep{kvrivan2008ideal, eaves1973polymatrix}.
 
 
-If we assume that $A_{ii}=0$ for all $i$, the problem of finding the Nash equilibrium $(p_i^{*,NE})_{i=1}^T$ of the game specified by all $H_i$ in \Cref{eq:utility_pm} can be interpreted as finding the Nash equilibrium in a polymatrix game \citep{howson1972equilibria, eaves1973polymatrix}. A polymatrix game has so-called polymorphic-monomorphic equivalence \citep{broom2013game, eaves1973polymatrix}, so an individual of type $j$ cannot determine whether it is playing against a polymorphic population $i$ with pure strategies, or a monomorphic population with a mixed strategy. The monomorphic interpretation is that we assume that all individuals of type $i$ choose their positions randomly according to the distribution $p_i$, instead of having players pick fixed position $p_i(k)$. Let $\Gamma_i$ be matrix where every column is $G_i$, so that $(\Gamma_i p_j)(k) = G(k). We define the total payoff matrices $E_{ij}$ for the interaction between type $i$ and $j$:
+If we assume that $A_{ii}=0$ for all $i$, the problem of finding the Nash equilibrium $(p_i^{*,NE})_{i=1}^T$ of the game specified by all $H_i$ in \Cref{eq:utility_pm} can be interpreted as finding the Nash equilibrium in a polymatrix game \citep{howson1972equilibria, eaves1973polymatrix}. %The interpretation comes from noting that $H_i$ is affine in $p_j$ and independent of $p_i$, so the sum of the payoff at all patches can be written as
+%\begin{equation}%
+  %\ip{p_i}{H_i((N_j p_j)_{j=1}^T)} = \ip{p_i}{\pa{\sum_{j=1}^T (N_j A_{ij}p_j)(k)} + G_i(k)}%
+%\end{equation}
+
+A polymatrix game has so-called polymorphic-monomorphic equivalence \citep{broom2013game, eaves1973polymatrix}, so an individual of type $j$ cannot determine whether it is playing against a polymorphic population $i$ with pure strategies, or a monomorphic population with a mixed strategy. The monomorphic interpretation is that we assume that all individuals of type $i$ choose their positions randomly according to the distribution $p_i$, instead of having players pick fixed position $p_i(k)$. Finding the Nash equilibrium $(p_i)^{*,NE}$ of \Cref{eq:utility_pm} is then equivalent to finding the Nash equilibrium of the game:
+\begin{equation}
+  \label{eq:poly_fitness}
+  F_i(p_i, (N_j p_j)_{j=1}^T) = \ip{p_i}{\sum_{j=1}^T E_{ij} p_j}
+\end{equation}
+Where we let $\Gamma_i$ be matrix where every column is $G_i$, so that $(\Gamma_i p_j)(k) = G(k). The total payoff matrices $E_{ij}$ for the interaction between type $i$ and $j$ then become:
 \begin{equation}
   \label{eq:disc_tot_payoff}
   \begin{split}
   \Gamma_i(l,k) = G_i(k) \\
     E_{ij} = N_j A_{ij} + \frac{1}{T}\Gamma_i%, \quad v_{ij}=1,i\neq j,~v_{ij}=\frac{1}{2},i=i, v_{ij}
   \end{split}
-\end{equation}
-Finding the Nash equilibrium $(p_i)^{*,NE}$ of \Cref{eq:utility_pm} is equivalent to finding the Nash equilibrium of:
-\begin{equation}
-  \label{eq:poly_fitness}
-  F_i(p_i, (N_j p_j)_{j=1}^T) = \ip{p_i}{\sum_{j=1}^T E_{ij} p_j}
 \end{equation}
 %\todo[inline]{Jeg forstår overhovedet ikke det foregående. Slutresultatet, derimod, er klart, altså at ligning (2) kan skrives på en matriksform. Så for mig ville det være lettere at vende den om: Starte med at konstatere at $H_i(k)$ er affin i $p$ og dermed kan skrives på en matriksform, angive den generelle form af denne, d.v.s. (4), og så til sidst fedte kooefficienterne på plads. I øvrigt forstår jeg heller ikke her notationen på venstresiden af (4).}
 
