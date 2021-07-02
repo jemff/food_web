@@ -154,7 +154,7 @@ where
     \end{array}
   \right]
 \]
-Conversely, assume that $z=(s_1,s_2,\gamma_1,\gamma_2)$ and $w$ solve the Linear Complementarity Problem, then it is straightforward to see that the mixed strategies $(s_1,s_2)$ form a Nash equilibrium with values $(\gamma_1,\gamma_2)$. The assumption that $E_1$ and $E_2$ have negative elements imply that the matrix $H$ is copositive plus (meaning, for all $z\geq0$ with $z\neq0$ it holds that $\ip z{Hz}>0$) which assures that the LCP to has a solution, in particular through Lemke's algorithm.
+Conversely, assume that $z=(s_1,s_2,\gamma_1,\gamma_2)$ and $w$ solve the LCP, then it is straightforward to see that the mixed strategies $(s_1,s_2)$ form a Nash equilibrium with values $(\gamma_1,\gamma_2)$. The assumption that $E_1$ and $E_2$ have negative elements imply that the matrix $H$ is copositive plus (meaning, for all $z\geq0$ with $z\neq0$ it holds that $\ip z{Hz}>0$) which assures that the LCP to has a solution, in particular through Lemke's algorithm.
 
 Solving \Cref{eq:lcp} was done through two different methods. The interior-point method as implemented in IPOPT, \citep{wachter2006implementation}, called via. the auto-differentation software CasADi \citep{Andersson2019}, and Lemkes Algorithm implemented in the Numerics package in Siconos, \citep{acary2019introduction}. Experience showed that Lemkes algorithm was the fastest.
 
