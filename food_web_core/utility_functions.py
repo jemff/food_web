@@ -302,7 +302,6 @@ def graph_builder_old(eco):  # Move into ecosystem class
             foraging_term = eco.water.res_counts * eco.parameters.forager_or_not[k] * \
                             eco.parameters.handling_times[k] \
                             * eco.parameters.clearance_rate[k] * eco.parameters.layered_foraging[:, k]
-            # print(eco.parameters.layered_attack[:,k,i], k, i, strat_mat[i])
             outflows[1+i, k] = np.dot(strat_mat[k], np.dot(eco.spectral.M, strat_mat[i] * eco.populations[
                 k] * eco.parameters.layered_attack[:, k, i] * eco.parameters.clearance_rate[k] * eco.populations[
                                                              i])) / \
